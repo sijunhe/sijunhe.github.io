@@ -1,15 +1,8 @@
 <div class="profilepic">
 	{% if site.email_md5 %}
-	<img src="http://www.gravatar.com/avatar/{{ site.email_md5 }}?s=160" alt="Profile Picture" style="width: 160px;" />
+	<img src="https://www.gravatar.com/avatar/{{ site.email_md5 }}?s=160" alt="Profile Picture" style="width: 160px;" />
 	{% else %}
 	<script src="{{ root_url }}/javascripts/md5.js"></script>
-	<!--- MathJax Configuration -->
-	<script type="text/x-mathjax-config">
-  		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
-	</script>
-	<script type="text/javascript" async
-	  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
-	</script>
 	<script type="text/javascript">
 		$(function(){
 			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("{{ site.email | downcase }}") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
@@ -25,7 +18,7 @@
 			<a class="email" href="mailto:{{ site.email }}" title="Email">Email</a>
 		{% endif %}
 		{% if site.facebook_user %}
-			<a class="facebook" href="http://www.facebook.com/{{ site.facebook_user }}" title="Facebook">Facebook</a>
+			<a class="facebook" href="https://www.facebook.com/{{ site.facebook_user }}" title="Facebook">Facebook</a>
 		{% endif %}
 		{% if site.googleplus_user and site.googleplus_hidden == false %}
 			<a class="google" href="https://plus.google.com/{{ site.googleplus_user }}" rel="author" title="Google+">Google+</a>
