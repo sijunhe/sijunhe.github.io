@@ -2,12 +2,12 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://yoursite.com
-title: My Octopress Blog
-subtitle: A blogging framework for hackers.
-author: Your Name
+url: http://sijunhe.github.io
+title: Blog | Sijun He
+subtitle: Sijun's Data Science Odyssey
+author: Sijun He
 simple_search: https://www.google.com/search
-description:
+description: MS Statistics @ Stanford, Data Scientist, Builder, Passionate about AI
 
 # Default date format is "ordinal" (resulting in "July 22nd 2007")
 # You can customize the format as defined in
@@ -16,10 +16,10 @@ description:
 date_format: "ordinal"
 
 # RSS / Email (optional) subscription links (change if using something like Feedburner)
-subscribe_rss: /atom.xml
-subscribe_email:
+# subscribe_rss: /atom.xml
+# subscribe_email:
 # RSS feeds can list your email address if you like
-email:
+email: sijun.he@hotmail.com
 
 # ----------------------- #
 #    Jekyll & Plugins     #
@@ -64,7 +64,7 @@ default_asides: [asides/recent_posts.html, asides/github.html, asides/delicious.
 # ----------------------- #
 
 # Github repositories
-github_user:
+github_user: sijunhe
 github_repo_count: 0
 github_show_profile_link: true
 github_skip_forks: true
@@ -91,11 +91,14 @@ delicious_user:
 delicious_count: 3
 
 # Disqus Comments
-disqus_short_name:
+disqus_short_name: sijunhe
 disqus_show_comment_count: false
 
 # Google Analytics
 google_analytics_tracking_id:
 
-# Facebook Like
-facebook_like: false
+# Linkedin
+linkedin_user: sijunhe48
+
+# Quora
+quora_user: Sijun-He-1
