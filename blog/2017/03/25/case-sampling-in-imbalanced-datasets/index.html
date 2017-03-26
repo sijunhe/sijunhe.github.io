@@ -5,11 +5,11 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>Reading List - Blog | Sijun He</title>
+	<title>Case-control Sampling In Imbalanced Datasets - Blog | Sijun He</title>
 	<meta name="author" content="Sijun He">
 
 	
-	<meta name="description" content="The page is a list of the papers I always wanted to read but have yet to do so. Various excuses include homework, exams, beer, PS4, English Premier &hellip;">
+	<meta name="description" content="Case-control Sampling in Imbalanced Datasets This problem was briefly introduced in STATS315A Applied Modern Statistics: Learning by the renowned &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +19,7 @@
 
 	<link href="" rel="alternate" title="Blog | Sijun He" type="application/atom+xml">
 	
-	<link rel="canonical" href="http://sijunhe.github.io/reading-list/">
+	<link rel="canonical" href="http://sijunhe.github.io/blog/2017/03/25/case-sampling-in-imbalanced-datasets/">
 	<link href="/favicon.png" rel="shortcut icon">
 	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
 	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -116,30 +116,36 @@
 				
 			
 			<div class="mid-col-container">
-				<div id="content" class="inner"><article class="page">
-    
-    <h1 class="title">Reading List</h1>
-    
-    <div class="entry-content"><p>The page is a list of the papers I always wanted to read but have yet to do so. Various excuses include homework, exams, beer, PS4, English Premier League, and ultimately my inertia. The goal is to turn these papers into reading notes in my blog. Hopefully the list keeps getting shorter but both you and I know that is rather unlikely.</p>
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Case-control Sampling in Imbalanced Datasets</h1>
+	<div class="entry-content" itemprop="articleBody"><p>This problem was briefly introduced in <a href="http://statweb.stanford.edu/~tibs/stat315a.html">STATS315A Applied Modern Statistics: Learning</a> by the renowned Professor <a href="https://web.stanford.edu/~hastie/">Trevor Hastie</a>. Given that the imbalanced dataset problem is ubiquitous in data science, such as modeling click through rate or anomaly detection, I think the case-sampling trick was one of the most practical tricks I have learned in this class.</p>
 
-<h2>Traditional Machine Learning</h2>
-
-<ul>
-<li><a href="http://ai.stanford.edu/~ang/papers/nips01-lda.pdf">Latent Dirichlet Allocation</a></li>
-<li><a href="https://arxiv.org/pdf/1603.02754.pdf">XGBoost: A Scalable Tree Boosting System</a></li>
-</ul>
+<!--more-->
 
 
-<h2>Deep Learning</h2>
+<h3>Case-Control Sampling Use Case</h3>
 
-<ul>
-<li><a href="https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf">Distributed Representations of Words and Phrases and their Compositionality</a> (word2vec)</li>
-<li><a href="http://nlp.stanford.edu/pubs/glove.pdf">GloVe: Global Vectors for Word Representation</a></li>
-<li><a href="http://www.iro.umontreal.ca/~vincentp/ift3395/lectures/backprop_old.pdf">Learning Representations by Backpropogating Errors</a> (the inception of the back-propagation algorithm in 1986)</li>
-<li><a href="http://cs.stanford.edu/people/danqi/papers/emnlp2014.pdf">A Fast and Accurate Dependency Parser using Neural Networks</a></li>
-</ul>
+<p>The concept of case-control sampling originated in epidemiology, where a prospective study is often costly in time and money so a retrospective study is choose instead. Let&rsquo;s take an example of studying a disease with 1% prevalence. The prospective study would be collecting data on a large group of people for a period of time. However, getting 1000 cases means following a group of 100,000 people, which is impractical. The retrospective study would be sampling cases and controls at different rates to form a dataset. Often cases are rare so they are all taken. Up to a few times of controls are taken as well.</p>
 
+<h3>Intercept Transformation</h3>
+
+<p>However, the case-control sample has a much greater prevalence. Assuming we are modeling with logistic regression, we still have the correct regression coefficients $\beta$, but the intercept term $\beta_0$ is incorrect. We can correct the estimated intercept by the transformation (shameless stolen from lecture slide 4 of STATS315A)
+$$\hat{\beta}^\ast_0 = \hat{\beta}_0 + \text{log}\frac{\pi}{1-\pi} - \text{log}\frac{\pi^\ast}{1-\pi^\ast}$$
+A more detailed proof can be found with <a href="http://www.ams.org/mathscinet-getitem?mr=0345332">Separate Sample Logistic Discrimination(Anderson et al. 1972)</a></p>
+
+<h3>Diminishing return on coefficients variance</h3>
+
+<p>Sampling more negatives/controls does give us more data, which reduces the variance of the coefficients. However, since the number of positives/cases is fixed in the dataset, beyond some point, the variance in the coefficients mainly comes from the positives/cases. Sampling only more negatives/controls has a diminishing return effect, as shown by the following plot (shameless stolen from lecture slide 4 of STATS315A).</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post8/variance_control%3Acase_ratio.png" alt="png" /></p>
+
+<h3>Extension to Modern Data Science Application</h3>
+
+<p>The idea of case-control sampling can be easily extend to modern data science application. When modeling click through rate, very often there is 1 positives (click-through) in more than 10000 data points (impression), which gives a control/case ratio of greater than 10000. With the same diminishing return effect as described in last paragraph, the large number of negatives doesn&rsquo;t offer much other than wasting computing powers. By appling the case-control sampling method, We can undersample the negatives by taking 10-15 negatives per positives and achieve a similar performance as using the full dataset, but much faster computation.</p>
+
+<p>See <a href="https://arxiv.org/pdf/1306.3706.pdf">Local Case-Control Sampling: Efficient Subsampling in Imbalanced Data Sets(Fithian et al. 2014)</a> for more advanced subsampling techniques that is consistent even when the model is misspecified.</p>
 </div>
+
 </article>
 
 	<div class="share">
@@ -161,7 +167,6 @@
     <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </div>
 </section>
-
 </div>
 			</div>
 			<footer id="footer" class="inner">Copyright &copy; 2017
@@ -179,8 +184,8 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://sijunhe.github.io/reading-list/index.html';
-        var disqus_url = 'http://sijunhe.github.io/reading-list/index.html';
+        var disqus_identifier = 'http://sijunhe.github.io/blog/2017/03/25/case-sampling-in-imbalanced-datasets/';
+        var disqus_url = 'http://sijunhe.github.io/blog/2017/03/25/case-sampling-in-imbalanced-datasets/';
         var disqus_script = 'embed.js';
       
     (function () {

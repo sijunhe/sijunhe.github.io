@@ -4,7 +4,7 @@
   <title><![CDATA[Category: models | Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/blog/categories/models/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2017-02-09T02:35:23-08:00</updated>
+  <updated>2017-03-26T00:17:31-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -12,6 +12,40 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Case-control Sampling In Imbalanced Datasets]]></title>
+    <link href="http://sijunhe.github.io/blog/2017/03/25/case-sampling-in-imbalanced-datasets/"/>
+    <updated>2017-03-25T21:37:28-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2017/03/25/case-sampling-in-imbalanced-datasets</id>
+    <content type="html"><![CDATA[<p>This problem was briefly introduced in <a href="http://statweb.stanford.edu/~tibs/stat315a.html">STATS315A Applied Modern Statistics: Learning</a> by the renowned Professor <a href="https://web.stanford.edu/~hastie/">Trevor Hastie</a>. Given that the imbalanced dataset problem is ubiquitous in data science, such as modeling click through rate or anomaly detection, I think the case-sampling trick was one of the most practical tricks I have learned in this class.</p>
+
+<!--more-->
+
+
+<h3>Case-Control Sampling Use Case</h3>
+
+<p>The concept of case-control sampling originated in epidemiology, where a prospective study is often costly in time and money so a retrospective study is choose instead. Let&rsquo;s take an example of studying a disease with 1% prevalence. The prospective study would be collecting data on a large group of people for a period of time. However, getting 1000 cases means following a group of 100,000 people, which is impractical. The retrospective study would be sampling cases and controls at different rates to form a dataset. Often cases are rare so they are all taken. Up to a few times of controls are taken as well.</p>
+
+<h3>Intercept Transformation</h3>
+
+<p>However, the case-control sample has a much greater prevalence. Assuming we are modeling with logistic regression, we still have the correct regression coefficients $\beta$, but the intercept term $\beta_0$ is incorrect. We can correct the estimated intercept by the transformation (shameless stolen from lecture slide 4 of STATS315A)
+$$\hat{\beta}^\ast_0 = \hat{\beta}_0 + \text{log}\frac{\pi}{1-\pi} - \text{log}\frac{\pi^\ast}{1-\pi^\ast}$$
+A more detailed proof can be found with <a href="http://www.ams.org/mathscinet-getitem?mr=0345332">Separate Sample Logistic Discrimination(Anderson et al. 1972)</a></p>
+
+<h3>Diminishing return on coefficients variance</h3>
+
+<p>Sampling more negatives/controls does give us more data, which reduces the variance of the coefficients. However, since the number of positives/cases is fixed in the dataset, beyond some point, the variance in the coefficients mainly comes from the positives/cases. Sampling only more negatives/controls has a diminishing return effect, as shown by the following plot (shameless stolen from lecture slide 4 of STATS315A).</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post8/variance_control%3Acase_ratio.png" alt="png" /></p>
+
+<h3>Extension to Modern Data Science Application</h3>
+
+<p>The idea of case-control sampling can be easily extend to modern data science application. When modeling click through rate, very often there is 1 positives (click-through) in more than 10000 data points (impression), which gives a control/case ratio of greater than 10000. With the same diminishing return effect as described in last paragraph, the large number of negatives doesn&rsquo;t offer much other than wasting computing powers. By appling the case-control sampling method, We can undersample the negatives by taking 10-15 negatives per positives and achieve a similar performance as using the full dataset, but much faster computation.</p>
+
+<p>See <a href="https://arxiv.org/pdf/1306.3706.pdf">Local Case-Control Sampling: Efficient Subsampling in Imbalanced Data Sets(Fithian et al. 2014)</a> for more advanced subsampling techniques that is consistent even when the model is misspecified.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Linear Regression and the KNN]]></title>

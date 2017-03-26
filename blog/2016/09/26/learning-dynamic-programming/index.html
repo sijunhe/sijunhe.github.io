@@ -149,25 +149,25 @@
 
 <h3>Subproblem</h3>
 
-<p>Let (S) be the max-weight independent set of the path graph (G) and (V_n) to be the last vertex of the path. Let (G') be the path graph (G) with  (V_n) deleted</p>
+<p>Let $S$ be the max-weight independent set of the path graph $G$ and $V_n$ to be the last vertex of the path. Let $G'$ be the path graph $G$ with  $V_n$ deleted</p>
 
 <ul>
-<li>Case 1: If (V_n \notin S), then (S) is also the max-weight IS of (G').</li>
-<li>Case 2: If (V_n \in S), then (S - {V_n}) is the max-weight IS of (G'&lsquo;), which is (G) with  (V_{n-1}) and (V_n) deleted</li>
+<li>Case 1: If $V_n \notin S$, then $S$ is also the max-weight IS of $G'$.</li>
+<li>Case 2: If $V_n \in S$, then $S - $V_n$ is the max-weight IS of $G'&lsquo;$, which is $G$ with  $V_{n-1}$ and $V_n$ deleted</li>
 </ul>
 
 
-<p>Hence, we know a max-weight IS (S) must be either</p>
+<p>Hence, we know a max-weight IS $S$ must be either</p>
 
 <ul>
-<li>a max-weight IS of (G') or</li>
-<li>a max-weight IS of (G'&lsquo;) + (V_n)</li>
+<li>a max-weight IS of $G'$ or</li>
+<li>a max-weight IS of $G'&lsquo;$ + $V_n$</li>
 </ul>
 
 
 <h3>The Dynamic Programming Solution</h3>
 
-<p>Let (G_i) be the first (i) vertices of (G) and we populate an array (A) from left to right with (A[i]) being the value of the max-weight IS of (G_i). Let array (W) store the weights of the vertices.</p>
+<p>Let $G_i$ be the first $i$ vertices of $G$ and we populate an array $A$ from left to right with $A[i]$ being the value of the max-weight IS of $G_i$. Let array $W$ store the weights of the vertices.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -182,7 +182,7 @@
 
 <h3>Complexity Analysis</h3>
 
-<p>Time complexity is (O(n)) since it is constant time per iteration. Space complexity is also (O(n)) from the memoization array (A).</p>
+<p>Time complexity is $O(n)$ since it is constant time per iteration. Space complexity is also $O(n)$ from the memoization array $A$.</p>
 
 <h2>Example Problem 2: The Knapsack Problem</h2>
 
@@ -190,31 +190,31 @@
 
 <p>The Knapsack problem mimics the situation where a thief breaks into a store with a knapsack. The knapsack can only carry certain weight so the thief needs to put in items with the most total value while stay under the knapsack&rsquo;s weight limit.</p>
 
-<p>Input: (n) items, each with a non-negative integer value (v_i) and a non-negative integer weight (w_i). The weight constraint is (W).</p>
+<p>Input: $n$ items, each with a non-negative integer value $v_i$ and a non-negative integer weight $w_i$. The weight constraint is $W$.</p>
 
-<p>Output: a subset (S) of all the items that maximizes (\sum<em>{i \in S} v_i) subjected to (\sum</em>{i \in S} w_i \leq W)</p>
+<p>Output: a subset $S$ of all the items that maximizes $\sum<em>{i \in S} v_i$ subjected to $\sum</em>{i \in S} w_i \leq W$</p>
 
 <h3>Subproblems</h3>
 
-<p>Let (S) be the max-value solution to an knapsack with capacity (W) and for item (n) be the last of all the available items</p>
+<p>Let $S$ be the max-value solution to an knapsack with capacity $W$ and for item $n$ be the last of all the available items</p>
 
 <ul>
-<li>Case 1: If (n \notin S), then S must also be the max-value solution to the first ((n-1)) items</li>
-<li>Case 2: If (n \in S), then then (S - {n}) is the max-value solution to the first ((n-1)) items and the knapsack with capacity of (W - w_n)</li>
+<li>Case 1: If $n \notin S$, then S must also be the max-value solution to the first $(n-1)$ items</li>
+<li>Case 2: If $n \in S$, then then $S - {n}$ is the max-value solution to the first $(n-1)$ items and the knapsack with capacity of $W - w_n$</li>
 </ul>
 
 
-<p>Hence, we know a max-value solution (V_{i,x}) must be the maximum of</p>
+<p>Hence, we know a max-value solution $V_{i,x}$ must be the maximum of</p>
 
 <ul>
-<li>(V_{i-1,W}), the max-value solution for the first ((n-1)) items with the same capacity</li>
-<li>(V_{i-1,W-w_i} + v_i), the sum of the max-value solution for the first ((n-1)) items with the capacity of (W-w_i) and value of the ith item (v_i)</li>
+<li>$V_{i-1,W}$, the max-value solution for the first $(n-1)$ items with the same capacity</li>
+<li>$V_{i-1,W-w_i} + v_i$, the sum of the max-value solution for the first $(n-1)$ items with the capacity of $W-w_i$ and value of the ith item $v_i$</li>
 </ul>
 
 
 <h3>The Dynamic Programming Solution</h3>
 
-<p>Since we are searching all the possible combination of items and capacities, we use an 2D array (A) for memoization. Let array (w) and (v) store the weights and values of the items.</p>
+<p>Since we are searching all the possible combination of items and capacities, we use an 2D array $A$ for memoization. Let array $w$ and $v$ store the weights and values of the items.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -233,7 +233,7 @@
 
 <h3>Complexity Analysis</h3>
 
-<p>Both the time complexity and the space complexity is also (O(nW)), since there&rsquo;re (O(nW)) subproblems and each can be solved in constant time and space.</p>
+<p>Both the time complexity and the space complexity is also $O(nW)$, since there&rsquo;re $O(nW)$ subproblems and each can be solved in constant time and space.</p>
 </div>
 
 </article>
