@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "Reading Notes| Apache Spark Research Paper III"
+title: "Reading | Apache Spark Research Paper III"
 subtitle: "Spark SQL: Relational Data Processing in Spark"
 date: 2016-08-25 16:49:35 -0800
 comments: true
-categories: BigData Spark
+categories: BigData Spark ReadingNotes
 ---
 
 This follows up the last post and I will read the third Apache Spark paper [Spark SQL: Relational Data Processing in Spark](http://people.csail.mit.edu/matei/papers/2015/sigmod_spark_sql.pdf ""), published in 2015 
