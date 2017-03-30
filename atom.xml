@@ -4,7 +4,7 @@
   <title><![CDATA[Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2017-03-30T01:39:31-07:00</updated>
+  <updated>2017-03-30T01:42:03-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Reading Notes | The 1986 Backpropagation Paper]]></title>
+    <title type="html"><![CDATA[Reading | The 1986 Backpropagation Paper]]></title>
     <link href="http://sijunhe.github.io/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper/"/>
     <updated>2017-03-27T15:18:09-07:00</updated>
     <id>http://sijunhe.github.io/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper</id>
@@ -487,7 +487,7 @@ In our case, we can find the closest location vector to an observation and assig
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Reading Notes | Apache Spark Research Paper III]]></title>
+    <title type="html"><![CDATA[Reading | Apache Spark Research Paper III]]></title>
     <link href="http://sijunhe.github.io/blog/2016/08/25/reading-notes-apache-spark-research-paper-iii/"/>
     <updated>2016-08-25T17:49:35-07:00</updated>
     <id>http://sijunhe.github.io/blog/2016/08/25/reading-notes-apache-spark-research-paper-iii</id>
@@ -739,7 +739,7 @@ In our case, we can find the closest location vector to an observation and assig
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Reading Notes | Apache Spark Research Paper II]]></title>
+    <title type="html"><![CDATA[Reading | Apache Spark Research Paper II]]></title>
     <link href="http://sijunhe.github.io/blog/2016/08/21/reading-notes-apache-spark-research-paper-ii/"/>
     <updated>2016-08-21T17:49:26-07:00</updated>
     <id>http://sijunhe.github.io/blog/2016/08/21/reading-notes-apache-spark-research-paper-ii</id>
@@ -874,7 +874,7 @@ In our case, we can find the closest location vector to an observation and assig
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Reading Notes | Apache Spark Research Paper I]]></title>
+    <title type="html"><![CDATA[Reading | Apache Spark Research Paper I]]></title>
     <link href="http://sijunhe.github.io/blog/2016/08/16/reading-notes-apache-spark-research-paper-i/"/>
     <updated>2016-08-16T17:49:21-07:00</updated>
     <id>http://sijunhe.github.io/blog/2016/08/16/reading-notes-apache-spark-research-paper-i</id>
