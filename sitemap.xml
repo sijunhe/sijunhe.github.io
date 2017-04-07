@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://sijunhe.github.io/blog/2017/04/04/reading-notes-lda/</loc>
+<lastmod>2017-04-04T21:54:13-07:00</lastmod>
+</url>
+<url>
 <loc>http://sijunhe.github.io/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper/</loc>
 <lastmod>2017-03-27T15:18:09-07:00</lastmod>
 </url>
@@ -119,5 +123,8 @@
 </url>
 <url>
 <loc>http://sijunhe.github.io/blog/categories/deeplearning/</loc>
+</url>
+<url>
+<loc>http://sijunhe.github.io/blog/categories/models-readingnotes-nlp/</loc>
 </url>
 </urlset>
