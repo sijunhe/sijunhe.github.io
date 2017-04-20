@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform/</loc>
+<lastmod>2017-04-18T13:59:48-07:00</lastmod>
+</url>
+<url>
 <loc>http://sijunhe.github.io/blog/2017/04/04/reading-notes-lda/</loc>
 <lastmod>2017-04-04T21:54:13-07:00</lastmod>
 </url>
@@ -126,5 +130,11 @@
 </url>
 <url>
 <loc>http://sijunhe.github.io/blog/categories/models-readingnotes-nlp/</loc>
+</url>
+<url>
+<loc>http://sijunhe.github.io/blog/categories/computervision/</loc>
+</url>
+<url>
+<loc>http://sijunhe.github.io/posts/2/</loc>
 </url>
 </urlset>

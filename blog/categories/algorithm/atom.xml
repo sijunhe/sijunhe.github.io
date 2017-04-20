@@ -4,7 +4,7 @@
   <title><![CDATA[Category: algorithm | Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/blog/categories/algorithm/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2017-04-06T17:14:45-07:00</updated>
+  <updated>2017-04-20T00:58:41-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -18,7 +18,7 @@
     <link href="http://sijunhe.github.io/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper/"/>
     <updated>2017-03-27T15:18:09-07:00</updated>
     <id>http://sijunhe.github.io/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper</id>
-    <content type="html"><![CDATA[<p>Deep learning is without doubt the hottest topic in both the academia and the industry at the moment, as it enables machines to recognize objects, translate speech or even play chess at human or super-human level. The workhorse behind the training of every neural network is backpropagation, where the weights of connections between neurons get adjusted to minimize the difference between the output of the neural network and the desired target. The idea of backpropagation came around in 1960 - 1970, but it wasn&rsquo;t until 1986 when it was formally introduced as the learning procedure to train neural networks. This is my reading notes of the famous 1986 paper in Nature by Rumelhart et al., <a href="https://www.iro.umontreal.ca/~vincentp/ift3395/lectures/backprop_old.pdf">Learning Representations by Back-propagating Errors</a>.</p>
+    <content type="html"><![CDATA[<p>Deep learning is without doubt the hottest topic in both the academia and the industry at the moment, as it enables machines to recognize objects, translate speech or even play chess at human or super-human level. The workhorse behind the training of every neural network is backpropagation, where the weights of connections between neurons get adjusted to minimize the difference between the output of the neural network and the desired target. The idea of backpropagation came around in 1960 - 1970, but it wasn&rsquo;t until 1986 when it was formally introduced as the learning procedure to train neural networks. This is my reading notes of the famous 1986 paper in Nature <a href="https://www.iro.umontreal.ca/~vincentp/ift3395/lectures/backprop_old.pdf">Learning Representations by Back-propagating Errors</a> by Rumelhart, Hinton and Williams.</p>
 
 <!--more-->
 
