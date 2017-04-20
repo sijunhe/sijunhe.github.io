@@ -7,7 +7,7 @@ comments: true
 categories: BigData Spark ReadingNotes
 ---
 
-This follows up the last post and I will read the third Apache Spark paper [Spark SQL: Relational Data Processing in Spark](http://people.csail.mit.edu/matei/papers/2015/sigmod_spark_sql.pdf ""), published in 2015 
+This follows up the last post and I will read the third Apache Spark paper [Spark SQL: Relational Data Processing in Spark](http://people.csail.mit.edu/matei/papers/2015/sigmod_spark_sql.pdf), published by Armbrust et al. in 2015 
 
 <!--more-->
 

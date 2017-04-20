@@ -7,7 +7,7 @@ comments: true
 categories: BigData Spark ReadingNotes
 ---
 
-This follows up the last post and I will read the second Apache Spark paper [Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing](http://people.csail.mit.edu/matei/papers/2012/nsdi_spark.pdf), published in 2012.
+This follows up the last post and I will read the second Apache Spark paper [Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing](http://people.csail.mit.edu/matei/papers/2012/nsdi_spark.pdf), published by Matei Zaharia et al. in 2012.
 
 <!--more-->
 
