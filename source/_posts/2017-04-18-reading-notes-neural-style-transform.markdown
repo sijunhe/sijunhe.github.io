@@ -4,14 +4,14 @@ title: "Reading: Neural Style Transform"
 subtitle: "A Neural Algorithm of Artistic Style"
 date: 2017-04-18 13:59:48 -0700
 comments: true
-categories: DeepLearning ReadingNotes ComputerVision
+categories: Deep_Learning Reading_Notes Computer_Vision
 ---
 
-Neural Style transfer is the technique of recomposing images in the style of other images using Deep Learning techniques and it has gotten very popular recently. My friends and I are planning on working on a final project related to Neural Style transfer and [Generative Adversial Network (GAN)](https://en.wikipedia.org/wiki/Generative_adversarial_networks) for [CS231N: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/) therefore I will be reading a series of related papers. Starting with the first one, [A Neural Algorithm of Artistic Style](https://arxiv.org/abs/1508.06576) by Gatys, Ecker and Bethge.
+Neural Style transfer is the technique of recomposing images in the style of other images using Deep Learning techniques and it has gotten very popular recently. I will be reading two papers related to Neural Style Transfer for [CS231N: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/). Starting with the first one, [A Neural Algorithm of Artistic Style](https://arxiv.org/abs/1508.06576) by Gatys, Ecker and Bethge.
 
 <!--more-->
 
-### Intro
+
 - The paper introduces a system based on Deep Neural Networks that composes a interplay between the content and style of an image.
 
 - The key finding of the paper is that representations of content and style in Convolutional Neural Networks (CNN) are separable. The system uses neural representations to separate and recombine the content style of images

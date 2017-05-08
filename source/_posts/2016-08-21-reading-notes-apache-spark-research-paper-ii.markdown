@@ -4,7 +4,7 @@ title: "Reading | Apache Spark Research Paper II"
 subtitle: "Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing"
 date: 2016-08-21 16:49:26 -0800
 comments: true
-categories: BigData Spark ReadingNotes
+categories: BigData Spark Reading_Notes
 ---
 
 This follows up the last post and I will read the second Apache Spark paper [Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing](http://people.csail.mit.edu/matei/papers/2012/nsdi_spark.pdf), published by Matei Zaharia et al. in 2012.

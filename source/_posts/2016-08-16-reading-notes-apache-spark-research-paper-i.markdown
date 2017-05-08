@@ -4,7 +4,7 @@ title: "Reading | Apache Spark Research Paper I"
 subtitle: "Spark: Cluster Computing with Working Sets"
 date: 2016-08-16 16:49:21 -0800
 comments: true
-categories: BigData Spark ReadingNotes
+categories: BigData Spark Reading_Notes
 ---
 
 For my summer internship at [Autodesk](http://www.autodesk.com), I have been heavily using Apache Spark for data analytics and machine learning. I believe a thorough understanding of the underlying principles and mechanisms of Apache Spark would be conducive to writing elegant and efficient Spark programs. Speaking of learning Spark, nothing is better than learning from the original authors. Therefore, I will read the three research papers out of The AMPLab at UC Berkeley that laid the groundwork for Apache Spark. I will start with the first paper [Spark: Cluster Computing with Working Sets](http://people.csail.mit.edu/matei/papers/2010/hotcloud_spark.pdf), published by Matei Zaharia in 2010.
