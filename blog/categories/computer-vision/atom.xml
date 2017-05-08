@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: computervision | Blog | Sijun He]]></title>
-  <link href="http://sijunhe.github.io/blog/categories/computervision/atom.xml" rel="self"/>
+  <title><![CDATA[Category: computer_vision | Blog | Sijun He]]></title>
+  <link href="http://sijunhe.github.io/blog/categories/computer-vision/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2017-04-20T01:02:43-07:00</updated>
+  <updated>2017-05-08T00:20:10-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -14,16 +14,113 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Reading: Neural Style Transform]]></title>
-    <link href="http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform/"/>
-    <updated>2017-04-18T13:59:48-07:00</updated>
-    <id>http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform</id>
-    <content type="html"><![CDATA[<p>Neural Style transfer is the technique of recomposing images in the style of other images using Deep Learning techniques and it has gotten very popular recently. My friends and I are planning on working on a final project related to Neural Style transfer and <a href="https://en.wikipedia.org/wiki/Generative_adversarial_networks">Generative Adversial Network (GAN)</a> for <a href="http://cs231n.stanford.edu/">CS231N: Convolutional Neural Networks for Visual Recognition</a> therefore I will be reading a series of related papers. Starting with the first one, <a href="https://arxiv.org/abs/1508.06576">A Neural Algorithm of Artistic Style</a> by Gatys, Ecker and Bethge.</p>
+    <title type="html"><![CDATA[Reading: Fast (Feedforward) Style Transfer]]></title>
+    <link href="http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer/"/>
+    <updated>2017-04-21T15:15:34-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer</id>
+    <content type="html"><![CDATA[<p><a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16.pdf">Perceptual Losses for Real-Time Style Transfer and Super-Resolution</a> is the second paper in my reading series for Neural Style Transfer, where Johnson et al. built on the work of Gatys et al. and used feedforward networks to stylize image order of magnitudes faster than the previous optimization approach.</p>
 
 <!--more-->
 
 
 <h3>Intro</h3>
+
+<p>Two common approach for image transformation, where an input image is transformed into an output image:</p>
+
+<ul>
+<li>feed-forward CNN using <strong>per-pixel loss</strong> between the output and ground-truth image</li>
+<li>generate image by defining and optimizing <strong>perceptual loss</strong> based on high-level features extracted from pretrained networks</li>
+</ul>
+
+
+<p>The paper combined the benefits of both approaches and proposed a system that</p>
+
+<ul>
+<li>train feed-forward network using use perceptual loss functions that depend on high-level features from a pretrained loss network</li>
+<li>allow the feed-forward network to learn a artistic style during training and can stylize images in <strong>real-time</strong> at test time</li>
+</ul>
+
+
+<h3>Method</h3>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/fast_neural_style_system.png" alt="fast_neural_style_system" />
+The system consists of two components:</p>
+
+<ul>
+<li><strong>image transformation network $f_W$</strong>: a deep residual CNN parameterized by $W$ and transforms input images $x$ into output images $\hat{y} = f_W(x)$</li>
+<li><strong>loss network $\phi$</strong>: used to define several loss functions $l_1, \cdots, l_k$. Each loss function computes a scalar loss value $l_i(\hat{y}, y_i)$ that measures the difference between the output image $\hat{y}$ and a target image $y_i$.</li>
+</ul>
+
+
+<p>The network is trained using SGD to minimize a loss functions of
+$$W^{\ast}  = \text{argmin}_W \ \textbf{E}_{x, \{y_i\} } \left[ \sum_{i} \lambda_i l_i (f_W(x), y_i)\right]$$</p>
+
+<ul>
+<li>Inspired from the optimziation approach from Gatys et al. and others, the author use a pretrained network $\phi$ as a fixed loss network to define the loss functions.</li>
+<li>The loss network $\phi$ is used to define a <strong>feature reconstruction loss $l_{feat}^{\phi}$</strong> and <strong>style reconstruction loss $l_{style}^{\phi}$</strong> that measure differences in <strong>content</strong> and <strong>style</strong> between images.</li>
+<li>For each input image $x$, there is a <strong>content target $y_c$</strong> and a <strong>style target $y_s$</strong></li>
+<li>For <strong>style transfer</strong>, the content target $y_c$ is the input image $x$ and the style target $y_s$ is the designated style image. One network is trained for each style target.</li>
+</ul>
+
+
+<h3>Image Transformation Network</h3>
+
+<p>The image transformation network is a Deep Residual Network. More detail can be found in the <a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16Supplementary.pdf">supplementary notes</a> of the paper.</p>
+
+<div style="text-align:center"><img src ="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/deep_residual_network_architecture.png" /></div>
+
+
+<h3>Loss Network</h3>
+
+<p>Johnson et al. defined the feature reconstruction loss and the style reconstruction loss in the same way as Gatys et al., though with a different notation. Let $\phi_{j}(x)$ be the $j$-th layer activations of the loss network for image $x$ with a shape $C_j \times H_j \times W_j$.</p>
+
+<h4>Feature Reconstruction Loss</h4>
+
+<ul>
+<li>Euclidean distance between feautre representations
+$$l_{feat}^{\phi, j}(\hat{y},y) = \frac{1}{C_j H_j W_j} ||\phi_j(\hat{y}) - \phi_j(y)||^2_2$$</li>
+<li><strong>Minimizing  $l_{feat}^{\phi}$ would reserve the image content and overall spatial structure, but not the color, texture or exacte shape</strong></li>
+</ul>
+
+
+<h4>Style Reconstruction Loss</h4>
+
+<ul>
+<li>Squared Frobenius norm of the distance between the <strong>Gram matrices</strong> between the output and target image</li>
+<li>Gram matrix $G_j^\phi(x)$ is a $C_j \times C_j$ whose elements are the inner product between the two channels $c$ and $c'$ of activations
+$$G_j^\phi(x)_{c,c'} = \frac{1}{C_j H_j W_j} \sum_{h=1}^{H_j} \sum_{w=1}^{W_j} \phi_j(x)_{h,w,c} \phi_j(x)_{h,w,c'}$$
+$$l_{style}^{\phi, j}(\hat{y},y) = ||G^\phi_j(\hat{y}) - G^\phi_j(y)||^2_F$$</li>
+<li><strong>Minimizing  $l_{style}^{\phi}$ would reserve the stylistic features, but not its spatial structure</strong></li>
+</ul>
+
+
+<h4>Total Variation Regularization</h4>
+
+<p>Other than the $l_{feat}^{\phi}$ and $l_{style}^{\phi}$, Johnson et al. also defined a loss function $l_{TV}(\hat{y})$ to encourage spatial smoothness in the output image $\hat{y}$.</p>
+
+<h3>Experiments and Training Details</h3>
+
+<ul>
+<li>The goal of style transfer is to generate an image $\hat{y}$ that combines the content of the content target $y_c$ with the style of the style target $y_s$.</li>
+<li>Gatsy et al. formulate the problem as a optimization problem. An image $\hat{y}$ is generated by solving the problem
+$$\hat{y} = \text{argmin}_y \ \lambda_c l_{feat}^{\phi, j}(y, y_c) + \lambda_s l_{style}^{\phi, j}(y, y_s) + \lambda_{TV} l_{TV}(y)$$</li>
+<li>However, the method is slow since satifactory results takes about 500 iterations and each iterations requires a forward and a backward pass</li>
+<li>The result from the style transfer network is <strong>qualitatively similar to Gatsy et al&rsquo;s method</strong>, but can be run in real time during test time</li>
+<li>Even though the style transfer network is trained on $256 \times 256$ images, they also <strong>perform satisfactorily in higher resolution</strong> of $512 \times 512$ and $1024 \times 1024$, achieving a performance comparable to 50-100 iterations of Gatsy et al&rsquo;s method</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Reading: Neural Style Transform]]></title>
+    <link href="http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform/"/>
+    <updated>2017-04-18T13:59:48-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform</id>
+    <content type="html"><![CDATA[<p>Neural Style transfer is the technique of recomposing images in the style of other images using Deep Learning techniques and it has gotten very popular recently. I will be reading two papers related to Neural Style Transfer for <a href="http://cs231n.stanford.edu/">CS231N: Convolutional Neural Networks for Visual Recognition</a>. Starting with the first one, <a href="https://arxiv.org/abs/1508.06576">A Neural Algorithm of Artistic Style</a> by Gatys, Ecker and Bethge.</p>
+
+<!--more-->
+
 
 <ul>
 <li><p>The paper introduces a system based on Deep Neural Networks that composes a interplay between the content and style of an image.</p></li>

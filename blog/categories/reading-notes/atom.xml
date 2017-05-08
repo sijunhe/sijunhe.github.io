@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: readingnotes | Blog | Sijun He]]></title>
-  <link href="http://sijunhe.github.io/blog/categories/readingnotes/atom.xml" rel="self"/>
+  <title><![CDATA[Category: reading_notes | Blog | Sijun He]]></title>
+  <link href="http://sijunhe.github.io/blog/categories/reading-notes/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2017-04-20T01:02:43-07:00</updated>
+  <updated>2017-05-08T00:20:10-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -18,12 +18,10 @@
     <link href="http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform/"/>
     <updated>2017-04-18T13:59:48-07:00</updated>
     <id>http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform</id>
-    <content type="html"><![CDATA[<p>Neural Style transfer is the technique of recomposing images in the style of other images using Deep Learning techniques and it has gotten very popular recently. My friends and I are planning on working on a final project related to Neural Style transfer and <a href="https://en.wikipedia.org/wiki/Generative_adversarial_networks">Generative Adversial Network (GAN)</a> for <a href="http://cs231n.stanford.edu/">CS231N: Convolutional Neural Networks for Visual Recognition</a> therefore I will be reading a series of related papers. Starting with the first one, <a href="https://arxiv.org/abs/1508.06576">A Neural Algorithm of Artistic Style</a> by Gatys, Ecker and Bethge.</p>
+    <content type="html"><![CDATA[<p>Neural Style transfer is the technique of recomposing images in the style of other images using Deep Learning techniques and it has gotten very popular recently. I will be reading two papers related to Neural Style Transfer for <a href="http://cs231n.stanford.edu/">CS231N: Convolutional Neural Networks for Visual Recognition</a>. Starting with the first one, <a href="https://arxiv.org/abs/1508.06576">A Neural Algorithm of Artistic Style</a> by Gatys, Ecker and Bethge.</p>
 
 <!--more-->
 
-
-<h3>Intro</h3>
 
 <ul>
 <li><p>The paper introduces a system based on Deep Neural Networks that composes a interplay between the content and style of an image.</p></li>
@@ -130,6 +128,97 @@ $$\frac{\partial E_l}{\partial F_{ij}^l} =
 
 
 <p>$$\mathcal{L}_{total}(\overset{\rightarrow}{p}, \overset{\rightarrow}{a}, \overset{\rightarrow}{x}) = \alpha \mathcal{L}_{content}(\overset{\rightarrow}{p}, \overset{\rightarrow}{x}) + \beta \mathcal{L}_{style}(\overset{\rightarrow}{a}, \overset{\rightarrow}{x})$$</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Reading: LDA, the Most Commonly-Used Topic Model]]></title>
+    <link href="http://sijunhe.github.io/blog/2017/04/04/reading-notes-lda/"/>
+    <updated>2017-04-04T21:54:13-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2017/04/04/reading-notes-lda</id>
+    <content type="html"><![CDATA[<p>I have been working on projects related to user profiles lately at <a href="http://www.autodesk.com/">Autodesk</a>. An important part of the project are extracting information out of command usage data, of which <a href="http://www.cs.columbia.edu/~blei/papers/BleiNgJordan2003.pdf">Latent Dirichlet Allocation</a> has been the main driving force. Hoping to get a better grasp of the underlying principles of LDA, I am reading this one of the most cited papers in Computer Science, by Blei, Ng and Jordan. Admittedly, the Bayesian math was a bit hard for me and I was not able to fully comprehend the material (never a big fan of Bayesian Statistics). Maybe I should have taken <a href="http://cs.stanford.edu/~ermon/cs228/index.html">CS 228: Probabilistic Graphical Models</a></p>
+
+<!--more-->
+
+
+<h1>Intro</h1>
+
+<p>The goal of modeling text corpora is to find short descriptions of the text corpora while preserviing the essential statistical relationships. The basic methodology is to reduce each document in the corpus to a vector a real numbers. Important previous work includes TF-IDF, LSI and pLSI.</p>
+
+<h4>TF-IDF</h4>
+
+<ul>
+<li>Counts are formed for number of occurences of each word and normalized to term frequency (TF)</li>
+<li>The inverse document frequency (IDF) measures the number of occurences of words in the entire corpus. - The end result is a term-by-document matrix whose columns contain the tf-idf values for each document in the corpus</li>
+<li><strong>Shortcoming</strong>: relatively small amount of reduction in description length and reveals little in the way of intra-document statistical structure</li>
+</ul>
+
+
+<h4>Latent Semantic Indexing (LSI)</h4>
+
+<ul>
+<li>Perform SVD on the X matrix to identify a linear subspace of tf-idf features that captures most of the variance</li>
+<li>Achieve significant compression in large collections</li>
+</ul>
+
+
+<h4>Probabilistic LSI (pLSI)</h4>
+
+<ul>
+<li>Models each word in a document as a sample from a mixutre model where the mixture components are random variables that can be viewed as representations of topics</li>
+<li>Each Document is represented as a list of mixing proportions for these mixture components and thereby reduced to a probability distribution on a fixed set of topics</li>
+<li>Both LSI and pLSI relies on the fundamental assumption of <strong>exchangeability</strong>, which means that the order of words in a document can be neglected and the specific ordering of the documents in a corpus can also be neglected</li>
+</ul>
+
+
+<h1>Model</h1>
+
+<p>The basic idea of LDA is that documents are represented as random mixtures over latent topics, where each topic is characterized by a distribution over words. The LDA assumes follows the generative process of:</p>
+
+<ol>
+<li>Decide the number of words in  the document $N \sim \text{Poisson}(\zeta)$</li>
+<li>Decide the topic mixture for the document $\theta \sim \text{Dir}(\alpha)$</li>
+<li>For each of the $N$ words $w_n$:
+
+<ul>
+<li>Choose a topic $z_n \sim \text{Multinomial}(\theta)$</li>
+<li>Choose a word $w_n$ from $p(w_n|z_n, \beta)$, a multinomial probability condiditioned on the topic $z_n$</li>
+</ul>
+</li>
+</ol>
+
+
+<p>The dimensionality $k$ of the <a href="https://en.wikipedia.org/wiki/Dirichlet_distribution">Dirichlet distribution</a> is the number of latent topics, which we assume is fixed and given. The $k$-dimensional Dirichlet random variable $\theta$ that parametrized the Multinomial Distribution that select the topics takes values in the $(k-1)$-simplex. The word probabilities $p(w_n|z_n, \beta)$ is parametrized by a $k \times V$ matrix $\beta$, which need to be estimated.</p>
+
+<p>Given the parameters $\alpha$ an $\beta$, the joint distribution of a topic mixture $\theta$, a set of $N$ topics $z$ and a set of $N$ words $w$ is
+$$p(\theta, z, w|\alpha,\beta) = p(\theta|\alpha) \prod_{n=1}^N p(z_n|\theta) p(w_n|z_n,\beta)$$</p>
+
+<p>Given that the distribution of topics $z$ sums up to 1 for a given set of parameter $\theta$, the marginal distribution of a topic mixture and a set of words is
+$$p(\theta, w|\alpha,\beta) = p(\theta|\alpha) \prod_{n=1}^N \sum_{z_n} p(z_n|\theta) p(w_n|z_n,\beta)$$</p>
+
+<p>And the marginal distribution of a document can be obtained by integrating over $\theta$,
+$$p(w|\alpha,\beta) = \int p(\theta|\alpha) \left[ \prod_{n=1}^N \sum_{z_n} p(z_n|\theta) p(w_n|z_n,\beta) \right] d\theta$$</p>
+
+<p>Finally, the product of the marginal probabilities of single documents is the probabilities of a corpus:
+$$p(D|\alpha,\beta) = \prod_{d=1}^M \int p(\theta_d|\alpha) \left[ \prod_{n=1}^{N_d} \sum_{z_{n,d}} p(z_{n,d}|\theta_d) p(w_{n,d}|z_{n,d},\beta) \right] d\theta_d$$</p>
+
+<p><strong>The LDA model is a probabilistic graphical model, as shown in the figure below. The parameters $\alpha$ and $\beta$ are corpus-level parameters and is sampled once in the process of generating the entire corpus. The variables $\theta_d$ are document-level variables and are sampled once per document. The variables $z_{n,d}$ and $w_{n,d}$ are word-level variables and are sampled once for each word in each document</strong>.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post9/lda_model.png" alt="lda_model" /></p>
+
+<h1>Parameter Estimation</h1>
+
+<p>The parameter of the LDA model is estimated by maximizing the log likelihood of the corpus
+$$l(\alpha, \beta) = \sum_{d=1}^M \text{log} \ p(w_d|\alpha,\beta)$$
+However, explicitly finding the maximum log likihood is often hard for models with latent random variables, and in this case the quantity $p(w_d|\alpha,\beta)$ cannot be computed tractably. In such setting, the <a href="https://en.wikipedia.org/wiki/Expectation%E2%80%93maximization_algorithm">expectation maximization (EM)</a> algorithm comes to rescue. The strategy is to repeatedly construct a lower-bound on $l$ with methods invloved with Jensen&rsquo;s inequality (E-step), and then optimize that lower-bound (M-step).</p>
+
+<p>The LDA model in particular is solved by a variational EM algorithm, where the lower bound is constructed by the <a href="https://en.wikipedia.org/wiki/Variational_Bayesian_methods">convexity-based variational inference</a></p>
+
+<ol>
+<li><strong>E-step</strong>: For each document, find the optimizing values of the variational parameters $\gamma_d^\ast, \phi_d^\ast$</li>
+<li><strong>M-step</strong>: Maximize the lower bound on the log likelihood with respect to the model parameters $\alpha$ and $\beta$, which corresponds to finding maximum likelihood estimates for each document under the approximate posterior computed in E-step</li>
+</ol>
+
 ]]></content>
   </entry>
   
@@ -565,77 +654,6 @@ df.groupBy('a').avg('b')
 <ul>
 <li>long linage with wide dependencies are costly to recover, thus checkpointing maybe worthwhile</li>
 <li>Spark provides an API for checkpointing, but leaves the decision of which data to checkpoint to the user</li>
-</ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Reading | Apache Spark Research Paper I]]></title>
-    <link href="http://sijunhe.github.io/blog/2016/08/16/reading-notes-apache-spark-research-paper-i/"/>
-    <updated>2016-08-16T17:49:21-07:00</updated>
-    <id>http://sijunhe.github.io/blog/2016/08/16/reading-notes-apache-spark-research-paper-i</id>
-    <content type="html"><![CDATA[<p>For my summer internship at <a href="http://www.autodesk.com">Autodesk</a>, I have been heavily using Apache Spark for data analytics and machine learning. I believe a thorough understanding of the underlying principles and mechanisms of Apache Spark would be conducive to writing elegant and efficient Spark programs. Speaking of learning Spark, nothing is better than learning from the original authors. Therefore, I will read the three research papers out of The AMPLab at UC Berkeley that laid the groundwork for Apache Spark. I will start with the first paper <a href="http://people.csail.mit.edu/matei/papers/2010/hotcloud_spark.pdf">Spark: Cluster Computing with Working Sets</a>, published by Matei Zaharia in 2010.</p>
-
-<!--more-->
-
-
-<h3>Intro</h3>
-
-<ul>
-<li>MapReduce pioneers the model of cluster computing that allows massively parallel computations, locality-aware scheduling (send the code to the data instead of the reverse) and fault tolerance</li>
-<li>However, Hadoop and MapReduce is lacking in two parts
-
-<ul>
-<li><strong>iterative jobs</strong>: Hadoop needs to read/write disk for each iteration and incurs performance penalty</li>
-<li><strong>interactive analytics</strong>: each job runs as a separate MapReduce job and reads data, making is slow for interactive/repetitive queries</li>
-</ul>
-</li>
-</ul>
-
-
-<h3>Resilient Distributed Dataset (RDD)</h3>
-
-<ul>
-<li>read-only collections of objects partitioned across many machines</li>
-<li>RDD need not exist in storage, instead, a handle to the RDD contains information to compute the RDD is stored</li>
-<li>achieve fault tolerance through <strong>lineage</strong>: if a partition is lost, it can be rebuilt through the handle</li>
-<li>RDDs are lazy and ephemeral, they aren&rsquo;t materialized until an action is taken, and are discarded from memory after use</li>
-<li>RDD has two levels of persistence:
-
-<ul>
-<li><strong>cache</strong>: leaves the dataset lazy but will be cached in memory after the first action is taken</li>
-<li><strong>save</strong>: evaluate the action and writes to a file system</li>
-</ul>
-</li>
-</ul>
-
-
-<h3>Shared Variables</h3>
-
-<ul>
-<li>Normally, when Spark runs a closure on a worker node, it copies the variables to the work as well, which increases the communication cost</li>
-<li><strong>Broadcast variables</strong>
-
-<ul>
-<li>used for large read-only piece of data</li>
-<li>distribute the data to the workers once instead of packaging it with every closure</li>
-</ul>
-</li>
-<li><strong>Accumulators</strong>
-
-<ul>
-<li>variables that workers can only &ldquo;add&rdquo; to using association operation, and only the driver can read</li>
-<li>used for grouped data that is across many machines</li>
-</ul>
-</li>
-</ul>
-
-
-<h3>Performance</h3>
-
-<ul>
-<li>Logistic Regression and Alternating Least Squares, both of which are iterative algorithms, was ran on Spark and was order of magnitude faster than Hadoop, due to cached data.</li>
 </ul>
 
 ]]></content>

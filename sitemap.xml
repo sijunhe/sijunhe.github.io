@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer/</loc>
+<lastmod>2017-04-21T15:15:34-07:00</lastmod>
+</url>
+<url>
 <loc>http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform/</loc>
 <lastmod>2017-04-18T13:59:48-07:00</lastmod>
 </url>
@@ -117,18 +121,21 @@
 <loc>http://sijunhe.github.io/blog/categories/spark/</loc>
 </url>
 <url>
-<loc>http://sijunhe.github.io/blog/categories/readingnotes/</loc>
+<loc>http://sijunhe.github.io/blog/categories/reading-notes/</loc>
 </url>
 <url>
 <loc>http://sijunhe.github.io/blog/categories/models/</loc>
 </url>
 <url>
-<loc>http://sijunhe.github.io/blog/categories/deeplearning/</loc>
+<loc>http://sijunhe.github.io/blog/categories/deep-learning/</loc>
 </url>
 <url>
-<loc>http://sijunhe.github.io/blog/categories/models-readingnotes-nlp/</loc>
+<loc>http://sijunhe.github.io/blog/categories/nlp/</loc>
 </url>
 <url>
-<loc>http://sijunhe.github.io/blog/categories/computervision/</loc>
+<loc>http://sijunhe.github.io/blog/categories/computer-vision/</loc>
+</url>
+<url>
+<loc>http://sijunhe.github.io/posts/2/</loc>
 </url>
 </urlset>
