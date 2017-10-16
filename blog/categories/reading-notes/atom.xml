@@ -4,7 +4,7 @@
   <title><![CDATA[Category: reading_notes | Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/blog/categories/reading-notes/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2017-05-08T00:20:10-07:00</updated>
+  <updated>2017-10-16T00:05:33-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -14,11 +14,279 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Reading: Neural Style Transform]]></title>
+    <title type="html"><![CDATA[Reading | The Effective Engineer]]></title>
+    <link href="http://sijunhe.github.io/blog/2017/09/12/reading-the-effective-engineer/"/>
+    <updated>2017-09-12T22:46:13-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2017/09/12/reading-the-effective-engineer</id>
+    <content type="html"><![CDATA[<p>I am always skeptical about productivity books since they can easily come off as very theoretical and of little use for my work. After recommendations from several friends, I decided to read <a href="https://www.amazon.com/Effective-Engineer-Engineering-Disproportionate-Meaningful/dp/0996128107">The Effective Engineer</a> and found it to be a <strong>highly leveraged</strong> use of my time! As a relatively new engineer, I can already resonate deeply with what Lau wrote. I also started to adopt some of the techniques Lau recommended and have seen good results. Here is my reading notes for <a href="https://www.amazon.com/Effective-Engineer-Engineering-Disproportionate-Meaningful/dp/0996128107">The Effective Engineer</a>.</p>
+
+<!--more-->
+
+
+<h1>1 Adopt the Right Mindsets</h1>
+
+<h2>1.1 Focus on High-Leverage Activities</h2>
+
+<ul>
+<li>Leverage is defined as
+$$\text{Leverage} = \frac{\text{Impact Produced}}{\text{Time Invested}}$$</li>
+<li>Example of high leverage activities <strong>mentoring new engineers</strong>. A new hire may spend 1% of the total time being mentored, but it can have an outsized infludnece on the productivity and effectiveness of the other 99% of work hours.</li>
+<li>As engineers, we can always ask ourselves about any activity we are working on:
+
+<ul>
+<li>How can I complete this activity in a shorter amount of time?</li>
+<li>How can I increase the value produced by this activity?</li>
+<li>Is there something else that I could spend my time on that would produce more value?</li>
+</ul>
+</li>
+<li>Many high-leverage activities require consistent applications of effort over long time periods to achieve impacts. An example is how Facebook built and maintain a strong hiring culture to attrack strong people.</li>
+</ul>
+
+
+<h2>1.2 Optimize for Learning</h2>
+
+<ul>
+<li><strong>Adopt a growth mindset</strong>. Believe that I can cultivate and grow their intelligence and skills through effort. View challenges and failures as opportunities to learn.</li>
+<li><strong>Invest in your learning rate</strong>. Learning compunds like interest. The earlier the compounding starts, the sooner you hit the region of rapid grwoth and reap its benefits. Optimize for learning over profitability, particularly early in your career.</li>
+<li><strong>Find work environments that can sustain your growth</strong>. Find out what opportunites a company provide for onboarding and mentoring, how transparent they are internally, how fast they move, what your prospective co-wrokers are like, and how much autonomy you&rsquo;ll have.</li>
+<li><strong>Learn at work</strong>. Work with and learn from your best co-workers. Dive into internal learning resource. Look into classes or books that your workplace might be willing to subsidize.</li>
+<li><strong>Learn outside of work</strong>. Challenge yourself to become better by just 1% a day, and not limited to engineering skills
+
+<ul>
+<li>Read books</li>
+<li>Attend talks and meetups</li>
+<li>Build and maintain network of relationships</li>
+<li>Read and follow blogs</li>
+<li>Write blogs</li>
+<li>Tinker on side projects</li>
+</ul>
+</li>
+</ul>
+
+
+<h2>1.3 Prioritize Regularly</h2>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post12/importance_urgency_quadrant.gif" alt="Importance_Urgency_Matrix" /></p>
+
+<ul>
+<li><strong>Write down and track To-Dos</strong>. Human brain is optimized for processing and not for storage, so treat your brain as a processor instad of a memory bank. Spend your mental energy on prioritizing and processing the tasks instead of remembering them. (<em>I have successfully persuaded myself and my team to adopt <a href="https://app.asana.com/">Asana</a></em>)</li>
+<li><strong>Work on both what directly leads to value and the Important &amp; Non-Urgent</strong>. Along with prioritizing the activities that directly produce value, we also need to prioritize the investments that increase our ability to deliver more value in the future.</li>
+<li><strong>Protect your Maker&rsquo;s schedule</strong>. Preserve larger blocks of focused time in the schedule to maintain the <em>flow</em>. Learn to say no to unimportant activities.</li>
+<li><strong>Reduce context switching</strong>. Limit the number of ongoing projects so that you don&rsquo;t spend your cognitive energy actively juggling tasks.</li>
+<li><strong>Make a routine of prioritization</strong>. Make prioritization part of your daily routine and it will help you to focus on and complete your highest-leverage activities.</li>
+</ul>
+
+
+<h1>2 Execute, Execute, Execute</h1>
+
+<h2>2.1 Invest in Iteration Speed</h2>
+
+<ul>
+<li><strong>Move fast to learn fast</strong>. The faster you can iterate, the more you can learn. Conversely, when you move too slowly trying to avoid mistakes, you lose opportunities.</li>
+<li><strong>Invest in time-saving tools</strong>. Time-saving tools pays-off large dividends. Faster compile times, faster deployment cyrcles and faster turnaround times for development all provide time-saving benefits that compound the more you use them.</li>
+<li><strong>Shorten debugging and validation loops</strong>. Create tight testing loops so we can debug faster and iterate quicker.</li>
+<li><strong>Master fundamentals of your craft</strong>. Get very comfortable with your dev environment (IDE) by learning and defining shortcuts. Use more keyboard than mouse. Learn UNIX shell commands and how to effectively pipe them together.</li>
+<li><strong>Think about your non-engineering bottlenecks</strong>. Find out where the biggest bottlenecks in your iteration cycle are, whether in engineering, cross-team dependencies, approvals from decision-makers, or organizational processes. Then, work to optimize them.</li>
+</ul>
+
+
+<h2>2.2 Measure What You Want to Improve</h2>
+
+<ul>
+<li><strong>Measure your progress</strong>. If you can&rsquo;t measure it, you can&rsquo;t improve it. Good metrics accomplish a number of goals, ranging from driveing forward progress to measuring effectiveness over time.</li>
+<li><strong>Pick the right metric</strong>. Different metrics incentivize different behaviors. Example here includes Google using &ldquo;long click-through rate&rdquo; to track search quality, companies use 95th/99th percentile of response times instead of average response time to hunt down the worest-case behavior in the system.</li>
+<li><strong>Instrument your system</strong>. Measure and instrument as much as possible to ensure you are not flying blind.</li>
+<li><strong>Internalize useful numbers</strong>. Memorize numbers that can benchmark your progress or help wit back-of-the-envelope calculations. Like the <a href="https://gist.github.com/jboner/2841832">table of common latency numbers</a></li>
+<li><strong>Prioritize data integrity</strong>. Having bad data is wrose than having no data because you will make the wrong decisions thinking that you are right. Here are some strategies you can use to increase confidence in your data integrity:
+
+<ul>
+<li>Log data liberally, in case it turns out to be useful later on.</li>
+<li>Build tools to iterate on data accuracy sooner</li>
+<li>Write end-too-end integration tests to validate your entire analytics pipeline</li>
+<li>Examine collected data sooner.</li>
+<li>Cross-validate data accuracy by computing the same metric in mulitple ways.</li>
+<li>When a number does look off, dig in to it early.</li>
+</ul>
+</li>
+</ul>
+
+
+<h2>2.3 Validate Your Ideas Early and Often</h2>
+
+<ul>
+<li><strong>Find low-effort ways to validate your work</strong>. Invest a little effort (i.e. minimum viable product) to figure out if the rest of your plan is worth doing.</li>
+<li><strong>Continously validate your product hypotheses</strong>. Use A/B testing to incremtnally develop a product and identify what works and doesn&rsquo;t work. This way, you increase the probability that your efforts are aligned with what users actually want.</li>
+<li><strong>Find way of soliciting feedback when working on solo projects</strong>. Being the one-man team runs the huge risk of overlooking something that , if spotted early, could save you lots of wasted effort. Some strategies are:
+
+<ul>
+<li>Ask to bounce ideas off your teammates.</li>
+<li>Send out a design document before devoting your energy to your code.</li>
+<li>Structure ongoing projects so that there is some shared context with your teammates.</li>
+<li>Solicit buy-in before investing too much time.</li>
+</ul>
+</li>
+</ul>
+
+
+<h2>2.4 Improve Your Project Estimation Skills</h2>
+
+<ul>
+<li><strong>Incorporate estimates into project planning</strong>. Use the estimates to inform project planning, not the other way around. Some concrete strategies that provide more accurate estimates are:
+
+<ul>
+<li>Decompose the project into granular tasks</li>
+<li>Think of estimates as probability distributions, not best-case scenarios</li>
+<li>Let the person doing the actual task make the estimate</li>
+<li>Beware of anchoring bias. Avoid committing to an initial number before actually outlining the tasks involved.</li>
+<li>Use timeboxing to constrain tasks that can grow in scope</li>
+</ul>
+</li>
+<li><strong>Budget for the unknown</strong>. Take into account competing work obligations, holidays, illnesses, etc. The longer a project, the higher the probability that some of these will occur.</li>
+<li><strong>Define measureable milestones</strong>. Define specific goals to reduce risk and efficiently allocate time, and outline milestones to track progress. This allows us to build alignment around what can tasks can be deferred and decreases the chance that a project inadvertently grows in scope.</li>
+<li><strong>Do the riskiest task first</strong>. Instead of giving yourself the illusion of progress by focusing first on what is easy to do, tackle the rickiest task first to reduce variance in your estimates and explore the unknown early on.</li>
+<li><strong>Don&rsquo;t sprint in the middle of a marathon</strong>. Don&rsquo;t sprint just because you are hebind. Work overtime only if you are confident that it will enable you to finish on time.</li>
+</ul>
+
+
+<h1>3 Build Long-Term Value</h1>
+
+<h2>3.1 Balance Quality with Pragmatism</h2>
+
+<ul>
+<li><strong>Establish a culture of reviewing code</strong>. Code reviews facilitate positive modeling of good coding practices. Find the right balance between code quality and development speed.</li>
+<li><strong>Manage complexity through abstraction</strong>. MapReduce illustrates how the right abstraction can dramatically amplify an engineer&rsquo;s output. Make sure you have complete information about use cases before building abstractions, or you will ned up with something clunky and unusable.</li>
+<li><strong>Scale code quality with automated testing</strong>. Automated testing provide a scalable way of managing a growing codebase with a large team without constantly breaking the build or the product.</li>
+<li><strong>Manage your technical debt</strong>. Incur technical debt when it&rsquo;s necessary to get things done for a deadline, but to pay off that debt periodically. Only repay the debt with the highest leverage.</li>
+</ul>
+
+
+<h2>3.2 Minimize Operational Burden</h2>
+
+<ul>
+<li><strong>Embrace operational simplicity</strong>. Simple solutions impose a lower operational burden because they are easier to understand, maintain, and modify. Always ask &ldquo;what is the simplest solution that can get the job done while also reducing our future operational burden&rdquo;?</li>
+<li><strong>Build systems to fail fast</strong>. Slow failing systems muddy the sources of code errors, making it difficult to debug. Building systems to fail fast helps reduce the time you spend maintaining and debugging software by surfacing problematic issues sooner and more directly.</li>
+<li><strong>Automate Mechanical Tasks</strong>. Every time you do something that a machine can do, ask yourself whether it&rsquo;s worthwhile to automate it.</li>
+<li><strong>Aim for idempotence</strong>. An <em>idempotent</em> process produces the same results regardless of whether it&rsquo;s run once or multiple times. Idempotence make it easier for you to retry actions in the face of failure.</li>
+<li><strong>Plan and practice failure modes</strong>. Building confidence in your ability to recover lets you proceed more boldly.</li>
+</ul>
+
+
+<h2>3.3 Invest in Your Team&rsquo;s Growth</h2>
+
+<ul>
+<li><strong>Help the peopel around you be successful</strong>. The higher you climb up the engineering ladder, the more your effectiveness will be measured not by your individual constributions, but by you rimpact on the people around you. &ldquo;If you are a staff engineer, you make a whole team better. You are a principal engineer if you are making the whole company better. And you are distinguished if you are improving the industry&rdquo;.</li>
+<li><strong>Make hiring a priority</strong>. Keep a high hiring bar and play an active role in growing your team.</li>
+<li><strong>Build shared ownership of code</strong>. Increase your bus factor to be greater than one so that you are not a bottleneck for development. This gives you the flexibility to focus on other high-leverage activities.</li>
+<li><strong>Document collective wisdom</strong>. Reflect on projects with team member, learn what worked and what didn&rsquo;t work, and document and share the lessions so that valuable wisdom doesn&rsquo;t get lost.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Reading | Fast (Feedforward) Style Transfer]]></title>
+    <link href="http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer/"/>
+    <updated>2017-04-21T15:15:34-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer</id>
+    <content type="html"><![CDATA[<p><a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16.pdf">Perceptual Losses for Real-Time Style Transfer and Super-Resolution</a> is the second paper in my reading series for Neural Style Transfer, where Johnson et al. built on the work of Gatys et al. and used feedforward networks to stylize image order of magnitudes faster than the previous optimization approach.</p>
+
+<!--more-->
+
+
+<h3>Intro</h3>
+
+<p>Two common approach for image transformation, where an input image is transformed into an output image:</p>
+
+<ul>
+<li>feed-forward CNN using <strong>per-pixel loss</strong> between the output and ground-truth image</li>
+<li>generate image by defining and optimizing <strong>perceptual loss</strong> based on high-level features extracted from pretrained networks</li>
+</ul>
+
+
+<p>The paper combined the benefits of both approaches and proposed a system that</p>
+
+<ul>
+<li>train feed-forward network using use perceptual loss functions that depend on high-level features from a pretrained loss network</li>
+<li>allow the feed-forward network to learn a artistic style during training and can stylize images in <strong>real-time</strong> at test time</li>
+</ul>
+
+
+<h3>Method</h3>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/fast_neural_style_system.png" alt="fast_neural_style_system" />
+The system consists of two components:</p>
+
+<ul>
+<li><strong>image transformation network $f_W$</strong>: a deep residual CNN parameterized by $W$ and transforms input images $x$ into output images $\hat{y} = f_W(x)$</li>
+<li><strong>loss network $\phi$</strong>: used to define several loss functions $l_1, \cdots, l_k$. Each loss function computes a scalar loss value $l_i(\hat{y}, y_i)$ that measures the difference between the output image $\hat{y}$ and a target image $y_i$.</li>
+</ul>
+
+
+<p>The network is trained using SGD to minimize a loss functions of
+$$W^{\ast}  = \text{argmin}_W \ \textbf{E}_{x, \{y_i\} } \left[ \sum_{i} \lambda_i l_i (f_W(x), y_i)\right]$$</p>
+
+<ul>
+<li>Inspired from the optimziation approach from Gatys et al. and others, the author use a pretrained network $\phi$ as a fixed loss network to define the loss functions.</li>
+<li>The loss network $\phi$ is used to define a <strong>feature reconstruction loss $l_{feat}^{\phi}$</strong> and <strong>style reconstruction loss $l_{style}^{\phi}$</strong> that measure differences in <strong>content</strong> and <strong>style</strong> between images.</li>
+<li>For each input image $x$, there is a <strong>content target $y_c$</strong> and a <strong>style target $y_s$</strong></li>
+<li>For <strong>style transfer</strong>, the content target $y_c$ is the input image $x$ and the style target $y_s$ is the designated style image. One network is trained for each style target.</li>
+</ul>
+
+
+<h3>Image Transformation Network</h3>
+
+<p>The image transformation network is a Deep Residual Network. More detail can be found in the <a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16Supplementary.pdf">supplementary notes</a> of the paper.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/deep_residual_network_architecture.png" alt="deep_residual_network_architecture" /></p>
+
+<h3>Loss Network</h3>
+
+<p>Johnson et al. defined the feature reconstruction loss and the style reconstruction loss in the same way as Gatys et al., though with a different notation. Let $\phi_{j}(x)$ be the $j$-th layer activations of the loss network for image $x$ with a shape $C_j \times H_j \times W_j$.</p>
+
+<h4>Feature Reconstruction Loss</h4>
+
+<ul>
+<li>Euclidean distance between feautre representations
+$$l_{feat}^{\phi, j}(\hat{y},y) = \frac{1}{C_j H_j W_j} ||\phi_j(\hat{y}) - \phi_j(y)||^2_2$$</li>
+<li><strong>Minimizing  $l_{feat}^{\phi}$ would reserve the image content and overall spatial structure, but not the color, texture or exacte shape</strong></li>
+</ul>
+
+
+<h4>Style Reconstruction Loss</h4>
+
+<ul>
+<li>Squared Frobenius norm of the distance between the <strong>Gram matrices</strong> between the output and target image</li>
+<li>Gram matrix $G_j^\phi(x)$ is a $C_j \times C_j$ whose elements are the inner product between the two channels $c$ and $c'$ of activations
+$$G_j^\phi(x)_{c,c'} = \frac{1}{C_j H_j W_j} \sum_{h=1}^{H_j} \sum_{w=1}^{W_j} \phi_j(x)_{h,w,c} \phi_j(x)_{h,w,c'}$$
+$$l_{style}^{\phi, j}(\hat{y},y) = ||G^\phi_j(\hat{y}) - G^\phi_j(y)||^2_F$$</li>
+<li><strong>Minimizing  $l_{style}^{\phi}$ would reserve the stylistic features, but not its spatial structure</strong></li>
+</ul>
+
+
+<h4>Total Variation Regularization</h4>
+
+<p>Other than the $l_{feat}^{\phi}$ and $l_{style}^{\phi}$, Johnson et al. also defined a loss function $l_{TV}(\hat{y})$ to encourage spatial smoothness in the output image $\hat{y}$.</p>
+
+<h3>Experiments and Training Details</h3>
+
+<ul>
+<li>The goal of style transfer is to generate an image $\hat{y}$ that combines the content of the content target $y_c$ with the style of the style target $y_s$.</li>
+<li>Gatsy et al. formulate the problem as a optimization problem. An image $\hat{y}$ is generated by solving the problem
+$$\hat{y} = \text{argmin}_y \ \lambda_c l_{feat}^{\phi, j}(y, y_c) + \lambda_s l_{style}^{\phi, j}(y, y_s) + \lambda_{TV} l_{TV}(y)$$</li>
+<li>However, the method is slow since satifactory results takes about 500 iterations and each iterations requires a forward and a backward pass</li>
+<li>The result from the style transfer network is <strong>qualitatively similar to Gatsy et al&rsquo;s method</strong>, but can be run in real time during test time</li>
+<li>Even though the style transfer network is trained on $256 \times 256$ images, they also <strong>perform satisfactorily in higher resolution</strong> of $512 \times 512$ and $1024 \times 1024$, achieving a performance comparable to 50-100 iterations of Gatsy et al&rsquo;s method</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Reading | Neural Style Transform]]></title>
     <link href="http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform/"/>
     <updated>2017-04-18T13:59:48-07:00</updated>
     <id>http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform</id>
-    <content type="html"><![CDATA[<p>Neural Style transfer is the technique of recomposing images in the style of other images using Deep Learning techniques and it has gotten very popular recently. I will be reading two papers related to Neural Style Transfer for <a href="http://cs231n.stanford.edu/">CS231N: Convolutional Neural Networks for Visual Recognition</a>. Starting with the first one, <a href="https://arxiv.org/abs/1508.06576">A Neural Algorithm of Artistic Style</a> by Gatys, Ecker and Bethge.</p>
+    <content type="html"><![CDATA[<p>Neural Style transfer is the technique of recomposing images in the style of other images using Deep Learning techniques and it has gotten very popular recently. I will be reading two papers related to Neural Style Transfer <form></form> <a href="http://cs231n.stanford.edu/">CS231N: Convolutional Neural Networks for Visual Recognition</a>. Starting with the first one, <a href="https://arxiv.org/abs/1508.06576">A Neural Algorithm of Artistic Style</a> by Gatys, Ecker and Bethge.</p>
 
 <!--more-->
 
@@ -132,7 +400,7 @@ $$\frac{\partial E_l}{\partial F_{ij}^l} =
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Reading: LDA, the Most Commonly-Used Topic Model]]></title>
+    <title type="html"><![CDATA[Reading | LDA, the Most Commonly-Used Topic Model]]></title>
     <link href="http://sijunhe.github.io/blog/2017/04/04/reading-notes-lda/"/>
     <updated>2017-04-04T21:54:13-07:00</updated>
     <id>http://sijunhe.github.io/blog/2017/04/04/reading-notes-lda</id>
@@ -283,377 +551,6 @@ $$\frac{\partial E}{\partial y_i} = \sum_j \frac{\partial E}{\partial x_j} W_{ji
 <ul>
 <li>Although I did not learn anything new with this paper, it was definitely fun seeing how influencial this paper was and how much of it has turned into &ldquo;deep learning basics&rdquo; in 2017, while they were cutting edge in 1986</li>
 <li>It is particularly interesting to see the intuitive observations made by the authors like small random initiation and local minima get their theoretical proofs decades later</li>
-</ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Reading | Apache Spark Research Paper III]]></title>
-    <link href="http://sijunhe.github.io/blog/2016/08/25/reading-notes-apache-spark-research-paper-iii/"/>
-    <updated>2016-08-25T17:49:35-07:00</updated>
-    <id>http://sijunhe.github.io/blog/2016/08/25/reading-notes-apache-spark-research-paper-iii</id>
-    <content type="html"><![CDATA[<p>This follows up the last post and I will read the third Apache Spark paper <a href="http://people.csail.mit.edu/matei/papers/2015/sigmod_spark_sql.pdf">Spark SQL: Relational Data Processing in Spark</a>, published by Armbrust et al. in 2015</p>
-
-<!--more-->
-
-
-<h3>1. Intro</h3>
-
-<ul>
-<li>Earliest big data processing systems like MapReduce give users a low-level <strong>procedural</strong> programming interface, which was onerous and required manual optimization by the user to achieve high performance</li>
-<li>New systems sought to offer relational interfaces to big data, like Pig, Hive, Dremel and Shark</li>
-<li>Spark SQL is bridges the gap between relational systems and procedural systems through two contributions:
-
-<ul>
-<li>a <strong>DataFrame</strong> API that allows relational operations, similar to the data frame concept in R, but evaluates operations lazily</li>
-<li>an optimizer <strong>Catalyst</strong>, that make it easy to dd data sources, optimization rules and data types for domains such as machine learning</li>
-</ul>
-</li>
-</ul>
-
-
-<h3>2. Programming Interface</h3>
-
-<p>Spark SQL runs as a library on top of Spark and exposed SQL interfaces through JDBC/ODBC, command-line console or DataFrame API
-<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post6/spark_sql_diagram.png"></p>
-
-<h4>2.1 DataFrame API</h4>
-
-<ul>
-<li>A distributed collection of rows with the same schema (RDD of Row objects), equivalent to a table in relational database and can be manipulated with various relational operators</li>
-<li>DataFrames are lazy, in that each DataFrame object represents a <strong>logical plan</strong> to compute a dataset, but no execution occurs until the user calls an action</li>
-</ul>
-
-
-<h4>2.2 Data Model</h4>
-
-<ul>
-<li>Nested data model based on Hive and supports all major SQL data types</li>
-<li>Provides support for non-atomic data types like structs, arrays, maps and unions, which are not usually in RDMBS</li>
-</ul>
-
-
-<h4>2.3 DataFrames vs SQL</h4>
-
-<ul>
-<li>Easier to use due to integration in a full programming language</li>
-<li>Have full control building logical plan, which will be optimized by the Catalyst</li>
-<li>Able to store and access intermediate results</li>
-</ul>
-
-
-<h3>3. Catalyst Optimizer</h3>
-
-<ul>
-<li>Catalyst’s extensible design had two purposes
-
-<ul>
-<li>Make it easy to add new optimization techniques and features to Spark SQL</li>
-<li>Enable external developers to extend the optimizer</li>
-</ul>
-</li>
-<li>Catalyst core contains a general library for representing trees and applying rules to manipulate them</li>
-<li>Several sets of rules to handle different phases of query execution: analysis, logical optimization, physical planning and code generation to compile queries to Java bytecode</li>
-</ul>
-
-
-<h4>3.1 Trees</h4>
-
-<ul>
-<li>Main data type in Catalyst, composed of nodes</li>
-<li>Each node has a node type and zero or more children</li>
-</ul>
-
-
-<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post6/spark_tree.png"></p>
-
-<ul>
-<li>This translate to</li>
-</ul>
-
-
-<pre><code class="scala">Add(Attribute(x), Add(Literal(1), Literal(2))
-</code></pre>
-
-<h4>3.2 Rules</h4>
-
-<ul>
-<li>Trees can be manipulated using rules, which are functions from a tree to another tree</li>
-<li>Mostly common approach is Scala’s pattern matching</li>
-</ul>
-
-
-<pre><code class="scala">tree.transform {
-    case Add(Literal(c1), Literal(c2)) =&gt; Literal(c1+c2) 
-    case Add(left, Literal(0)) =&gt; left
-    case Add(Literal(0),right) =&gt; right
-}
-</code></pre>
-
-<ul>
-<li>Catalyst groups rules into batches, and executes each batch until the trees stops changing after applying its rules</li>
-<li>For example, for (x+0) + (3+3), a first batch might analyze an expression to assign types to all of the attributes, while a second batch might use these types to do constant folding</li>
-</ul>
-
-
-<h4>3.3 Using Catalyst in Spark SQL</h4>
-
-<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post6/spark_plan.png"></p>
-
-<p>Catalyst’s general tree transformation framework contains four phases</p>
-
-<ul>
-<li>Analyzing a logical plan to resolve references</li>
-<li>Logical plan optimization</li>
-<li>Physical Planning, catalyst may generate multiple plans and compare them based on cost</li>
-<li>Code generation to compile parts of the query to Java bytecode</li>
-</ul>
-
-
-<h5>3.3.1 Analysis</h5>
-
-<ul>
-<li>Spark SQL begins with a relation to be computed, which may contain unresolved attributes references or relations</li>
-<li>Spark SQL uses Catalyst rules and a Catalog object that trakcs the tables in all data source to resolve the unresolved attributes</li>
-<li>Example query: SELECT col FROM sales
-
-<ul>
-<li>Looking up relations by name form the catalog, such as SELECT</li>
-<li>Mapping named attributes, such as col, to the input provided</li>
-<li>Determining which attributes refer to the same value to give them a unique ID</li>
-<li>Propagating and coercing types through expressions</li>
-</ul>
-</li>
-</ul>
-
-
-<h5>3.3.2 Physical Planning</h5>
-
-<ul>
-<li>Spark SQL takes a logical plan and generates one or more physical plans, using physical operators that match the Spark execution engine</li>
-<li>Cost-based Optimization: selects a plan among all physical plans using a cost model</li>
-<li>Physical Planner also performs rule-based optimizations, such as pipelining projections or filters into one Spark map operation</li>
-</ul>
-
-
-<h5>3.3.3 Code generation</h5>
-
-<ul>
-<li>Need to support code generation to speed up execution, since Spark SQL operates on in-memory datasets where processing is CPU-bound</li>
-<li>Use Catalyst to transform a tree representing an expression in SQL to an AST for Scala code to evaluate that expression, and then compile and run the generated code</li>
-<li>Use a special feature of the Scala language: quasiquotes, which allows the programmatic construction of abstract syntax trees (AST)</li>
-</ul>
-
-
-<h5>3.3.4 Data Sources</h5>
-
-<ul>
-<li>Developers can define a new data soruce for Spark SQL, which expose varying degrees of possible optimization</li>
-<li>All data sources must implement a createRelation function that takes a set of key-value parameters and returns a BaseRelation object, which contains a schema and an optimal estimated size in bytes</li>
-<li><p>BaseRelation can implement one of several interfaces that let them expose varying degrees of sophistication</p>
-
-<ul>
-<li><strong>TableScan</strong>: return an RDD of Row objects for all the data in the table</li>
-<li><strong>PrunedScan</strong>: takes an array of column names to read and return Rows containing only those columns</li>
-<li><strong>PrunedFilteredScan</strong>: takes both desired column names and an array of Filter objects, which returns only rows passing each filters</li>
-<li><strong>CatalystScan</strong>: given a complete sequence of Catalyst expression trees to use in predicate pushdown</li>
-</ul>
-</li>
-<li><p>The following data sources has been implemented:</p>
-
-<ul>
-<li><strong>CSV files</strong>, which simply scan the whole file but allow users to specify a schema</li>
-<li><strong>Avro</strong>, a self-describing binary format for nested data</li>
-<li><strong>Parquet</strong>, a columnar file format for which column pruning as well as filters are supported</li>
-<li><strong>JDBC</strong> data source, which scans ranges of a table from an RDBMS in parallel and pushes filters into the RDBMS to minimize communication</li>
-</ul>
-</li>
-</ul>
-
-
-<h5>3.3.5 User-Defined Types(UDTs)</h5>
-
-<ul>
-<li>Allows user-defined types over relational tables</li>
-<li>Solve the issue by mapping UDTs to structures composed of Catalyst’s built-in types</li>
-<li>UDTs need to implement <strong>datatype</strong>, <strong>serialize</strong> and <strong>deserialize</strong> methods</li>
-</ul>
-
-
-<h3>4. Evaluation</h3>
-
-<h4>4.1 SQL Performance</h4>
-
-<ul>
-<li>Spark SQL is substantially faster than Shark and generally competitive with Impala</li>
-</ul>
-
-
-<h4>4.2 DataFrames vs. Native Spark Code</h4>
-
-<ul>
-<li>Spark SQL help non-SQL developers write simpler and more efficient Spark code through the DataFrame API, as Catalyst optimizes DataFrame operatons that are hard to do with hand written code</li>
-<li>Compare speed of computing the average of b for each value of a, for the dataset consists of 1 billion integer pairs (a,b) with 100,000 distinct values of a</li>
-</ul>
-
-
-<pre><code class="python">## Python API
-sum_and_count = 
-data.map(lambda x: (x.a, (x.b,1)))
-       .reduceByKey(lambda x, y: (x[0] + y[0], x[1] + y[1]))
-       .collect()
-## DataFrame API:
-df.groupBy('a').avg('b')
-</code></pre>
-
-<ul>
-<li>DataFrame API outperforms the hand written Python version by 12x, and outperforms Scala version 2x</li>
-</ul>
-
-
-<h4>4.3 Pipeline Performance</h4>
-
-<ul>
-<li>DataFrame API improves performance in applications that combine relational and procedural processing by letting developers write all operations in a single program and pipelining computation across relational and procedural code</li>
-<li>Compare speed of two stage pipeline that selects a subset of text messages from a corpus and computes the most frequent words</li>
-<li>Separate SQL query followed by a Scala-based Spark job, similar to a Hive query followed by a Spark job, vs the DataFrame API</li>
-<li>DataFrame API pipelines improves performance 2x, since it avoids the cost of saving the whole result of the SQL query to an HDFS file as an intermediate dataset, because SparkSQL pipelines the <strong>map</strong> for the word count with the relational operators for the filtering</li>
-</ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Reading | Apache Spark Research Paper II]]></title>
-    <link href="http://sijunhe.github.io/blog/2016/08/21/reading-notes-apache-spark-research-paper-ii/"/>
-    <updated>2016-08-21T17:49:26-07:00</updated>
-    <id>http://sijunhe.github.io/blog/2016/08/21/reading-notes-apache-spark-research-paper-ii</id>
-    <content type="html"><![CDATA[<p>This follows up the last post and I will read the second Apache Spark paper <a href="http://people.csail.mit.edu/matei/papers/2012/nsdi_spark.pdf">Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing</a>, published by Matei Zaharia et al. in 2012.</p>
-
-<!--more-->
-
-
-<h2>Intro</h2>
-
-<ul>
-<li>Cluster computing frameworks like MapReduce and Dryad are widely adopted since they provide the high level abstraction of parallel programming without worrying about work distribution and fault tolerance</li>
-<li>Frameworks like MapReduce lacks abstractions for leveraging distributed memory and makes them inefficient for iterative algorithms</li>
-<li>Resilient Distributed Datasets (RDDs) are fault tolerant, parallel data structures that let users explicitly persists intermediate results in-memory, controlling their partitioning to optimize data placement</li>
-<li>Existing abstractions for in-memory storage offer an interface based on <strong>fine-grained</strong> updates to mutable state. This makes the only way to provide fault tolerance being replicating the data across machines, which is too data intensive</li>
-<li>RDDs provide an interface based on <strong>coarse-grained</strong> transformation (e.g., map, filter, join) that apply the same operation to many data items. this allows them to provide fault tolerance by logging the transformations used to build its <strong>lineage</strong> instead of replicating the actual data. If an RDD is lost, there&rsquo;s enough information about how it was derived from other RDDs so it can be recomputed</li>
-</ul>
-
-
-<h2>RDDs</h2>
-
-<h3>Abstraction</h3>
-
-<ul>
-<li>Read-only, partitioned collection</li>
-<li>Not materialized at all times</li>
-<li>Users can control <strong>persistence</strong> and <strong>partitioning</strong> of RDD</li>
-</ul>
-
-
-<h3>Programming Interface</h3>
-
-<ul>
-<li>Each dataset is represented as an object and interacted through an API</li>
-<li>Spark computes RDDs lazily the first time they are used in an action, so that it can pipeline transformations</li>
-</ul>
-
-
-<h3>Advantage of the RDD Model</h3>
-
-<ul>
-<li>Compare with distributed shared memory (DSM), where applications read and write to arbitrary locations (fine-grained transformation)in a global address space</li>
-<li>Main difference is that RDDs can only be created through coarse-grained transformation, which restricts RDDs to perform bulk writes, but allows for more efficient fault tolerance</li>
-<li>Immutable natures of RDDs let the system mitigate slow nodes by running backup copies of slow tasks just like MapReduce</li>
-<li>In bulk operations on RDDs, runtime can schedule task based on data locality, a.k.a &ldquo;move processing to data&rdquo;</li>
-<li>RDDs degrade gracefully when there&rsquo;s not enough memory: partitions that do not fit in RAM are spilled on disk</li>
-</ul>
-
-
-<h3>Applications not suitable for RDD</h3>
-
-<ul>
-<li>Not suitable for applications that make asynchronous fine-grained updates to shared state, such as a storage system for a web application or an incremental web crawler</li>
-<li>Spark aims to provide an efficient programming model for batch analytics and is not suitable asynchronous applications</li>
-</ul>
-
-
-<h2>Spark Programming Interface</h2>
-
-<ul>
-<li>Developers write a driver program that connects to a cluster of workers</li>
-<li>The workers are long-lived processes that can store RDD partitions in RAM across operations</li>
-<li>Driver also keep tracks the RDDs' lineage</li>
-<li>Scala represents closures as Java objects, serialized and loaded them on another node to pass the closure across the network</li>
-</ul>
-
-
-<h2>Representing RDDs</h2>
-
-<ul>
-<li>A simple graph-based representation for RDDs that facilitates the goal of tracking lineage across a wide range of transformation</li>
-<li>Represent each RDD through a five pieces of information
-
-<ul>
-<li>a set of <strong>partitions</strong>: atomic pieces of the dataset</li>
-<li>a set of <strong>dependencies</strong> on parent RDDs</li>
-<li>a <strong>function</strong> for computing the dataset based on its parents</li>
-<li><strong>metadata</strong> about its partitioning scheme and data placement</li>
-</ul>
-</li>
-<li>distinction between <em>narrow</em> dependencies, where each partition of the parent RDD is used by at most one partition of the child RDD (join) and <em>wide</em> dependencies, where multiple child partitions may depend on it (map)
-
-<ul>
-<li>narrow dependencies allows for pipelined execution on one node, while wide dependencies require shuffling of the partitions across the node</li>
-<li>recovery after a node failure is more efficient with a narrow dependency</li>
-</ul>
-</li>
-</ul>
-
-
-<h2>Implementation</h2>
-
-<h3>Job scheduling</h3>
-
-<ul>
-<li>Whenever a user runs an action on RDD, the scheduler examines that RDD&rsquo;s lineage to build a DAG of stages to execute, each stage consists of pipelined transformation with narrow dependencies. Boundaries of the stages are shuffling operations required for wide dependencies.</li>
-<li>Scheduler assigns tasks to machines based on data locality using <strong>delay scheduling</strong>: send task to node if a partition is available in memory on that node, otherwise, send to preferred locations</li>
-<li>Materialize intermediate records on the nodes holding parent partitions for wide dependencies</li>
-</ul>
-
-
-<h3>Memory management</h3>
-
-<ul>
-<li>three levels of persistence:
-
-<ul>
-<li>in memory storage as <strong>deserialized Java objects</strong>: fastest performance</li>
-<li>in memory storage as <strong>serialized Java objects</strong>: more memory-efficient representation at the cost of lower performance</li>
-<li>on-disk storage</li>
-<li>refer to <a href="http://sujee.net/2015/01/22/understanding-spark-caching/#.V76MRpMrJTY" title="Understanding Spark Caching">Understanding Spark Caching</a> for reference</li>
-</ul>
-</li>
-<li>For limited memory available, when a new RDD partition is computed but there&rsquo;s not enough space
-
-<ul>
-<li>evict a partition from the least recently accessed RDD, unless this is the same RDD as the one with the new partition</li>
-<li>If it&rsquo;s the same RDD, we keep the old partition in memory since it&rsquo;s likely that the partition already in memory will be needed soon</li>
-</ul>
-</li>
-</ul>
-
-
-<h3>Checkpointing</h3>
-
-<ul>
-<li>long linage with wide dependencies are costly to recover, thus checkpointing maybe worthwhile</li>
-<li>Spark provides an API for checkpointing, but leaves the decision of which data to checkpoint to the user</li>
 </ul>
 
 ]]></content>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: models | Blog | Sijun He]]></title>
-  <link href="http://sijunhe.github.io/blog/categories/models/atom.xml" rel="self"/>
+  <title><![CDATA[Category: traditional_ml | Blog | Sijun He]]></title>
+  <link href="http://sijunhe.github.io/blog/categories/traditional-ml/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2017-05-08T00:20:10-07:00</updated>
+  <updated>2017-10-16T00:05:33-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Reading: LDA, the Most Commonly-Used Topic Model]]></title>
+    <title type="html"><![CDATA[Reading | LDA, the Most Commonly-Used Topic Model]]></title>
     <link href="http://sijunhe.github.io/blog/2017/04/04/reading-notes-lda/"/>
     <updated>2017-04-04T21:54:13-07:00</updated>
     <id>http://sijunhe.github.io/blog/2017/04/04/reading-notes-lda</id>

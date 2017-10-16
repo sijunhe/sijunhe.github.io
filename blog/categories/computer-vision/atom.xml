@@ -4,7 +4,7 @@
   <title><![CDATA[Category: computer_vision | Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/blog/categories/computer-vision/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2017-05-08T00:20:10-07:00</updated>
+  <updated>2017-10-16T00:05:33-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Reading: Fast (Feedforward) Style Transfer]]></title>
+    <title type="html"><![CDATA[Reading | Fast (Feedforward) Style Transfer]]></title>
     <link href="http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer/"/>
     <updated>2017-04-21T15:15:34-07:00</updated>
     <id>http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer</id>
@@ -67,8 +67,7 @@ $$W^{\ast}  = \text{argmin}_W \ \textbf{E}_{x, \{y_i\} } \left[ \sum_{i} \lambda
 
 <p>The image transformation network is a Deep Residual Network. More detail can be found in the <a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16Supplementary.pdf">supplementary notes</a> of the paper.</p>
 
-<div style="text-align:center"><img src ="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/deep_residual_network_architecture.png" /></div>
-
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/deep_residual_network_architecture.png" alt="deep_residual_network_architecture" /></p>
 
 <h3>Loss Network</h3>
 
@@ -113,11 +112,11 @@ $$\hat{y} = \text{argmin}_y \ \lambda_c l_{feat}^{\phi, j}(y, y_c) + \lambda_s l
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Reading: Neural Style Transform]]></title>
+    <title type="html"><![CDATA[Reading | Neural Style Transform]]></title>
     <link href="http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform/"/>
     <updated>2017-04-18T13:59:48-07:00</updated>
     <id>http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform</id>
-    <content type="html"><![CDATA[<p>Neural Style transfer is the technique of recomposing images in the style of other images using Deep Learning techniques and it has gotten very popular recently. I will be reading two papers related to Neural Style Transfer for <a href="http://cs231n.stanford.edu/">CS231N: Convolutional Neural Networks for Visual Recognition</a>. Starting with the first one, <a href="https://arxiv.org/abs/1508.06576">A Neural Algorithm of Artistic Style</a> by Gatys, Ecker and Bethge.</p>
+    <content type="html"><![CDATA[<p>Neural Style transfer is the technique of recomposing images in the style of other images using Deep Learning techniques and it has gotten very popular recently. I will be reading two papers related to Neural Style Transfer <form></form> <a href="http://cs231n.stanford.edu/">CS231N: Convolutional Neural Networks for Visual Recognition</a>. Starting with the first one, <a href="https://arxiv.org/abs/1508.06576">A Neural Algorithm of Artistic Style</a> by Gatys, Ecker and Bethge.</p>
 
 <!--more-->
 
