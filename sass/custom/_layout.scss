@@ -5,3 +5,8 @@ article code, article pre {
 article .entry-content table { 
 	background: white;
 }
+
+img + em { 
+	display: block; 
+	text-align: center;
+}

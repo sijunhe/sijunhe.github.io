@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "Reading: LDA, the Most Commonly-Used Topic Model"
+title: "Reading | LDA, the Most Commonly-Used Topic Model"
 subtitle: "Latent Dirichlet Allocation"
 date: 2017-04-04 21:54:13 -0700
 comments: true
-categories: models Reading_Notes NLP
+categories: Traditional_ML Reading_Notes NLP
 ---
 I have been working on projects related to user profiles lately at [Autodesk](http://www.autodesk.com/). An important part of the project are extracting information out of command usage data, of which [Latent Dirichlet Allocation](http://www.cs.columbia.edu/~blei/papers/BleiNgJordan2003.pdf) has been the main driving force. Hoping to get a better grasp of the underlying principles of LDA, I am reading this one of the most cited papers in Computer Science, by Blei, Ng and Jordan. Admittedly, the Bayesian math was a bit hard for me and I was not able to fully comprehend the material (never a big fan of Bayesian Statistics). Maybe I should have taken [CS 228: Probabilistic Graphical Models](http://cs.stanford.edu/~ermon/cs228/index.html)
 

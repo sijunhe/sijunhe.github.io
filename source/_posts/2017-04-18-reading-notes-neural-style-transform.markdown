@@ -1,13 +1,13 @@
 ---
 layout: post
-title: "Reading: Neural Style Transform"
+title: "Reading | Neural Style Transform"
 subtitle: "A Neural Algorithm of Artistic Style"
 date: 2017-04-18 13:59:48 -0700
 comments: true
 categories: Deep_Learning Reading_Notes Computer_Vision
 ---
 
-Neural Style transfer is the technique of recomposing images in the style of other images using Deep Learning techniques and it has gotten very popular recently. I will be reading two papers related to Neural Style Transfer for [CS231N: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/). Starting with the first one, [A Neural Algorithm of Artistic Style](https://arxiv.org/abs/1508.06576) by Gatys, Ecker and Bethge.
+Neural Style transfer is the technique of recomposing images in the style of other images using Deep Learning techniques and it has gotten very popular recently. I will be reading two papers related to Neural Style Transfer <form></form> [CS231N: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/). Starting with the first one, [A Neural Algorithm of Artistic Style](https://arxiv.org/abs/1508.06576) by Gatys, Ecker and Bethge.
 
 <!--more-->
 

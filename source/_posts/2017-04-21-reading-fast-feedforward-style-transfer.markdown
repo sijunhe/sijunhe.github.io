@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "Reading: Fast (Feedforward) Style Transfer"
+title: "Reading | Fast (Feedforward) Style Transfer"
 subtitle: "Perceptual Losses for Real-Time Style Transfer and Super-Resolution"
 date: 2017-04-21 15:15:34 -0700
 comments: true
-categories: Deep_Learning Computer_Vision
+categories: Deep_Learning Computer_Vision Reading_Notes
 ---
 
 [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16.pdf) is the second paper in my reading series for Neural Style Transfer, where Johnson et al. built on the work of Gatys et al. and used feedforward networks to stylize image order of magnitudes faster than the previous optimization approach.
@@ -39,7 +39,7 @@ $$W^{\ast}  = \text{argmin}\_W \ \textbf{E}\_{x, \\{y\_i\\} } \left[ \sum\_{i} \
 ### Image Transformation Network
 The image transformation network is a Deep Residual Network. More detail can be found in the [supplementary notes](http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16Supplementary.pdf) of the paper.
 
-<div style="text-align:center"><img src ="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/deep_residual_network_architecture.png" /></div>
+![deep_residual_network_architecture](https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/deep_residual_network_architecture.png)
 
 ### Loss Network
 Johnson et al. defined the feature reconstruction loss and the style reconstruction loss in the same way as Gatys et al., though with a different notation. Let $\phi\_{j}(x)$ be the $j$-th layer activations of the loss network for image $x$ with a shape $C\_j \times H\_j \times W\_j$.

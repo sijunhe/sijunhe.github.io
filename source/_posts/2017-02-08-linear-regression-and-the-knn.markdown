@@ -4,7 +4,7 @@ title: "Linear Regression and the KNN"
 subtitle: "Performance Simulation of Least Squares and KNN Under Different Signal-to-Noise Ratio"
 date: 2017-02-08 17:09:38 -0800
 comments: true
-categories: R models
+categories: R Traditional_ML
 ---
 
 This was an homework problem in [STATS315A Applied Modern Statistics: Learning](http://statweb.stanford.edu/~tibs/stat315a.html) at Stanford and I thought it is worth sharing. It runs a simulation to compare KNN and linear regression in terms of their performance as a classifier, in the presence of an increasing number of noise variables.
