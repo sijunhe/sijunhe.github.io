@@ -4,7 +4,7 @@
   <title><![CDATA[Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2017-10-24T00:15:14-07:00</updated>
+  <updated>2017-12-05T22:31:29-08:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -12,6 +12,438 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Reading | Crossing the Chasm]]></title>
+    <link href="http://sijunhe.github.io/blog/2017/11/22/reading-crossing-the-chasm/"/>
+    <updated>2017-11-22T18:49:19-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2017/11/22/reading-crossing-the-chasm</id>
+    <content type="html"><![CDATA[<p>After hearing numerous quotes and ideas from it in meetings, I finally decided to read <a href="https://www.amazon.com/Crossing-Chasm-3rd-Disruptive-Mainstream/dp/0062292986/">Crossing the Chasm: Marketing and Selling Disruptive Products to Mainstream Customers</a>. I wanted to understand the fundamentals of high technology business development and the book did not disappoint. While there were portion of it that I couldn&rsquo;t understand fully due to lack of experience, I could resonate with the rest of it. It wouldn&rsquo;t be an overstatement to say that this book changed the way I looked at high-tech business.</p>
+
+<!--more-->
+
+
+<h1>1. High-Tech Marketing Illusion</h1>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post13/tech_adoption_cycle.png" alt="Tech_Adoption_Cycle" /></p>
+
+<h3>Technology Adoption Life Cycle</h3>
+
+<ul>
+<li>The <strong>Technology Adoption Life Cycle</strong> is a model for understanding the acceptance of new products.</li>
+<li>Each group represents a unique psychographical profile toward a discontinuous innovation based on a new technology
+
+<ul>
+<li><strong>Innovators</strong>: Pursue new technology produces aggresively. Intrigued with any fundamental advance and often make a technology purchase simply for the pleasure of exploring the new device&rsquo;s properties</li>
+<li><strong>early adopter</strong>: Buy into new product concepts very early in their life cycle. When there is a strong match, they are willing to base their buying decisions upon it. They do not rely on well-established references in marking these buying decisions.</li>
+<li><strong>early majority</strong>: Driven by a strong sense of practicality. They want well-established references before investing substantiall. Roughly <em>a third</em> of the whole adoption life cycle and winning their business is key to profit and growth.</li>
+<li><strong>late majority</strong>: They wait until something has become an established standard, even then they want to see lots of support and tend to buy from large, well-stablished companies. Roughly <em>a third</em> of the total buying population. Courting its favor is highly profitable.</li>
+<li><strong>laggard</strong>: Simply don&rsquo;t want anything to do with new technology. The only tie they ever buy a technological product is when it is buried very deep inside another product. Generally regarded as not worth pursuing.</li>
+</ul>
+</li>
+<li>The way to develop a high-tech market is to work the curve left to right and use each &ldquo;captured&rdquo; group as a reference base for going on to market to the next group.</li>
+</ul>
+
+
+<h1>2. High-Tech Marketing Enlightenment</h1>
+
+<h4>Innovators (Techies)</h4>
+
+<ul>
+<li>Innovators are those who appreciate the technology for its own sake. They are the gatekeepers for any new technology and the first key to any high-tech marketing effort.</li>
+<li>A small class of enthusiasts will want to try the product just to see if it works. Mostly, they are not powerful enough to dictate the buying decisions. But they represent a beachhead, a source of initial product or service references, and a test bed for the product.</li>
+<li>The other key to working with enthusiasts is to find the ones who are near or have access to the big boss, a.k.a the <em>early adopters</em> or the <em>visionaries</em>.</li>
+</ul>
+
+
+<h4>Early Adopters (visionaries)</h4>
+
+<ul>
+<li>Visionaries are early adopters of high-tech products, often working with budgets in the multiple millions. They are the least price-sensitive and are great reference. They are easy to sell but very hard to please.</li>
+<li>Visionaries are not looking for an <em>improvement</em>, they are looking for a fundamental <em>breakthrough</em>. They drive the high-tech industry because they see the potential for an &ldquo;order-of-magnitude&rdquo; return on investment and willingly take high risks to pursue that goal.</li>
+<li>They are an opportunity early in a product&rsquo;s life cycle to generate a burst of revenue and gain exceptional visibility. It also comes with a big price tag since they are highly-demanding. Visioanries are the ones who give high-tech companies their first biog break. It is hard to plan for them but it even harder to plan without them.</li>
+</ul>
+
+
+<h4>Early Majority (pragmatists)</h4>
+
+<ul>
+<li>Pragmatists are prudent souls who never volunteer to be an early test site and who have learned the hard way that the &ldquo;leading edge&rdquo; is too often the &ldquo;bleeding edge&rdquo;.</li>
+<li>The goal of pragmatists is to make a percentage improvement - incremental, measurable, predictable progress.</li>
+<li>They are hard to win over, but they are loyal once won. They are prudent and they are planning on living with this decision personally for a long time to come.</li>
+<li>They tend to be &ldquo;vertically&rdquo; oriented that they communicate more with others like themselves within their own industry than do techies or visionaries who communicate &ldquo;horizontally&rdquo; across industry boundaries. This means it is very hard to break into a new industry selling to pragmatists.</li>
+<li>They like to see competition and want to buy from proven market leaders because market-leading products create an <em>aftermarket</em> that other vendors service.They are reasonably price-sensitive and are willing to pay a modest premium for top quality service. In absence of any special differentiation, they want the test deal.</li>
+</ul>
+
+
+<h4>Late Majority (conservatives)</h4>
+
+<ul>
+<li>Conservatives are against discontinuous innovation and believe far more in tradition than in progress. They often succumb to new technology only to stay on par with the rest of the world.</li>
+<li>They often fear high tech a little bit hence they tend to invest only at the end of a technology life cycle, when products are extremely mature. They do not have high aspirations about their high-tech investments and hence will not support high price margins.</li>
+<li>They like to buy preassembled packages, with everything bundled, at a heavily discounted price. They like products decitated to a single function (i.e. word processors, calculators, copies and fax machine instead of a single computer).</li>
+<li>Conservatives have enormous value since they greatly extend the market for high-tech components that are no longer state-of-the-art. But high-tech business success within the conservatives market will require a new kind of marketing imagination likned to a less venturesome financial model.</li>
+</ul>
+
+
+<h4>Laggards (skeptics)</h4>
+
+<ul>
+<li>Skeptics do not participate in the high-tech marketplace except to block purchases. Thus, the primary function of high-tech marketing in relation to skeptics is to neuralize their influence.</li>
+<li>Their favorite arguments is that the billions of dollars invested in office automation have not improved the productivity of the office place.</li>
+<li>Ultimately the service that skeptics provide to high-tech marketers is to point continually to the discrepancies between the sales claims and the delivered product.</li>
+</ul>
+
+
+<h4>The Chasm</h4>
+
+<ul>
+<li>Visionaries tend to keep in touch with the techies and conservatives look to pragmatists to help lead them in terms of high-tech products.</li>
+<li>Between visionaries and pragmatists, there is a <strong>chasm</strong>, since visionaries are not the right sort of references for pragmatists since visionaries alienate pragmatists.</li>
+</ul>
+
+
+<h1>3. D-Day Analogy</h1>
+
+<h4>Overall Strategy</h4>
+
+<ul>
+<li>Long-term goal is to enter and take control of a mainstream market that is currently dominated by an entrenched competitor, while the immediate goal is to transition from an early market base to a <strong>strategic target market segment</strong> in the mainstream</li>
+<li>Cross the chasm by targeting a very specific niche market, drive competitiors out of that market niche, and then use it as a base for broader operations.</li>
+</ul>
+
+
+<h4>Starting a fire</h4>
+
+<ul>
+<li>When crossing the chasm, be a market-driven company, not a sales-driven company, since the sole goal of the company during this stage of market development must be to secure a beachhead in a mainstream market (create a pragmatist customer base that is referenceable)</li>
+<li>There are three compelling reasons that the sales-driven strategy should be avoided
+
+<ul>
+<li>We must ensure the customer gets the <strong>whole product</strong> - the complete set of products and services needed to achieve the desired result. Whole product commitments are expensive can only be made sparingly and strategically.</li>
+<li>Seeding a <strong>strong word-of-mouth reputation</strong> among buyers. Winning four or five customers in one segment wil create the desired word-of-mouth effect, while winning one or two in each of 5 or 10 different segments won&rsquo;t.</li>
+<li>Pragmatist customers want to buy from market leaders and the only right strategy is to take a **&ldquo;big fish, small pond&rdquo; approach</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>Beyond niche</h4>
+
+<ul>
+<li>The key to moving beyong one&rsquo;s initial target niche is to select <strong>strategic</strong> target market segments to begin with. Target a segment that creates an entry point into a larger segment.</li>
+<li><strong>Example of Mac crossing the chasm</strong>: Target niche was the graphic arts department in Fortune 500 companies. Apple then leverage its win into adjacent departmens within the corporation - first marketing, then sales. The beachhead in Graphic arts also extended into external markets - creative agencies, ad agencies and publishers.</li>
+</ul>
+
+
+<h4>Application vs. Platforms</h4>
+
+<ul>
+<li>Aplications have a huge advantage in chasm crossing since disruptive innovation are more likely to be championed by end users.</li>
+<li>Platforms are infrastructure and are slower in adoption. Vendor must tie them directly to an application in order to gain the end-user sponsorship.</li>
+<li>Platforms are likely to remian the market leader for a long time to come in any niche that you have saturated. When markets go mass, platforms have the advantage of participate openly in many value chains at the same time.</li>
+</ul>
+
+
+<h1>4. Target the Point of Attack</h1>
+
+<ul>
+<li>Choosing the niche market to target is a very important marketing decision <strong>with little or no useful hard information</strong>. No one has any direct experience in the product since we are introducing a discontinuous innovation.</li>
+<li>Need to understand that <strong>informed intuition</strong>, rather than analytics reason, is the most trustworthy decision-making tool to use. Informed intuition involves conclusions based on isolating a few high-quality images that are archetypes of a broader and more complex reality.</li>
+</ul>
+
+
+<h4>Target-Customer Characterization</h4>
+
+<ul>
+<li><p>A formal process for making up target customer image s, getting them out of individual heads and in front of a marketing decision-making group.</p></li>
+<li><p>The idea is to create as many characeterizations as possible and apply technique to reduce these images into a prioritized list of desirable target amrket segment opportunities.</p></li>
+<li>A representative format for target-customer scenarios include
+
+<ul>
+<li><strong>Header information</strong>: thumbnail info about end user, the technical buyer and the economic buyer.
+
+<ul>
+<li>Business markets: industry, geograph, department, job title</li>
+<li>Consumer markets: age, sex, economic status, social group</li>
+</ul>
+</li>
+<li><strong>A day in the life (before)</strong>: describe a situation in which the user in stuck, with significant consequences for the economic buyer
+
+<ul>
+<li>Catpures the five elements: <em>situation</em>, <em>desired outcome</em>, <em>attemtped approach</em>, <em>interfering factors</em>, <em>economic consequences</em></li>
+</ul>
+</li>
+<li><strong>A day in the life (after)</strong>: Take the same situation, same desired outcome and replay the scenario with the new technology in place.
+
+<ul>
+<li>Catpures the three elements: <em>new approach</em>, <em>enabling factors</em>, <em>economic rewards</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>Market Development Strategy Checklist</h4>
+
+<ul>
+<li>The scenerios are crude at best and we need to submit them to a refinery - the market development strategy checklist. The list consists of issues around which go-to-market plans are built.</li>
+<li>The <em>Show-stopper</em> issues are:
+
+<ul>
+<li><strong>Target customer</strong>: Is there a single, identifiable economic buyer, accessible to our sales channel  and sufficiently well-funded to pay the price?</li>
+<li><strong>Compelling reason to buy</strong>: Are the economic consequences sufficient to mandate any reasonable economic buyer to fix the problem?</li>
+<li><strong>Whole product</strong>: Can we field a complete solution tto the target customer&rsquo;s compelling reason to buy in the next three months?</li>
+<li><strong>Competition</strong>: Has this problem already been addressed by another compnay such that they have crossed the chasm ahead of us and occpied the space we would be targetting?</li>
+</ul>
+</li>
+<li><p>The <em>Nice to have</em> factors are:</p>
+
+<ul>
+<li><strong>Parnters and allies</strong>: Do we already have relationships begun with other companies needed to fulfill the whole product?</li>
+<li><strong>Distribution</strong>: Do we have a sales channel in place?</li>
+<li><strong>Pricing</strong>: Is the price of the whole product consistent with the target customer&rsquo;s budget and the values gained?</li>
+<li><strong>Positioning</strong>: Is the company credible as a provider of products and services to the target niche?</li>
+<li><strong>Next target customer</strong>: Does it have good &ldquo;bowling pin&rdquo; potential?</li>
+</ul>
+</li>
+<li><p><strong>Commiting</strong>: Don&rsquo;t have to pick the optimal beachhead to be successful. Just need to win the beachhead you have picked.</p></li>
+<li><strong>Target segment size</strong>: Pick somebody your own size.</li>
+</ul>
+
+
+<h1>5. Assemble the Invasion Force</h1>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post13/whole-product.png" alt="Whole Product Model" /> <img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post13/simplfied-whole-product.png" alt="Simplified Whole Product" /></p>
+
+<ul>
+<li>Wiring the marketplace starts with targetting markets that have a compelling reason to buy your product. The next step is to ensure that you have a monopoly over fulfilling that reason to buy. To secure that monopoly, you need to understand <strong>what a whole product consists of</strong> and <strong>how to organizae a marketplace to provide a whoel product</strong></li>
+</ul>
+
+
+<h4>The Whole Product Concept</h4>
+
+<ul>
+<li>There is a gap between the marketing promise made to the customer and the ability of the shipped product to fulfill that promise. The model identified four different perceptions of product:
+
+<ul>
+<li><strong>Generic product</strong>: what is shipped in the box and covered by the purchasing contract.</li>
+<li><strong>Expected product</strong>: the product that the consumer thought she was buying when you bought the generic product. The <em>minimum</em> product and services to have any chance of achieving the buying objective</li>
+<li><strong>Augmented product</strong>: the product that provide the <em>maximum</em> chance of achieving the buying objective.</li>
+<li><strong>Potential product</strong>: the product&rsquo;s room for growth</li>
+</ul>
+</li>
+<li>The marketing battle takes place at the level of the <strong>generic product</strong> for the <em>early market</em>. But as marketplaces develop as we enter the <em>mainstream market</em>, the battle shifts increasingly to the outer circles.</li>
+<li>Technology enthusiasts are the customers least in need of whole product support. Visionaries accept that they are going to have to take responsibility for creating the whole product under their own steam. <strong>Pragmatists evalulate and buy whole products.</strong></li>
+</ul>
+
+
+<h4>Whole Product Planning</h4>
+
+<ul>
+<li><strong>Winning the whole product battle means winning the war.</strong> Whole product planning is the centerpiece for developing a market domination strategy as pragmatists will hold off committing until they see a strong whole product.</li>
+<li>The focus should be on the minimum commitment to whole product needed to cross the chasm. There are two categories in the simplified model:
+
+<ul>
+<li>what we ship</li>
+<li>whatever else the customer need in order to achieve their compelling reason to buy</li>
+</ul>
+</li>
+<li>The contract does not require the compnay to deliver on the later, but the <em>customer relationship</em> does. Lack of attention to whole product marketing is the wellspring of high tech&rsquo;s inability to deliver on its promise.</li>
+</ul>
+
+
+<h4>Partners and Allies</h4>
+
+<ul>
+<li>The purpose of <strong>tactical alliances</strong> is to accelerate the formation of whole product infrastructre within a specific target market segment. The basic commitment is to codevelop a whole product and market it jointly.</li>
+<li>for any company crossing the chasm, fostering the initial partnerships to create the whole product is the equivalent of seeding the value chain, getting it started. Once the value starts being generated, the market system becomes self-reinforcing.</li>
+</ul>
+
+
+<h1>6. Define the Battle</h1>
+
+<ul>
+<li>To dominate our beachhead we need to understand who or what the competition is, what their current relationship to our target customer consist of, and how we can best <strong>position</strong> ourselves to force them out of our target market segmgent.</li>
+<li>One of the key things a pragmatist customer wants to see is strong compeition. In crossing the chasm, that competition is not likely to exist. What you have to do then is create it.</li>
+<li>When developing an early market, competition are usually from alternative modes of operation. Resistance are growing out of commitment to the status quo, fear, risk, or lack of compelling reason to buy. Our goal is to ennlist visionary sponsors to help overcome this resistance.</li>
+<li>In pragmatist&rsquo;s domain, competition is defined by <strong>comparative evaluations of products and vendors</strong> within a common category. These evaluations are extremely reassuring to the pragmatists, who are loath to buy until they can compare. <strong>Competition</strong>, therefore, becomes a fundamental condition for purchase.</li>
+<li>Creating your competition starts with locating your product within a buying category and position your product as the indisputably correct buying choice (with some rigging). The buying category need to be both credible and attractive.</li>
+</ul>
+
+
+<h4>Competitive-Positioning Compass</h4>
+
+<ul>
+<li>Crossing the chasm requires
+
+<ul>
+<li>moving from an environment of <strong>support</strong> by the visionaries to <strong>skepticism</strong> among the pragmatists</li>
+<li>moving from an <strong>product-oriented</strong> issues to <strong>market-oriented</strong> ones</li>
+<li>moving from the audience of like-minded <strong>specialists</strong> to essentially uninterested <strong>generalists</strong></li>
+</ul>
+</li>
+<li>It&rsquo;s the <strong>market-centric value system</strong> &ndash; supplemented by the product-centric ones &ndash; that must be the basis for the value profile of the target customers when crossing the chasm.</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th> Product-Centric          </th>
+<th> Market-Centric                  </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> Fastest product          </td>
+<td> Largest installed base          </td>
+</tr>
+<tr>
+<td> Easier to use            </td>
+<td> Most third party supporters     </td>
+</tr>
+<tr>
+<td> Elegant architecture     </td>
+<td> De facto standard               </td>
+</tr>
+<tr>
+<td> Product price            </td>
+<td> Cost of ownership               </td>
+</tr>
+<tr>
+<td> Unique functionality     </td>
+<td> Quality of support              </td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>Creating the Competition</h4>
+
+<ul>
+<li><strong>Market Alternative</strong>: a company that the target customer has been buying from for years. They address the problem that we will address. The market alternative helps people identify your target customer and your compelling reason to buy.</li>
+<li><strong>Product Alternative</strong>: a company that has also harnessed a discontinuous innovation. Their existence gives credibility to the notion that now is the time to embrace a discontinuity. The product alternative helps people appreciate your technology leverage.</li>
+<li><strong>Example 1</strong>: Silicon Graphics targetting post-production film editing process in Hollywood.
+
+<ul>
+<li>Market Alternative: Tradidional editing of cutting and splicing film.</li>
+<li>Product Alternative: Sun and HP workstations.</li>
+</ul>
+</li>
+<li><strong>Example 2</strong>: Quicken targetting home computer user who pay bills
+
+<ul>
+<li>Market Alternative: paper and pen checking.</li>
+<li>Product Alternative: Professional programs for financial enthusiasts.</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>Positioning</h4>
+
+<ul>
+<li>The goal of positioning is to make products easier to buy. There are four stages in this process, corresponding the the four primary psychographic types:
+
+<ul>
+<li><strong>Name it and frame it</strong>: What the product is and what category it falls under? Positioning for technology enthusiasts.</li>
+<li><strong>Who for and what for</strong>: Who is going to use it and for what purpose? Positioning for visionaries.</li>
+<li><strong>Competition and differentiation</strong>: a comparative context for the product? Positioning for pragmatists.</li>
+<li><strong>Financials and Futures</strong>: Is the product from a vendor with staying power? Positioning for conservative.</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>The Claim: Elevator Pitch</h4>
+
+<table>
+<thead>
+<tr>
+<th> Framework                                                                          </th>
+<th> Example (Intuit Quicken)                                           </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> <strong>For</strong> (target customers &ndash; beachhead segment only)                               </td>
+<td> For the bill-paying member of the family who also uses a home PC   </td>
+</tr>
+<tr>
+<td> <strong>Who are dissatisfied with</strong> (the current market alternative)                     </td>
+<td> Who is tired of filling out the same old checks month after month  </td>
+</tr>
+<tr>
+<td> <strong>Our product is a new</strong> (new product category)                                    </td>
+<td> Quicken is a PC home finance program                               </td>
+</tr>
+<tr>
+<td> <strong>That provides</strong> (key problem-solving capability)                                 </td>
+<td> That automatically creates and tracks all your check-writing       </td>
+</tr>
+<tr>
+<td> <strong>Unlike</strong> (the product alternative),                                              </td>
+<td> Unlike <em>Managing Your Money</em>, a financial analysis package,        </td>
+</tr>
+<tr>
+<td> <strong>We have assembled</strong> (key whole product features for your specific application).  </td>
+<td> Our system is optimized specifically fofr home bill-paying         </td>
+</tr>
+</tbody>
+</table>
+
+
+<h1>7. Launch the Invasion</h1>
+
+<ul>
+<li>The #1 corporate objective when crossing the chasm is to secure a <strong>channel</strong> into the mainstream market with which pragmatist customer will be comfortable.</li>
+<li>The fundamental function of pricing during this period is to <strong>motivate the channel</strong>.</li>
+</ul>
+
+
+<h4>The Structure of High-Tech Distribution</h4>
+
+<ul>
+<li><strong>Direct sales</strong>: dedicated sales force in the direct employ of the vendor. Optimized for creating demand.</li>
+<li><strong>Retail</strong>: the retail system works optimally when its job is to fulfill demand rather than to creat it. Structurally unsuited to solve the chasm problem.</li>
+<li><strong>Value-Added Reselling</strong>: for products that are too complex for retail. These are typically small companies which specialize in a particular technology or a particular vertical market. VARs are problematic to be mainstream distribution</li>
+</ul>
+
+
+<h4>The Right Choice</h4>
+
+<ul>
+<li>Use direct sales and support as a demand-creation channel to penetrate the initial target segment</li>
+<li>Once segment has become aware of your presence, transition to the most efficient fulfillment channel</li>
+</ul>
+
+
+<h4>Pricing</h4>
+
+<ul>
+<li><strong>Customer-Oriented Pricing</strong>: perspective of the customers varies among different psychographics
+
+<ul>
+<li>Visionaries: <strong>value-based pricing</strong>, price-insensitive and seeks an order-of-magnitude ROI</li>
+<li>Conservatives: <strong>cost-based pricing</strong>, wait until complete institutionalization of the product and keep their cost way down</li>
+<li>Pragmatists: <strong>competition-based pricing</strong>, want to back the market leader and would pay premium for the market leader</li>
+</ul>
+</li>
+<li><strong>Vendor-Oriented Pricing</strong>: function of internal issues, i.e. cost og foods, cost of capital, promised rate of return, etc. Unsuitable for for the chasm perid since we need to be entirely external focused.</li>
+<li><strong>Distribution-Oriented Pricing</strong>: price does not become a major issue during the sales cycle, price high enough for a sufficient margin to reward the channel</li>
+<li><strong>Overall Strategy</strong>:
+
+<ul>
+<li>price at the market leader price point</li>
+<li>build a disproportionally high reward for the channel. The reward should phased out as the product becomes established in the mainstream.</li>
+</ul>
+</li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Reading | The Effective Engineer]]></title>
