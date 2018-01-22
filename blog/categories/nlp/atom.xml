@@ -4,7 +4,7 @@
   <title><![CDATA[Category: nlp | Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/blog/categories/nlp/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2017-12-05T22:31:29-08:00</updated>
+  <updated>2018-01-21T21:23:05-08:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -12,6 +12,71 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Reading | Highway Networks]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/01/21/reading-highway-network/"/>
+    <updated>2018-01-21T18:18:41-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/01/21/reading-highway-network</id>
+    <content type="html"><![CDATA[<p>I have been working on some NLP-related Kaggle competitions lately and have came across the <a href="https://arxiv.org/pdf/1505.00387.pdf">Highway Networks</a> in quite a few papers and models. The LSTM-inspired Highway Networks make it easier to train deep networks by adding a small twick to the vanilla feedforward layer. I am reading the paper to get an intuition of how they work.</p>
+
+<!--more-->
+
+
+<h2>1. Introduction</h2>
+
+<ul>
+<li>It&rsquo;s well known that deep networks can represent certain function classes exponentially more efficiently than shallow ones. However, optimization of deep networks is considerably more difficult.</li>
+<li>Srivastava et al. presented a architecture that enables the opmiziation of networks with virtually arbitary depth by a learned gating mechanism for regulating information flow. A network can have paths along which information can flow across several layers without attenuation.</li>
+</ul>
+
+
+<h2>2. Highway Networks</h2>
+
+<ul>
+<li><p>For a layer in a plain feedforward network
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H})$$
+where H is an affine transfor following by a non-linear activation function.</p></li>
+<li><p>For a highway network, we define two non-linear transforms $T(\mathbf{x}, \mathbf{W}_T)$ and $C(\mathbf{x}, \mathbf{W}_C)$ such that
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H}) \cdot T(\mathbf{x}, \mathbf{W}_T) + \mathbf{x} \cdot C(\mathbf{x}, \mathbf{W}_C)$$</p></li>
+<li><p>$T$ is the transform date and $C$ is the carry gate, each respectively express how much of the output is produced by transforming the input and carrying it.</p></li>
+<li><p>For simplicity, we set $C = 1 - T$, giving
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H}) \cdot T(\mathbf{x}, \mathbf{W}_T) + \mathbf{x} \cdot (1-T(\mathbf{x}, \mathbf{W}_C))$$</p></li>
+<li><p>This re-parametrization of the layer transformation is more flexible than the plain feedforward layer. Since
+$$ \mathbf{y} =
+\begin{cases}
+\mathbf{x},  &amp; \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 0 \\
+H(\mathbf{x}, \mathbf{W}_{H}), &amp; \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 1
+\end{cases}$$
+$$ \frac{d\mathbf{y}}{d\mathbf{x}} =
+\begin{cases}
+\mathbf{I} = 0 \\
+H'(\mathbf{x}, \mathbf{W}_{H}), &amp; \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 1
+\end{cases}$$</p></li>
+<li><p>Depending on the output of the transform gates $(\mathbf{x}, \mathbf{W}_C)$, a highway layer can smoothly vary its behavior between a plain layer and a layer that simply passes its inputs through.</p></li>
+<li><p>For highway layers, we user the tranform gate defined as
+$$T(\boldsymbol{x}) = \sigma(\boldsymbol{W}_T^T + \boldsymbol{b}_T)$$</p></li>
+<li><p>For training very deep networks, $\boldsymbol{b}_T$ can be initallzed with a negative value such that the network is initially biased towards <strong>carrry</strong> behavior.</p></li>
+</ul>
+
+
+<h2>Experiments and Analysis</h2>
+
+<ul>
+<li>Networks with depths of 10, 20, 50 and 100 plain or highway layers are trained.</li>
+<li><strong>Optimization</strong>: The performance of plain networks degrades significantly as depth increases, while highway networks do not seem to suffer from an increase in depth at all.</li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post14/highway_networks_depth.png" alt="highway_networks_depth" /></p>
+
+<ul>
+<li><p><strong>Performance</strong>: The performance of highway networks is similar to <a href="https://arxiv.org/abs/1412.6550">Fitnets</a> on CIFAR-10 and MNIST datasets. But highway network is much easier to train since no two-stage training procedure is needed.</p></li>
+<li><p><strong>Analysis</strong>: By analzing the biases of the transform gates and the outputs of the block, it was found that the strong negative biases at low depths are not used to shut down the gates, but to make them more selective.</p></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Reading | LDA, the Most Commonly-Used Topic Model]]></title>
