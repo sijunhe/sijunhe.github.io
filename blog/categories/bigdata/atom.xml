@@ -1,0 +1,712 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: bigdata | My Octopress Blog]]></title>
+  <link href="http://yoursite.com/blog/categories/bigdata/atom.xml" rel="self"/>
+  <link href="http://yoursite.com/"/>
+  <updated>2018-04-02T00:55:31-07:00</updated>
+  <id>http://yoursite.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Reading | Apache Spark Research Paper III]]></title>
+    <link href="http://yoursite.com/blog/2016/08/25/reading-notes-apache-spark-research-paper-iii/"/>
+    <updated>2016-08-25T17:49:35-07:00</updated>
+    <id>http://yoursite.com/blog/2016/08/25/reading-notes-apache-spark-research-paper-iii</id>
+    <content type="html"><![CDATA[<p>This follows up the last post and I will read the third Apache Spark paper <a href="http://people.csail.mit.edu/matei/papers/2015/sigmod_spark_sql.pdf">Spark SQL: Relational Data Processing in Spark</a>, published by Armbrust et al. in 2015</p>
+
+<!--more-->
+
+
+<h3>1. Intro</h3>
+
+<ul>
+<li>Earliest big data processing systems like MapReduce give users a low-level <strong>procedural</strong> programming interface, which was onerous and required manual optimization by the user to achieve high performance</li>
+<li>New systems sought to offer relational interfaces to big data, like Pig, Hive, Dremel and Shark</li>
+<li>Spark SQL is bridges the gap between relational systems and procedural systems through two contributions:
+
+<ul>
+<li>a <strong>DataFrame</strong> API that allows relational operations, similar to the data frame concept in R, but evaluates operations lazily</li>
+<li>an optimizer <strong>Catalyst</strong>, that make it easy to dd data sources, optimization rules and data types for domains such as machine learning</li>
+</ul>
+</li>
+</ul>
+
+
+<h3>2. Programming Interface</h3>
+
+<p>Spark SQL runs as a library on top of Spark and exposed SQL interfaces through JDBC/ODBC, command-line console or DataFrame API
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post6/spark_sql_diagram.png"></p>
+
+<h4>2.1 DataFrame API</h4>
+
+<ul>
+<li>A distributed collection of rows with the same schema (RDD of Row objects), equivalent to a table in relational database and can be manipulated with various relational operators</li>
+<li>DataFrames are lazy, in that each DataFrame object represents a <strong>logical plan</strong> to compute a dataset, but no execution occurs until the user calls an action</li>
+</ul>
+
+
+<h4>2.2 Data Model</h4>
+
+<ul>
+<li>Nested data model based on Hive and supports all major SQL data types</li>
+<li>Provides support for non-atomic data types like structs, arrays, maps and unions, which are not usually in RDMBS</li>
+</ul>
+
+
+<h4>2.3 DataFrames vs SQL</h4>
+
+<ul>
+<li>Easier to use due to integration in a full programming language</li>
+<li>Have full control building logical plan, which will be optimized by the Catalyst</li>
+<li>Able to store and access intermediate results</li>
+</ul>
+
+
+<h3>3. Catalyst Optimizer</h3>
+
+<ul>
+<li>Catalyst’s extensible design had two purposes
+
+<ul>
+<li>Make it easy to add new optimization techniques and features to Spark SQL</li>
+<li>Enable external developers to extend the optimizer</li>
+</ul>
+</li>
+<li>Catalyst core contains a general library for representing trees and applying rules to manipulate them</li>
+<li>Several sets of rules to handle different phases of query execution: analysis, logical optimization, physical planning and code generation to compile queries to Java bytecode</li>
+</ul>
+
+
+<h4>3.1 Trees</h4>
+
+<ul>
+<li>Main data type in Catalyst, composed of nodes</li>
+<li>Each node has a node type and zero or more children</li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post6/spark_tree.png"></p>
+
+<ul>
+<li>This translate to</li>
+</ul>
+
+
+<pre><code class="scala">Add(Attribute(x), Add(Literal(1), Literal(2))
+</code></pre>
+
+<h4>3.2 Rules</h4>
+
+<ul>
+<li>Trees can be manipulated using rules, which are functions from a tree to another tree</li>
+<li>Mostly common approach is Scala’s pattern matching</li>
+</ul>
+
+
+<pre><code class="scala">tree.transform {
+    case Add(Literal(c1), Literal(c2)) =&gt; Literal(c1+c2) 
+    case Add(left, Literal(0)) =&gt; left
+    case Add(Literal(0),right) =&gt; right
+}
+</code></pre>
+
+<ul>
+<li>Catalyst groups rules into batches, and executes each batch until the trees stops changing after applying its rules</li>
+<li>For example, for (x+0) + (3+3), a first batch might analyze an expression to assign types to all of the attributes, while a second batch might use these types to do constant folding</li>
+</ul>
+
+
+<h4>3.3 Using Catalyst in Spark SQL</h4>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post6/spark_plan.png"></p>
+
+<p>Catalyst’s general tree transformation framework contains four phases</p>
+
+<ul>
+<li>Analyzing a logical plan to resolve references</li>
+<li>Logical plan optimization</li>
+<li>Physical Planning, catalyst may generate multiple plans and compare them based on cost</li>
+<li>Code generation to compile parts of the query to Java bytecode</li>
+</ul>
+
+
+<h5>3.3.1 Analysis</h5>
+
+<ul>
+<li>Spark SQL begins with a relation to be computed, which may contain unresolved attributes references or relations</li>
+<li>Spark SQL uses Catalyst rules and a Catalog object that trakcs the tables in all data source to resolve the unresolved attributes</li>
+<li>Example query: SELECT col FROM sales
+
+<ul>
+<li>Looking up relations by name form the catalog, such as SELECT</li>
+<li>Mapping named attributes, such as col, to the input provided</li>
+<li>Determining which attributes refer to the same value to give them a unique ID</li>
+<li>Propagating and coercing types through expressions</li>
+</ul>
+</li>
+</ul>
+
+
+<h5>3.3.2 Physical Planning</h5>
+
+<ul>
+<li>Spark SQL takes a logical plan and generates one or more physical plans, using physical operators that match the Spark execution engine</li>
+<li>Cost-based Optimization: selects a plan among all physical plans using a cost model</li>
+<li>Physical Planner also performs rule-based optimizations, such as pipelining projections or filters into one Spark map operation</li>
+</ul>
+
+
+<h5>3.3.3 Code generation</h5>
+
+<ul>
+<li>Need to support code generation to speed up execution, since Spark SQL operates on in-memory datasets where processing is CPU-bound</li>
+<li>Use Catalyst to transform a tree representing an expression in SQL to an AST for Scala code to evaluate that expression, and then compile and run the generated code</li>
+<li>Use a special feature of the Scala language: quasiquotes, which allows the programmatic construction of abstract syntax trees (AST)</li>
+</ul>
+
+
+<h5>3.3.4 Data Sources</h5>
+
+<ul>
+<li>Developers can define a new data soruce for Spark SQL, which expose varying degrees of possible optimization</li>
+<li>All data sources must implement a createRelation function that takes a set of key-value parameters and returns a BaseRelation object, which contains a schema and an optimal estimated size in bytes</li>
+<li><p>BaseRelation can implement one of several interfaces that let them expose varying degrees of sophistication</p>
+
+<ul>
+<li><strong>TableScan</strong>: return an RDD of Row objects for all the data in the table</li>
+<li><strong>PrunedScan</strong>: takes an array of column names to read and return Rows containing only those columns</li>
+<li><strong>PrunedFilteredScan</strong>: takes both desired column names and an array of Filter objects, which returns only rows passing each filters</li>
+<li><strong>CatalystScan</strong>: given a complete sequence of Catalyst expression trees to use in predicate pushdown</li>
+</ul>
+</li>
+<li><p>The following data sources has been implemented:</p>
+
+<ul>
+<li><strong>CSV files</strong>, which simply scan the whole file but allow users to specify a schema</li>
+<li><strong>Avro</strong>, a self-describing binary format for nested data</li>
+<li><strong>Parquet</strong>, a columnar file format for which column pruning as well as filters are supported</li>
+<li><strong>JDBC</strong> data source, which scans ranges of a table from an RDBMS in parallel and pushes filters into the RDBMS to minimize communication</li>
+</ul>
+</li>
+</ul>
+
+
+<h5>3.3.5 User-Defined Types(UDTs)</h5>
+
+<ul>
+<li>Allows user-defined types over relational tables</li>
+<li>Solve the issue by mapping UDTs to structures composed of Catalyst’s built-in types</li>
+<li>UDTs need to implement <strong>datatype</strong>, <strong>serialize</strong> and <strong>deserialize</strong> methods</li>
+</ul>
+
+
+<h3>4. Evaluation</h3>
+
+<h4>4.1 SQL Performance</h4>
+
+<ul>
+<li>Spark SQL is substantially faster than Shark and generally competitive with Impala</li>
+</ul>
+
+
+<h4>4.2 DataFrames vs. Native Spark Code</h4>
+
+<ul>
+<li>Spark SQL help non-SQL developers write simpler and more efficient Spark code through the DataFrame API, as Catalyst optimizes DataFrame operatons that are hard to do with hand written code</li>
+<li>Compare speed of computing the average of b for each value of a, for the dataset consists of 1 billion integer pairs (a,b) with 100,000 distinct values of a</li>
+</ul>
+
+
+<pre><code class="python">## Python API
+sum_and_count = 
+data.map(lambda x: (x.a, (x.b,1)))
+       .reduceByKey(lambda x, y: (x[0] + y[0], x[1] + y[1]))
+       .collect()
+## DataFrame API:
+df.groupBy('a').avg('b')
+</code></pre>
+
+<ul>
+<li>DataFrame API outperforms the hand written Python version by 12x, and outperforms Scala version 2x</li>
+</ul>
+
+
+<h4>4.3 Pipeline Performance</h4>
+
+<ul>
+<li>DataFrame API improves performance in applications that combine relational and procedural processing by letting developers write all operations in a single program and pipelining computation across relational and procedural code</li>
+<li>Compare speed of two stage pipeline that selects a subset of text messages from a corpus and computes the most frequent words</li>
+<li>Separate SQL query followed by a Scala-based Spark job, similar to a Hive query followed by a Spark job, vs the DataFrame API</li>
+<li>DataFrame API pipelines improves performance 2x, since it avoids the cost of saving the whole result of the SQL query to an HDFS file as an intermediate dataset, because SparkSQL pipelines the <strong>map</strong> for the word count with the relational operators for the filtering</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Reading | Apache Spark Research Paper II]]></title>
+    <link href="http://yoursite.com/blog/2016/08/21/reading-notes-apache-spark-research-paper-ii/"/>
+    <updated>2016-08-21T17:49:26-07:00</updated>
+    <id>http://yoursite.com/blog/2016/08/21/reading-notes-apache-spark-research-paper-ii</id>
+    <content type="html"><![CDATA[<p>This follows up the last post and I will read the second Apache Spark paper <a href="http://people.csail.mit.edu/matei/papers/2012/nsdi_spark.pdf">Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing</a>, published by Matei Zaharia et al. in 2012.</p>
+
+<!--more-->
+
+
+<h2>Intro</h2>
+
+<ul>
+<li>Cluster computing frameworks like MapReduce and Dryad are widely adopted since they provide the high level abstraction of parallel programming without worrying about work distribution and fault tolerance</li>
+<li>Frameworks like MapReduce lacks abstractions for leveraging distributed memory and makes them inefficient for iterative algorithms</li>
+<li>Resilient Distributed Datasets (RDDs) are fault tolerant, parallel data structures that let users explicitly persists intermediate results in-memory, controlling their partitioning to optimize data placement</li>
+<li>Existing abstractions for in-memory storage offer an interface based on <strong>fine-grained</strong> updates to mutable state. This makes the only way to provide fault tolerance being replicating the data across machines, which is too data intensive</li>
+<li>RDDs provide an interface based on <strong>coarse-grained</strong> transformation (e.g., map, filter, join) that apply the same operation to many data items. this allows them to provide fault tolerance by logging the transformations used to build its <strong>lineage</strong> instead of replicating the actual data. If an RDD is lost, there&rsquo;s enough information about how it was derived from other RDDs so it can be recomputed</li>
+</ul>
+
+
+<h2>RDDs</h2>
+
+<h3>Abstraction</h3>
+
+<ul>
+<li>Read-only, partitioned collection</li>
+<li>Not materialized at all times</li>
+<li>Users can control <strong>persistence</strong> and <strong>partitioning</strong> of RDD</li>
+</ul>
+
+
+<h3>Programming Interface</h3>
+
+<ul>
+<li>Each dataset is represented as an object and interacted through an API</li>
+<li>Spark computes RDDs lazily the first time they are used in an action, so that it can pipeline transformations</li>
+</ul>
+
+
+<h3>Advantage of the RDD Model</h3>
+
+<ul>
+<li>Compare with distributed shared memory (DSM), where applications read and write to arbitrary locations (fine-grained transformation)in a global address space</li>
+<li>Main difference is that RDDs can only be created through coarse-grained transformation, which restricts RDDs to perform bulk writes, but allows for more efficient fault tolerance</li>
+<li>Immutable natures of RDDs let the system mitigate slow nodes by running backup copies of slow tasks just like MapReduce</li>
+<li>In bulk operations on RDDs, runtime can schedule task based on data locality, a.k.a &ldquo;move processing to data&rdquo;</li>
+<li>RDDs degrade gracefully when there&rsquo;s not enough memory: partitions that do not fit in RAM are spilled on disk</li>
+</ul>
+
+
+<h3>Applications not suitable for RDD</h3>
+
+<ul>
+<li>Not suitable for applications that make asynchronous fine-grained updates to shared state, such as a storage system for a web application or an incremental web crawler</li>
+<li>Spark aims to provide an efficient programming model for batch analytics and is not suitable asynchronous applications</li>
+</ul>
+
+
+<h2>Spark Programming Interface</h2>
+
+<ul>
+<li>Developers write a driver program that connects to a cluster of workers</li>
+<li>The workers are long-lived processes that can store RDD partitions in RAM across operations</li>
+<li>Driver also keep tracks the RDDs' lineage</li>
+<li>Scala represents closures as Java objects, serialized and loaded them on another node to pass the closure across the network</li>
+</ul>
+
+
+<h2>Representing RDDs</h2>
+
+<ul>
+<li>A simple graph-based representation for RDDs that facilitates the goal of tracking lineage across a wide range of transformation</li>
+<li>Represent each RDD through a five pieces of information
+
+<ul>
+<li>a set of <strong>partitions</strong>: atomic pieces of the dataset</li>
+<li>a set of <strong>dependencies</strong> on parent RDDs</li>
+<li>a <strong>function</strong> for computing the dataset based on its parents</li>
+<li><strong>metadata</strong> about its partitioning scheme and data placement</li>
+</ul>
+</li>
+<li>distinction between <em>narrow</em> dependencies, where each partition of the parent RDD is used by at most one partition of the child RDD (join) and <em>wide</em> dependencies, where multiple child partitions may depend on it (map)
+
+<ul>
+<li>narrow dependencies allows for pipelined execution on one node, while wide dependencies require shuffling of the partitions across the node</li>
+<li>recovery after a node failure is more efficient with a narrow dependency</li>
+</ul>
+</li>
+</ul>
+
+
+<h2>Implementation</h2>
+
+<h3>Job scheduling</h3>
+
+<ul>
+<li>Whenever a user runs an action on RDD, the scheduler examines that RDD&rsquo;s lineage to build a DAG of stages to execute, each stage consists of pipelined transformation with narrow dependencies. Boundaries of the stages are shuffling operations required for wide dependencies.</li>
+<li>Scheduler assigns tasks to machines based on data locality using <strong>delay scheduling</strong>: send task to node if a partition is available in memory on that node, otherwise, send to preferred locations</li>
+<li>Materialize intermediate records on the nodes holding parent partitions for wide dependencies</li>
+</ul>
+
+
+<h3>Memory management</h3>
+
+<ul>
+<li>three levels of persistence:
+
+<ul>
+<li>in memory storage as <strong>deserialized Java objects</strong>: fastest performance</li>
+<li>in memory storage as <strong>serialized Java objects</strong>: more memory-efficient representation at the cost of lower performance</li>
+<li>on-disk storage</li>
+<li>refer to <a href="http://sujee.net/2015/01/22/understanding-spark-caching/#.V76MRpMrJTY" title="Understanding Spark Caching">Understanding Spark Caching</a> for reference</li>
+</ul>
+</li>
+<li>For limited memory available, when a new RDD partition is computed but there&rsquo;s not enough space
+
+<ul>
+<li>evict a partition from the least recently accessed RDD, unless this is the same RDD as the one with the new partition</li>
+<li>If it&rsquo;s the same RDD, we keep the old partition in memory since it&rsquo;s likely that the partition already in memory will be needed soon</li>
+</ul>
+</li>
+</ul>
+
+
+<h3>Checkpointing</h3>
+
+<ul>
+<li>long linage with wide dependencies are costly to recover, thus checkpointing maybe worthwhile</li>
+<li>Spark provides an API for checkpointing, but leaves the decision of which data to checkpoint to the user</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Reading | Apache Spark Research Paper I]]></title>
+    <link href="http://yoursite.com/blog/2016/08/16/reading-notes-apache-spark-research-paper-i/"/>
+    <updated>2016-08-16T17:49:21-07:00</updated>
+    <id>http://yoursite.com/blog/2016/08/16/reading-notes-apache-spark-research-paper-i</id>
+    <content type="html"><![CDATA[<p>For my summer internship at <a href="http://www.autodesk.com">Autodesk</a>, I have been heavily using Apache Spark for data analytics and machine learning. I believe a thorough understanding of the underlying principles and mechanisms of Apache Spark would be conducive to writing elegant and efficient Spark programs. Speaking of learning Spark, nothing is better than learning from the original authors. Therefore, I will read the three research papers out of The AMPLab at UC Berkeley that laid the groundwork for Apache Spark. I will start with the first paper <a href="http://people.csail.mit.edu/matei/papers/2010/hotcloud_spark.pdf">Spark: Cluster Computing with Working Sets</a>, published by Matei Zaharia in 2010.</p>
+
+<!--more-->
+
+
+<h3>Intro</h3>
+
+<ul>
+<li>MapReduce pioneers the model of cluster computing that allows massively parallel computations, locality-aware scheduling (send the code to the data instead of the reverse) and fault tolerance</li>
+<li>However, Hadoop and MapReduce is lacking in two parts
+
+<ul>
+<li><strong>iterative jobs</strong>: Hadoop needs to read/write disk for each iteration and incurs performance penalty</li>
+<li><strong>interactive analytics</strong>: each job runs as a separate MapReduce job and reads data, making is slow for interactive/repetitive queries</li>
+</ul>
+</li>
+</ul>
+
+
+<h3>Resilient Distributed Dataset (RDD)</h3>
+
+<ul>
+<li>read-only collections of objects partitioned across many machines</li>
+<li>RDD need not exist in storage, instead, a handle to the RDD contains information to compute the RDD is stored</li>
+<li>achieve fault tolerance through <strong>lineage</strong>: if a partition is lost, it can be rebuilt through the handle</li>
+<li>RDDs are lazy and ephemeral, they aren&rsquo;t materialized until an action is taken, and are discarded from memory after use</li>
+<li>RDD has two levels of persistence:
+
+<ul>
+<li><strong>cache</strong>: leaves the dataset lazy but will be cached in memory after the first action is taken</li>
+<li><strong>save</strong>: evaluate the action and writes to a file system</li>
+</ul>
+</li>
+</ul>
+
+
+<h3>Shared Variables</h3>
+
+<ul>
+<li>Normally, when Spark runs a closure on a worker node, it copies the variables to the work as well, which increases the communication cost</li>
+<li><strong>Broadcast variables</strong>
+
+<ul>
+<li>used for large read-only piece of data</li>
+<li>distribute the data to the workers once instead of packaging it with every closure</li>
+</ul>
+</li>
+<li><strong>Accumulators</strong>
+
+<ul>
+<li>variables that workers can only &ldquo;add&rdquo; to using association operation, and only the driver can read</li>
+<li>used for grouped data that is across many machines</li>
+</ul>
+</li>
+</ul>
+
+
+<h3>Performance</h3>
+
+<ul>
+<li>Logistic Regression and Alternating Least Squares, both of which are iterative algorithms, was ran on Spark and was order of magnitude faster than Hadoop, due to cached data.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Friends You Might Know]]></title>
+    <link href="http://yoursite.com/blog/2016/01/19/friends-you-might-know/"/>
+    <updated>2016-01-19T15:46:36-08:00</updated>
+    <id>http://yoursite.com/blog/2016/01/19/friends-you-might-know</id>
+    <content type="html"><![CDATA[<p>This is a problem from <a href="http://web.stanford.edu/class/cs246/">CS246</a>: Mining Massive Datasets from Stanford University. The idea behind the original &ldquo;People You Might Know&rdquo; friendship recommendation algorithm is that if two people share a high number of mutual friends, they are more likely to know each other and thus the system would recommend that they connect with each other.</p>
+
+<!--more-->
+
+
+<h2>Problem Statement</h2>
+
+<p>The input here can be found <a href="https://s3-us-west-1.amazonaws.com/sijunhe-blog/data/soc-LiveJournal1Adj.txt">here</a>, which is in the form of [User][Tab][Friends]&ldquo;, where [Friends] is a comma-separated list of Users. The output will be in terms of [User][Tab][Recommendations], where [Recommendations] is a comma-separated list of users that are recommended friend.</p>
+
+<p>We could use a algorithm that for each user A, it recommends N = 10 users who are not already friends with A, but share the largest number of mutual friends in common with A.</p>
+
+<h2>Approach and Pseudocode</h2>
+
+<p>The key is that for each user, the algorithm needs to find out the users who share mutual friends with him. Then, the algorithm needs to sort the users by the number of mutual friends in descending order and to make sure not to recommend the users who are already friends with A. Clearly, this is a highly parallelizable problem since for each user the computation is entirely separated. This would make a great MapReduce problem.</p>
+
+<h4>Terminology</h4>
+
+<p>For each user A:</p>
+
+<p>Degree 1 friends: the users who A is already friends with<br/>
+Degree 2 friends: the users who shares a mutual friend with A.<br/>
+Degree 2 friends could potentially be degree 1 friends as well and we are interested in the users who are degree 2 friends with A, but not degree 1 friends.</p>
+
+<h4>Approach</h4>
+
+<p>Since we are using MapReduce, we want the reducer to have the key as A, and the value as an <a href="https://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html">Iterable</a> of degree 1 friends and degree 2 friends.</p>
+
+<p>Example input: A B,C,D</p>
+
+<p>Mapper:</p>
+
+<ul>
+<li>Computing degree 1 friends for A would be straightforward, as they would just be the users in the comma-separated friends list. The mapper would just emit the key values pairs of (A, B), (A, C) and (A, D)</li>
+<li>Computing degree 2 friends is a little trickier. Here we will use A as the key, but as the mutual friend. For example, from A&rsquo;s friends list, we know B and C both have A as a mutual friend. Therefore B is a degree 2 friend of C and vice versa. The mapper would emit (B, C), (C, B), (B, D), (D, B), (C, D) and (D, C)</li>
+</ul>
+
+
+<p>Reducer:</p>
+
+<ul>
+<li>The reducer receives the key, which is an user, and an Iterable of degree 1 and degree 2 friends of the key</li>
+<li>The reducer needs to count the number of times that a degree 2 friend pair shows up is the number of their mutual friends</li>
+<li>The reducer then needs to sort the degree two friends of the key by the number of mutual friends</li>
+<li>The reducer needs to make sure that degree 1 don&rsquo;t get recommended</li>
+</ul>
+
+
+<h4>Pseudocode</h4>
+
+<pre><code>Map: 
+
+    for each user, friendList:
+        for each friend i in friendList:
+            emit (user, (i, 1)) 
+            for each friend j in friendlist: 
+            emit (j, (i, 2))
+            emit (i, (j, 2))
+
+Reduce: 
+
+    for each user, friendDegreeList:
+
+        for each (friend, degree) in  friendDegreeList:
+            if degree == 1: hashmap.add(friend, -1)
+            else:
+                if (friend in hashmap):
+                    hashmap[friend] += 1
+                else:
+                    hashmap.add(friend, 1)
+
+        for each entry in hashmap:
+            if (value != -1): add to list
+
+        sort list
+                output top N
+</code></pre>
+
+<h2>Hadoop MapReduce Program</h2>
+
+<pre><code class="Java">package edu.stanford.cs246.friendrecommendation;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.PriorityQueue;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
+
+public class FriendRecommendation extends Configured implements Tool {
+   public static void main(String[] args) throws Exception {
+      System.out.println(Arrays.toString(args));
+      int res = ToolRunner.run(new Configuration(), new FriendRecommendation(), args);
+      System.exit(res);
+   }
+
+   @Override
+   public int run(String[] args) throws Exception {
+      System.out.println(Arrays.toString(args));
+      Job job = new Job(getConf(), "FriendRecommendation");
+      job.setJarByClass(FriendRecommendation.class);
+      job.setMapOutputKeyClass(Text.class);
+      job.setMapOutputValueClass(PairWritable.class);
+
+      job.setMapperClass(Map.class);
+      job.setReducerClass(Reduce.class);
+
+      job.setInputFormatClass(KeyValueTextInputFormat.class);
+      job.setOutputFormatClass(TextOutputFormat.class);
+
+      FileInputFormat.addInputPath(job, new Path(args[0]));
+      FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+      job.waitForCompletion(true);
+
+      return 0;
+   }
+
+   public static class Map extends Mapper&lt;Text, Text, Text, PairWritable&gt; {
+
+      @Override
+      public void map(Text key, Text value, Context context) throws IOException, InterruptedException {;
+         if (value.getLength() != 0) {
+             String[] friendsList = value.toString().split(",");
+             for (int i = 0; i &lt; friendsList.length; i ++) {
+                 //adding all degree 1 friends to keep track of the people who are already friends and don't need to be recommended
+                 context.write(key, new PairWritable(new Text(friendsList[i]), new IntWritable(1)));
+                 for (int j = i + 1; j &lt; friendsList.length; j++) {
+                     //adding all potential degree 2, which are people in the list who are both friends with the person (key)
+                     context.write(new Text(friendsList[i]), new PairWritable(new Text(friendsList[j]), new IntWritable(2)));
+                     context.write(new Text(friendsList[j]), new PairWritable(new Text(friendsList[i]), new IntWritable(2)));
+                 }
+             }
+         }   
+      }
+   }
+
+   public static class Reduce extends Reducer&lt;Text, PairWritable, Text, Text&gt; {
+      @Override
+      public void reduce(Text key, Iterable&lt;PairWritable&gt; values, Context context) throws IOException, InterruptedException {
+          Iterator&lt;PairWritable&gt; itr = values.iterator();
+          //use a hashmap to keep track of the friends of the person and the count
+          HashMap&lt;String, Integer&gt; hash = new HashMap&lt;String, Integer&gt;(); 
+          while (itr.hasNext()) {
+              PairWritable curEntry = itr.next();
+              String friendName = curEntry.getFriend();
+              // if this is a degree 1 friend, identify it with -1 and later delete it
+              if (curEntry.getDegree() == 1) hash.put(friendName, -1);
+              else {
+                  if (hash.containsKey(friendName)) {
+                      //if person already in the list
+                      if (hash.get(friendName) != -1) {
+                          //make sure that the friends pair are not degree 1 friends
+                          // if not, increase the count by 1
+                          hash.put(friendName, hash.get(friendName) + 1);
+                      }
+                  }
+                  else hash.put(friendName, 1);
+              }
+          }
+
+          // remove all degree 1 friend, sort top 10 with a top 10 heap (implemented by PriorityQueue), output 
+          PriorityQueue&lt;Entry&lt;String, Integer&gt;&gt; top10heap = new PriorityQueue&lt;Entry&lt;String, Integer&gt;&gt;(10, new Comparator&lt;Entry&lt;String, Integer&gt;&gt;() {
+
+            @Override
+            public int compare(Entry&lt;String, Integer&gt; o1,
+                    Entry&lt;String, Integer&gt; o2) {
+                return o2.getValue() - o1.getValue();
+            }
+          }); 
+
+          for (Entry&lt;String, Integer&gt; pairs: hash.entrySet()) {
+              if (!pairs.getValue().equals(-1)) top10heap.add(pairs);
+          }
+          StringBuffer output = new StringBuffer();
+          int count = 0;
+          int size = top10heap.size();
+          while (!top10heap.isEmpty()) {
+              output.append(top10heap.poll().getKey());
+              if (count &gt;= 9 || count &gt;= size-1) break;
+              count ++;
+              output.append(",");
+          }
+          context.write(key, new Text(output.toString()));
+      }
+   }
+
+
+   /*
+    * the implementation of a friend and the degree with the WritableComparable interface required as a value 
+    */
+   public static class PairWritable implements Writable {
+       private Text friend;
+       private IntWritable degree;
+
+       public PairWritable() {
+           this.friend = new Text();
+           this.degree = new IntWritable();
+       }
+
+       public PairWritable(Text friend1, IntWritable degree) {
+           this.friend = friend1;
+           this.degree = degree;
+       }
+
+       @Override
+       public void readFields(DataInput in) throws IOException {
+           this.friend.readFields(in);
+           this.degree.readFields(in);
+       }
+
+       @Override
+       public void write(DataOutput out) throws IOException {
+           friend.write(out);
+           degree.write(out);
+       }
+
+       public int getDegree() {
+           return degree.get();
+       }
+
+       public String getFriend() {
+           return friend.toString();
+       }
+   }
+
+}
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

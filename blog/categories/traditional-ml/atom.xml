@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: traditional_ml | My Octopress Blog]]></title>
+  <link href="http://yoursite.com/blog/categories/traditional-ml/atom.xml" rel="self"/>
+  <link href="http://yoursite.com/"/>
+  <updated>2018-04-02T00:55:31-07:00</updated>
+  <id>http://yoursite.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Reading | LDA, the Most Commonly-Used Topic Model]]></title>
+    <link href="http://yoursite.com/blog/2017/04/04/reading-notes-lda/"/>
+    <updated>2017-04-04T21:54:13-07:00</updated>
+    <id>http://yoursite.com/blog/2017/04/04/reading-notes-lda</id>
+    <content type="html"><![CDATA[<p>I have been working on projects related to user profiles lately at <a href="http://www.autodesk.com/">Autodesk</a>. An important part of the project are extracting information out of command usage data, of which <a href="http://www.cs.columbia.edu/~blei/papers/BleiNgJordan2003.pdf">Latent Dirichlet Allocation</a> has been the main driving force. Hoping to get a better grasp of the underlying principles of LDA, I am reading this one of the most cited papers in Computer Science, by Blei, Ng and Jordan. Admittedly, the Bayesian math was a bit hard for me and I was not able to fully comprehend the material (never a big fan of Bayesian Statistics). Maybe I should have taken <a href="http://cs.stanford.edu/~ermon/cs228/index.html">CS 228: Probabilistic Graphical Models</a></p>
+
+<!--more-->
+
+
+<h1>Intro</h1>
+
+<p>The goal of modeling text corpora is to find short descriptions of the text corpora while preserviing the essential statistical relationships. The basic methodology is to reduce each document in the corpus to a vector a real numbers. Important previous work includes TF-IDF, LSI and pLSI.</p>
+
+<h4>TF-IDF</h4>
+
+<ul>
+<li>Counts are formed for number of occurences of each word and normalized to term frequency (TF)</li>
+<li>The inverse document frequency (IDF) measures the number of occurences of words in the entire corpus. - The end result is a term-by-document matrix whose columns contain the tf-idf values for each document in the corpus</li>
+<li><strong>Shortcoming</strong>: relatively small amount of reduction in description length and reveals little in the way of intra-document statistical structure</li>
+</ul>
+
+
+<h4>Latent Semantic Indexing (LSI)</h4>
+
+<ul>
+<li>Perform SVD on the X matrix to identify a linear subspace of tf-idf features that captures most of the variance</li>
+<li>Achieve significant compression in large collections</li>
+</ul>
+
+
+<h4>Probabilistic LSI (pLSI)</h4>
+
+<ul>
+<li>Models each word in a document as a sample from a mixutre model where the mixture components are random variables that can be viewed as representations of topics</li>
+<li>Each Document is represented as a list of mixing proportions for these mixture components and thereby reduced to a probability distribution on a fixed set of topics</li>
+<li>Both LSI and pLSI relies on the fundamental assumption of <strong>exchangeability</strong>, which means that the order of words in a document can be neglected and the specific ordering of the documents in a corpus can also be neglected</li>
+</ul>
+
+
+<h1>Model</h1>
+
+<p>The basic idea of LDA is that documents are represented as random mixtures over latent topics, where each topic is characterized by a distribution over words. The LDA assumes follows the generative process of:</p>
+
+<ol>
+<li>Decide the number of words in  the document $N \sim \text{Poisson}(\zeta)$</li>
+<li>Decide the topic mixture for the document $\theta \sim \text{Dir}(\alpha)$</li>
+<li>For each of the $N$ words $w_n$:
+
+<ul>
+<li>Choose a topic $z_n \sim \text{Multinomial}(\theta)$</li>
+<li>Choose a word $w_n$ from $p(w_n|z_n, \beta)$, a multinomial probability condiditioned on the topic $z_n$</li>
+</ul>
+</li>
+</ol>
+
+
+<p>The dimensionality $k$ of the <a href="https://en.wikipedia.org/wiki/Dirichlet_distribution">Dirichlet distribution</a> is the number of latent topics, which we assume is fixed and given. The $k$-dimensional Dirichlet random variable $\theta$ that parametrized the Multinomial Distribution that select the topics takes values in the $(k-1)$-simplex. The word probabilities $p(w_n|z_n, \beta)$ is parametrized by a $k \times V$ matrix $\beta$, which need to be estimated.</p>
+
+<p>Given the parameters $\alpha$ an $\beta$, the joint distribution of a topic mixture $\theta$, a set of $N$ topics $z$ and a set of $N$ words $w$ is
+$$p(\theta, z, w|\alpha,\beta) = p(\theta|\alpha) \prod_{n=1}^N p(z_n|\theta) p(w_n|z_n,\beta)$$</p>
+
+<p>Given that the distribution of topics $z$ sums up to 1 for a given set of parameter $\theta$, the marginal distribution of a topic mixture and a set of words is
+$$p(\theta, w|\alpha,\beta) = p(\theta|\alpha) \prod_{n=1}^N \sum_{z_n} p(z_n|\theta) p(w_n|z_n,\beta)$$</p>
+
+<p>And the marginal distribution of a document can be obtained by integrating over $\theta$,
+$$p(w|\alpha,\beta) = \int p(\theta|\alpha) \left[ \prod_{n=1}^N \sum_{z_n} p(z_n|\theta) p(w_n|z_n,\beta) \right] d\theta$$</p>
+
+<p>Finally, the product of the marginal probabilities of single documents is the probabilities of a corpus:
+$$p(D|\alpha,\beta) = \prod_{d=1}^M \int p(\theta_d|\alpha) \left[ \prod_{n=1}^{N_d} \sum_{z_{n,d}} p(z_{n,d}|\theta_d) p(w_{n,d}|z_{n,d},\beta) \right] d\theta_d$$</p>
+
+<p><strong>The LDA model is a probabilistic graphical model, as shown in the figure below. The parameters $\alpha$ and $\beta$ are corpus-level parameters and is sampled once in the process of generating the entire corpus. The variables $\theta_d$ are document-level variables and are sampled once per document. The variables $z_{n,d}$ and $w_{n,d}$ are word-level variables and are sampled once for each word in each document</strong>.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post9/lda_model.png" alt="lda_model" /></p>
+
+<h1>Parameter Estimation</h1>
+
+<p>The parameter of the LDA model is estimated by maximizing the log likelihood of the corpus
+$$l(\alpha, \beta) = \sum_{d=1}^M \text{log} \ p(w_d|\alpha,\beta)$$
+However, explicitly finding the maximum log likihood is often hard for models with latent random variables, and in this case the quantity $p(w_d|\alpha,\beta)$ cannot be computed tractably. In such setting, the <a href="https://en.wikipedia.org/wiki/Expectation%E2%80%93maximization_algorithm">expectation maximization (EM)</a> algorithm comes to rescue. The strategy is to repeatedly construct a lower-bound on $l$ with methods invloved with Jensen&rsquo;s inequality (E-step), and then optimize that lower-bound (M-step).</p>
+
+<p>The LDA model in particular is solved by a variational EM algorithm, where the lower bound is constructed by the <a href="https://en.wikipedia.org/wiki/Variational_Bayesian_methods">convexity-based variational inference</a></p>
+
+<ol>
+<li><strong>E-step</strong>: For each document, find the optimizing values of the variational parameters $\gamma_d^\ast, \phi_d^\ast$</li>
+<li><strong>M-step</strong>: Maximize the lower bound on the log likelihood with respect to the model parameters $\alpha$ and $\beta$, which corresponds to finding maximum likelihood estimates for each document under the approximate posterior computed in E-step</li>
+</ol>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Case-control Sampling In Imbalanced Datasets]]></title>
+    <link href="http://yoursite.com/blog/2017/03/25/case-sampling-in-imbalanced-datasets/"/>
+    <updated>2017-03-25T21:37:28-07:00</updated>
+    <id>http://yoursite.com/blog/2017/03/25/case-sampling-in-imbalanced-datasets</id>
+    <content type="html"><![CDATA[<p>This problem was briefly introduced in <a href="http://statweb.stanford.edu/~tibs/stat315a.html">STATS315A Applied Modern Statistics: Learning</a> by the renowned Professor <a href="https://web.stanford.edu/~hastie/">Trevor Hastie</a>. Given that the imbalanced dataset problem is ubiquitous in data science, such as modeling click through rate or anomaly detection, I think the case-sampling trick was one of the most practical tricks I have learned in this class.</p>
+
+<!--more-->
+
+
+<h3>Case-Control Sampling Use Case</h3>
+
+<p>The concept of case-control sampling originated in epidemiology, where a prospective study is often costly in time and money so a retrospective study is choose instead. Let&rsquo;s take an example of studying a disease with 1% prevalence. The prospective study would be collecting data on a large group of people for a period of time. However, getting 1000 cases means following a group of 100,000 people, which is impractical. The retrospective study would be sampling cases and controls at different rates to form a dataset. Often cases are rare so they are all taken. Up to a few times of controls are taken as well.</p>
+
+<h3>Intercept Transformation</h3>
+
+<p>However, the case-control sample has a much greater prevalence. Assuming we are modeling with logistic regression, we still have the correct regression coefficients $\beta$, but the intercept term $\beta_0$ is incorrect. We can correct the estimated intercept by the transformation (shameless stolen from lecture slide 4 of STATS315A)
+$$\hat{\beta}^\ast_0 = \hat{\beta}_0 + \text{log}\frac{\pi}{1-\pi} - \text{log}\frac{\pi^\ast}{1-\pi^\ast}$$
+A more detailed proof can be found with <a href="http://www.ams.org/mathscinet-getitem?mr=0345332">Separate Sample Logistic Discrimination(Anderson et al. 1972)</a></p>
+
+<h3>Diminishing return on coefficients variance</h3>
+
+<p>Sampling more negatives/controls does give us more data, which reduces the variance of the coefficients. However, since the number of positives/cases is fixed in the dataset, beyond some point, the variance in the coefficients mainly comes from the positives/cases. Sampling only more negatives/controls has a diminishing return effect, as shown by the following plot (shameless stolen from lecture slide 4 of STATS315A).</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post8/variance_control%3Acase_ratio.png" alt="png" /></p>
+
+<h3>Extension to Modern Data Science Application</h3>
+
+<p>The idea of case-control sampling can be easily extend to modern data science application. When modeling click through rate, very often there is 1 positives (click-through) in more than 10000 data points (impression), which gives a control/case ratio of greater than 10000. With the same diminishing return effect as described in last paragraph, the large number of negatives doesn&rsquo;t offer much other than wasting computing powers. By appling the case-control sampling method, We can undersample the negatives by taking 10-15 negatives per positives and achieve a similar performance as using the full dataset, but much faster computation.</p>
+
+<p>See <a href="https://arxiv.org/pdf/1306.3706.pdf">Local Case-Control Sampling: Efficient Subsampling in Imbalanced Data Sets(Fithian et al. 2014)</a> for more advanced subsampling techniques that is consistent even when the model is misspecified.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Linear Regression and the KNN]]></title>
+    <link href="http://yoursite.com/blog/2017/02/08/linear-regression-and-the-knn/"/>
+    <updated>2017-02-08T17:09:38-08:00</updated>
+    <id>http://yoursite.com/blog/2017/02/08/linear-regression-and-the-knn</id>
+    <content type="html"><![CDATA[<p>This was an homework problem in <a href="http://statweb.stanford.edu/~tibs/stat315a.html">STATS315A Applied Modern Statistics: Learning</a> at Stanford and I thought it is worth sharing. It runs a simulation to compare KNN and linear regression in terms of their performance as a classifier, in the presence of an increasing number of noise variables.</p>
+
+<!--more-->
+
+
+<h2>Model</h2>
+
+<p>We have a binary response variable $Y$, which takes value ${0,1}$. The feautre variable $X$ is in $\mathcal{R}^{2 + k}$, of which 2 are the true features and the rest $k$ are noise features. The model used to simulate the data is a <a href="https://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model">Gaussian Mixture</a>. First we generate 6 location vectors $m_{k}$ in $\mathcal{R}^{2}$ from a bivariate Gaussian $N[(1,0)^{T}, \boldsymbol{I}]$ with $Y = 1$ and 6 location vectors from $N[(0,1)^{T}, \boldsymbol{I}]$ with $Y = 0$. To simulate $n$ observations from each class, we picked an location vector $m_k$ with a probaility of $1/6$ and then generate one observation from $N[m_k, \boldsymbol{I}/5]$.</p>
+
+<h2>Data Simulation</h2>
+
+<pre><code class="r">set.seed(1)
+library(MASS)
+library(mvtnorm)
+library(class)
+# generate the location vectors with multivariate gaussian
+class_0_loc_vec &lt;- mvrnorm(n = 6, c(0,1), diag(2))
+class_1_loc_vec &lt;- mvrnorm(n = 6, c(1,0), diag(2))
+class_loc_vec &lt;- rbind(class_0_loc_vec, class_1_loc_vec)
+
+# function to generate sample points from the gaussian mixture
+sample_points &lt;- function(centroid, N, sigma2) {
+  # function to generate a sample point, given a location vector
+  simulate_points &lt;- function(centroidNum) {
+    return(mvrnorm(n=1, centroid[centroidNum,], sigma2 * diag(2)))
+  }
+  # randomly choose from the 6 location vectors from class 0
+  random_centrod_0 &lt;- sample(1:6, N/2, replace=T)
+  X_0 &lt;- sapply(random_centrod_0, simulate_points)
+  # randomly choose from the 6 location vectors from class 1
+  random_centrod_1 &lt;- sample(7:12, N/2, replace=T)
+  X_1 &lt;- sapply(random_centrod_1, simulate_points)
+  return(rbind(t(X_0), t(X_1)))
+}
+
+# generate a training set of 200 and a test set of 20k, half and half for class 0 and 1
+xtrain &lt;- sample_points(class_loc_vec, 300, 0.2)
+ytrain &lt;- rbind(matrix(0, 150, 1), matrix(1, 150, 1))
+xtest &lt;- sample_points(class_loc_vec, 20000, 0.2)
+ytest &lt;- rbind(matrix(0, 10000, 1), matrix(1, 10000, 1))
+</code></pre>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post7/plot1.jpeg" alt="png" /></p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post7/plot2.jpeg" alt="png" /></p>
+
+<h2>Bayes Clasifier</h2>
+
+<p>Given that we know the underlyign model, we can compute the Bayes Classifier
+$$\hat{Y}(x) = \text{argmax}_Y(Pr(Y|X=x))$$
+In our case, we can find the closest location vector to an observation and assign the observation to its class.</p>
+
+<pre><code class="r"># bayes classifier
+bayes_classifier &lt;- function(centroid, X, sigma) {
+  # due to equal covariance, we only need to find closest centroid and assign it to its class
+  findClosestCentroid &lt;- function(index) {
+    evaluate_density &lt;- function(ccentroid_index, index) {
+      return(dmvnorm(X[index,], centroid[ccentroid_index,], sigma = sigma^2 * diag(2)))
+    }
+    densities &lt;- sapply(1:12, evaluate_density, index = index)
+    return(which.max(densities))
+  }
+  n &lt;- dim(X)[1]
+  assigned_centroids &lt;- sapply(1:n, findClosestCentroid)
+  y_pred &lt;- sapply(assigned_centroids, function(x){if (x &lt; 7) return(0) else return(1)})
+  return(y_pred)
+}
+</code></pre>
+
+<h2>Function to Add Noise</h2>
+
+<p>We adds up to $K$ noise features to the training data, drawing each noise observations from the uniform normal distribution $N(0,1)$</p>
+
+<pre><code class="r"># function to add noise
+add_noise &lt;- function(data, noise, sigma.noise) {
+  noise &lt;- mvrnorm(n = dim(data)[1], rep(0, noise), sigma.noise^2 * diag(noise))
+  data_noise &lt;- cbind(data, noise)
+  return(data_noise)
+}
+</code></pre>
+
+<h2>Function to Evaluate Accuracy and Plot</h2>
+
+<pre><code class="r"># function to evaluate knn error with a vector of k
+evaluate_knn_vec &lt;- function(xtrain, xtest, ytrain, ytest, k_vec) {
+  evaluate_knn &lt;- function(k) {
+    knn_pred = knn(train = xtrain, test = xtest, k = k, cl = ytrain)
+    return(1-sum(knn_pred == ytest)/length(ytest))
+  }
+  knn_test_error = sapply(k_vec, evaluate_knn)
+  return(knn_test_error)
+}
+# function to evaluate least squares classifiers test errors
+evaluate_ls &lt;- function(xtrain, xtest, ytrain, ytest) {
+  xtrain &lt;- cbind(xtrain, matrix(1, dim(xtrain)[1], 1))
+  xtest &lt;- cbind(xtest, matrix(1, dim(xtest)[1], 1))
+  beta &lt;- solve(t(xtrain) %*% xtrain) %*% t(xtrain) %*% ytrain
+  y_pred_numeric &lt;- xtest %*% beta
+  y_pred &lt;- sapply(y_pred_numeric, function(x){if (x &lt; 0.5) return(0) else return(1)})
+  return(1 - sum(y_pred == ytest)/length(ytest))
+}
+# function to evaluate bayes classifiers test errors
+evaluate_bayes &lt;- function(centroid, X, Y,sigma) {
+  y_pred &lt;- bayes_classifier(centroid, X, sigma)
+  return(1-sum(y_pred == Y)/length(Y))
+}
+# function to compute all errors with added noise, color argument is for plotting on the same figure
+compute_plot_errors &lt;- function(noise, sigma.noise, color) {
+  xtrain &lt;- add_noise(xtrain, noise, sigma.noise)
+  xtest &lt;- add_noise(xtest, noise, sigma.noise)
+  k &lt;- c(1, 3, 5, 7, 9, 11, 13, 15)
+  knn_error &lt;- evaluate_knn_vec(xtrain, xtest, ytrain, ytest, k)
+  ls_error &lt;- evaluate_ls(xtrain, xtest, ytrain, ytest)
+  if (noise == 1) {
+    plot(k, knn_error, type = "b", pch = 16,ylim = c(0, 0.3), col = color, xlab = "k/DoF", ylab = "Test Error")
+  }
+  else {
+    points(k, knn_error, type = "b", pch = 16,ylim = c(0, 0.3), col = color)
+  }
+  points(3+noise, ls_error, pch = 18)
+  abline(h=bayes_error, col="brown")
+}
+</code></pre>
+
+<h2>Simulate Performance for $K = 1 \cdots 10$</h2>
+
+<pre><code class="r">colors = palette(rainbow(10))
+for (noise in 1:10) {
+  compute_plot_errors(noise, 1, colors[noise])
+}
+x &lt;- 1:10
+legend_names &lt;- c(paste("Noise", x), "Least Squares","Bayes Error")
+legend("bottom",legend_names,fill=c(colors, "black", "brown"),ncol=4, cex = 0.9)
+</code></pre>
+
+<h2>Results</h2>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post7/plot3.jpeg" alt="png" /></p>
+
+<p>Overall, the test error of KNN decreases as $k$ increases, no matter how many noise parameters there are The test error of KNN generally increases significantly as the number of noise parameters increases, while the test error of least squares stays at about the same level. This shows that the KNN is more susceptible to high noise due to its flexiblity. The least squares is more rigid and is less affected by the noise. KNN overperforms the least squares when the noise-to-signal ratio is low and underperforms the least squares when the noise-to-signal ratio is high.</p>
+]]></content>
+  </entry>
+  
+</feed>

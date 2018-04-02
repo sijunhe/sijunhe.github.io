@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: java | My Octopress Blog]]></title>
+  <link href="http://yoursite.com/blog/categories/java/atom.xml" rel="self"/>
+  <link href="http://yoursite.com/"/>
+  <updated>2018-04-02T00:55:31-07:00</updated>
+  <id>http://yoursite.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Detecting Community Structures in Networks]]></title>
+    <link href="http://yoursite.com/blog/2016/04/05/detecting-community-structures-in-networks/"/>
+    <updated>2016-04-05T16:46:58-07:00</updated>
+    <id>http://yoursite.com/blog/2016/04/05/detecting-community-structures-in-networks</id>
+    <content type="html"><![CDATA[<p>The purpose of this post is two-folded</p>
+
+<ul>
+<li>To gain hands-on experience with graph algorithms</li>
+<li>To complete the project from Coursera: <a href="https://www.coursera.org/learn/intermediate-programming-capstone">Capstone: Analyzing Social Network Data</a></li>
+</ul>
+
+
+<!--more-->
+
+
+<h2>Problem</h2>
+
+<p>A well known property in networked systems is that network nodes are joined together in tightly knit groups. The connections within groups are significantly denser compared with connections between different groups. The <a href="https://en.wikipedia.org/wiki/Girvan%E2%80%93Newman_algorithm">Girvan-Newman algorithm</a> is an method for detecting such close knit communities, leveraging the idea of betweenness of edges. My goal here is to implement the Girvan-Newman algorithm in java, and apply it to a few datasets to observe how it performs.</p>
+
+<h2>Data</h2>
+
+<p>When it comes to implementing an algorithm from a paper, you can&rsquo;t get better datasets other than the ones used by the original authors. Therefore I picked two datasets that was from the original paper. I also applied the algorithm on a slightly larger graph(~1000 nodes) just to see how it performs on larger graphs that has no clear communities.</p>
+
+<ul>
+<li><a href="https://networkdata.ics.uci.edu/data.php?id=10">Zachary&rsquo;s Karate Club</a>: A 34 node graph of Social network of friendships between 34 members of a karate club at a US university in the 1970</li>
+<li><a href="https://networkdata.ics.uci.edu/data.php?id=5">American College Football</a>: A 114 node graph of network of American football games between Division IA colleges during regular season Fall 2000</li>
+<li><a href="https://archive.org/details/oxford-2005-facebook-matrix">UCSD Facebook Graph - 1000</a>: A scaled-down version (783 nodes) of the Facebook friendships between students at UCSD in 2005</li>
+</ul>
+
+
+<h2>Algorithm</h2>
+
+<p>The key concepts in the Girvan-Newman Algorithm is <strong>edge betweenness</strong>, which is defined as the number of shortest paths between pairs of vertices that run along it. If there&rsquo;s more than one shortest path between a pair of vertices, each path is given equal weight. The interpretation behind the edge betweenness is that communities in the network are loosely connected by a few edges, hence all the shortest paths between the communities would have go through one of these few edge, which results in high edge betweenness. The next step is to remove the edge with the highest betweenness and re-compute the betweenness for all the edges. We iterate this until a desired number of communities has already been reached or until there is no edge remain.</p>
+
+<p>The first problem I encountered was to find all the shortest paths between a pair of vertices. We could easily find one shortest path with <a href="https://en.wikipedia.org/wiki/Breadth-first_search">Bread First Search (BFS)</a>, but it would return the path immediately after it finds one, instead of finding all shortest paths. Hence, I needed to make some minor modifications to the BFS algorithm. The two key modification is as follows</p>
+
+<ul>
+<li>Allow vertices to be discovered more than once from different vertices, as long as the vertex getting discovered is one level further than the vertex from which it discovers</li>
+<li>Allow vertices to have multiple parents</li>
+<li>After finding the target node, run <a href="https://en.wikipedia.org/wiki/Depth-first_search">Depth First Search (DFS)</a> through the parents all the way to the starting vertex to return all possible shortest paths</li>
+</ul>
+
+
+<h3>Modified BFS Pseudocode</h3>
+
+<pre><code class="python">def ModifiedBFS(Node start, Node end):
+    add start to the queue
+    while (queue is not empty):
+        Node current = queue.pop 
+        set current as visited
+        for each neighbor of current:
+            if (neighbor is not in queue):
+                add neighbor to queue 
+            if (neighbor's level &gt; current's level): 
+                add Node current as a parent of Node neighbor
+
+    return all paths found from Node end to Node start using DFS
+</code></pre>
+
+<h3>Finding Number of Communities In the Network</h3>
+
+<p>There is a well-known algorithm for finding all <a href="https://en.wikipedia.org/wiki/Strongly_connected_component">Strongly Connected Components</a> in a graph. The number of Strongly Connected Components(SCC) is the number of communities in the graph. The algorithm is <a href="https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm">Tarjan&rsquo;s strongly connected components algorithm</a></p>
+
+<h3>Overall Pseudocode</h3>
+
+<pre><code class="python">def GirvanNewman():
+    while (no edge left or desired number of communities unreached):
+        calculate Betweeness of all edges
+        remove the edge with the highest edge betweenness
+        calculate the number of strongly connected component (communities)
+</code></pre>
+
+<h3>Sidenote</h3>
+
+<p>It was pointed out from the original paper that when recalculating the betweenness of all edges, only the betweenness of the edges that are affected by the removal of the edge with highest betweenness would need to get re-computed. This may improve the time complexity of the algorithm, which is the main disadvantage of the algorithm. The time complexity is (O(m<sup>2n</sup>)), where m is the number of edges and n is the number vertices. However, this could dramatically increase the space complexity. Since there is no way of knowing which edge would be removed before hand, we would need to store the shortest path between all pairs of vertices. Best case scenario, all pairs of vertices has constant shortest path, which gives (O(n<sup>2</sup>)), which is already greater than the space we needed for the adjacency list we need to store the graph. The worst case of number of shortest path between a pair of vertices would be <strong>exponential</strong>!. So I don&rsquo;t think this is a good idea, as the worst case would most certainly kill the algorithm.</p>
+
+<h2>Results</h2>
+
+<h3>Zachary&rsquo;s Karate Club</h3>
+
+<p>The graph below shows the two community separation made by the Girvan-Newman algorithm, compared with the ground-truth communities. The only misclassified node is marked green, which is node 3 in the above graph. As we can see, the algorithm performed pretty well and the result is consistent with the result from the original paper.
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post5/karate.png"></p>
+
+<h3>American College Football</h3>
+
+<p>The two graphs below shows the comparison between the communities detected based on the American football games between Division IA colleges and the ground truth conferences each college plays in. As we can see, the algorithm did a great job, which is consistent with the results from the original paper. It is worth noting that since the algorithm had a difficult detecting the &ldquo;Independent&rdquo; schools, which are the brown cluster in the middle. This is because independent schools aren&rsquo;t really a league and they play against schools in other conferences, as opposed to other independent schools.
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post5/footballTrue.png">
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post5/footballMy.png"></p>
+
+<h3>UCSD Facebook Graph</h3>
+
+<p>This is an trimmed downed version of the original 15000+ nodes graph of the Facebook friendship in UCSD in 2005. As opposed to the earlier two examples, this dataset has no obvious ground truth communities, which explains why the Girvan-Newman algorithm is struggling splitting the graph. Since there were no major communities in the graph, the algorithm could only detects the very small communities on the outside of the graph that are connected to the main graph by very few edges, as opposed to splitting the graph in major groups. A better algorithm for this situation would be the <a href="https://en.wikipedia.org/wiki/Louvain_Modularity">Louvain Modularity</a>, which produces a much more reasonable 5 community graph.</p>
+
+<p>It is also worth noting that with a moderate size graph like this (~800 nodes), the Girvan-Newman algorithm is taking about 200 seconds for each iterations with my Mac, indicating that it is not that scaleable.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post5/5Group.png">
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post5/socialModuarity.png"></p>
+
+<h2>Improvements</h2>
+
+<p>While the Girvan-Newman algorithm is indeed quite slow, the good news is that it is can be easily parallelized! The most time consuming part of the algorithm is finding the betweenness of all the edges. It has no data dependency at all and can be easily run in parallel. While I haven&rsquo;t implemented it, here&rsquo;s some pseudocode in MapReduce.
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">map</span><span class="p">():</span>
+</span><span class='line'>    <span class="n">read</span> <span class="nb">all</span> <span class="n">graph</span> <span class="n">data</span>
+</span><span class='line'>    <span class="n">find</span> <span class="n">shortest</span> <span class="n">path</span> <span class="n">between</span> <span class="n">start</span> <span class="ow">and</span> <span class="n">end</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">each</span> <span class="n">path</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">each</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">emit</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">number</span> <span class="n">of</span> <span class="n">shortest</span> <span class="n">path</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">reduce</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">values</span> <span class="n">array</span><span class="p">):</span>
+</span><span class='line'>    <span class="nb">sum</span> <span class="n">values</span> <span class="n">array</span>
+</span><span class='line'>    <span class="n">emit</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">betweenness</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Friends You Might Know]]></title>
+    <link href="http://yoursite.com/blog/2016/01/19/friends-you-might-know/"/>
+    <updated>2016-01-19T15:46:36-08:00</updated>
+    <id>http://yoursite.com/blog/2016/01/19/friends-you-might-know</id>
+    <content type="html"><![CDATA[<p>This is a problem from <a href="http://web.stanford.edu/class/cs246/">CS246</a>: Mining Massive Datasets from Stanford University. The idea behind the original &ldquo;People You Might Know&rdquo; friendship recommendation algorithm is that if two people share a high number of mutual friends, they are more likely to know each other and thus the system would recommend that they connect with each other.</p>
+
+<!--more-->
+
+
+<h2>Problem Statement</h2>
+
+<p>The input here can be found <a href="https://s3-us-west-1.amazonaws.com/sijunhe-blog/data/soc-LiveJournal1Adj.txt">here</a>, which is in the form of [User][Tab][Friends]&ldquo;, where [Friends] is a comma-separated list of Users. The output will be in terms of [User][Tab][Recommendations], where [Recommendations] is a comma-separated list of users that are recommended friend.</p>
+
+<p>We could use a algorithm that for each user A, it recommends N = 10 users who are not already friends with A, but share the largest number of mutual friends in common with A.</p>
+
+<h2>Approach and Pseudocode</h2>
+
+<p>The key is that for each user, the algorithm needs to find out the users who share mutual friends with him. Then, the algorithm needs to sort the users by the number of mutual friends in descending order and to make sure not to recommend the users who are already friends with A. Clearly, this is a highly parallelizable problem since for each user the computation is entirely separated. This would make a great MapReduce problem.</p>
+
+<h4>Terminology</h4>
+
+<p>For each user A:</p>
+
+<p>Degree 1 friends: the users who A is already friends with<br/>
+Degree 2 friends: the users who shares a mutual friend with A.<br/>
+Degree 2 friends could potentially be degree 1 friends as well and we are interested in the users who are degree 2 friends with A, but not degree 1 friends.</p>
+
+<h4>Approach</h4>
+
+<p>Since we are using MapReduce, we want the reducer to have the key as A, and the value as an <a href="https://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html">Iterable</a> of degree 1 friends and degree 2 friends.</p>
+
+<p>Example input: A B,C,D</p>
+
+<p>Mapper:</p>
+
+<ul>
+<li>Computing degree 1 friends for A would be straightforward, as they would just be the users in the comma-separated friends list. The mapper would just emit the key values pairs of (A, B), (A, C) and (A, D)</li>
+<li>Computing degree 2 friends is a little trickier. Here we will use A as the key, but as the mutual friend. For example, from A&rsquo;s friends list, we know B and C both have A as a mutual friend. Therefore B is a degree 2 friend of C and vice versa. The mapper would emit (B, C), (C, B), (B, D), (D, B), (C, D) and (D, C)</li>
+</ul>
+
+
+<p>Reducer:</p>
+
+<ul>
+<li>The reducer receives the key, which is an user, and an Iterable of degree 1 and degree 2 friends of the key</li>
+<li>The reducer needs to count the number of times that a degree 2 friend pair shows up is the number of their mutual friends</li>
+<li>The reducer then needs to sort the degree two friends of the key by the number of mutual friends</li>
+<li>The reducer needs to make sure that degree 1 don&rsquo;t get recommended</li>
+</ul>
+
+
+<h4>Pseudocode</h4>
+
+<pre><code>Map: 
+
+    for each user, friendList:
+        for each friend i in friendList:
+            emit (user, (i, 1)) 
+            for each friend j in friendlist: 
+            emit (j, (i, 2))
+            emit (i, (j, 2))
+
+Reduce: 
+
+    for each user, friendDegreeList:
+
+        for each (friend, degree) in  friendDegreeList:
+            if degree == 1: hashmap.add(friend, -1)
+            else:
+                if (friend in hashmap):
+                    hashmap[friend] += 1
+                else:
+                    hashmap.add(friend, 1)
+
+        for each entry in hashmap:
+            if (value != -1): add to list
+
+        sort list
+                output top N
+</code></pre>
+
+<h2>Hadoop MapReduce Program</h2>
+
+<pre><code class="Java">package edu.stanford.cs246.friendrecommendation;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.PriorityQueue;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
+
+public class FriendRecommendation extends Configured implements Tool {
+   public static void main(String[] args) throws Exception {
+      System.out.println(Arrays.toString(args));
+      int res = ToolRunner.run(new Configuration(), new FriendRecommendation(), args);
+      System.exit(res);
+   }
+
+   @Override
+   public int run(String[] args) throws Exception {
+      System.out.println(Arrays.toString(args));
+      Job job = new Job(getConf(), "FriendRecommendation");
+      job.setJarByClass(FriendRecommendation.class);
+      job.setMapOutputKeyClass(Text.class);
+      job.setMapOutputValueClass(PairWritable.class);
+
+      job.setMapperClass(Map.class);
+      job.setReducerClass(Reduce.class);
+
+      job.setInputFormatClass(KeyValueTextInputFormat.class);
+      job.setOutputFormatClass(TextOutputFormat.class);
+
+      FileInputFormat.addInputPath(job, new Path(args[0]));
+      FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+      job.waitForCompletion(true);
+
+      return 0;
+   }
+
+   public static class Map extends Mapper&lt;Text, Text, Text, PairWritable&gt; {
+
+      @Override
+      public void map(Text key, Text value, Context context) throws IOException, InterruptedException {;
+         if (value.getLength() != 0) {
+             String[] friendsList = value.toString().split(",");
+             for (int i = 0; i &lt; friendsList.length; i ++) {
+                 //adding all degree 1 friends to keep track of the people who are already friends and don't need to be recommended
+                 context.write(key, new PairWritable(new Text(friendsList[i]), new IntWritable(1)));
+                 for (int j = i + 1; j &lt; friendsList.length; j++) {
+                     //adding all potential degree 2, which are people in the list who are both friends with the person (key)
+                     context.write(new Text(friendsList[i]), new PairWritable(new Text(friendsList[j]), new IntWritable(2)));
+                     context.write(new Text(friendsList[j]), new PairWritable(new Text(friendsList[i]), new IntWritable(2)));
+                 }
+             }
+         }   
+      }
+   }
+
+   public static class Reduce extends Reducer&lt;Text, PairWritable, Text, Text&gt; {
+      @Override
+      public void reduce(Text key, Iterable&lt;PairWritable&gt; values, Context context) throws IOException, InterruptedException {
+          Iterator&lt;PairWritable&gt; itr = values.iterator();
+          //use a hashmap to keep track of the friends of the person and the count
+          HashMap&lt;String, Integer&gt; hash = new HashMap&lt;String, Integer&gt;(); 
+          while (itr.hasNext()) {
+              PairWritable curEntry = itr.next();
+              String friendName = curEntry.getFriend();
+              // if this is a degree 1 friend, identify it with -1 and later delete it
+              if (curEntry.getDegree() == 1) hash.put(friendName, -1);
+              else {
+                  if (hash.containsKey(friendName)) {
+                      //if person already in the list
+                      if (hash.get(friendName) != -1) {
+                          //make sure that the friends pair are not degree 1 friends
+                          // if not, increase the count by 1
+                          hash.put(friendName, hash.get(friendName) + 1);
+                      }
+                  }
+                  else hash.put(friendName, 1);
+              }
+          }
+
+          // remove all degree 1 friend, sort top 10 with a top 10 heap (implemented by PriorityQueue), output 
+          PriorityQueue&lt;Entry&lt;String, Integer&gt;&gt; top10heap = new PriorityQueue&lt;Entry&lt;String, Integer&gt;&gt;(10, new Comparator&lt;Entry&lt;String, Integer&gt;&gt;() {
+
+            @Override
+            public int compare(Entry&lt;String, Integer&gt; o1,
+                    Entry&lt;String, Integer&gt; o2) {
+                return o2.getValue() - o1.getValue();
+            }
+          }); 
+
+          for (Entry&lt;String, Integer&gt; pairs: hash.entrySet()) {
+              if (!pairs.getValue().equals(-1)) top10heap.add(pairs);
+          }
+          StringBuffer output = new StringBuffer();
+          int count = 0;
+          int size = top10heap.size();
+          while (!top10heap.isEmpty()) {
+              output.append(top10heap.poll().getKey());
+              if (count &gt;= 9 || count &gt;= size-1) break;
+              count ++;
+              output.append(",");
+          }
+          context.write(key, new Text(output.toString()));
+      }
+   }
+
+
+   /*
+    * the implementation of a friend and the degree with the WritableComparable interface required as a value 
+    */
+   public static class PairWritable implements Writable {
+       private Text friend;
+       private IntWritable degree;
+
+       public PairWritable() {
+           this.friend = new Text();
+           this.degree = new IntWritable();
+       }
+
+       public PairWritable(Text friend1, IntWritable degree) {
+           this.friend = friend1;
+           this.degree = degree;
+       }
+
+       @Override
+       public void readFields(DataInput in) throws IOException {
+           this.friend.readFields(in);
+           this.degree.readFields(in);
+       }
+
+       @Override
+       public void write(DataOutput out) throws IOException {
+           friend.write(out);
+           degree.write(out);
+       }
+
+       public int getDegree() {
+           return degree.get();
+       }
+
+       public String getFriend() {
+           return friend.toString();
+       }
+   }
+
+}
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

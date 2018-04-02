@@ -1,0 +1,380 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Reading | Apache Spark Research Paper III - My Octopress Blog</title>
+	<meta name="author" content="Your Name">
+
+	
+	<meta name="description" content="Reading | Apache Spark Research Paper III This follows up the last post and I will read the third Apache Spark paper Spark SQL: Relational Data &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://yoursite.com/blog/2016/08/25/reading-notes-apache-spark-research-paper-iii/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='https://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!--- MathJax Configuration -->
+	<script type="text/x-mathjax-config">
+  		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script type="text/javascript" async
+	  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+	</script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><img src= 'https://s3-us-west-1.amazonaws.com/sijunhe-blog/images/name_white.png' height: 150px width: 150px >
+<nav id="main-nav">
+<ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/blog/categories">Categories</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Reading | Apache Spark Research Paper III</h1>
+	<div class="entry-content" itemprop="articleBody"><p>This follows up the last post and I will read the third Apache Spark paper <a href="http://people.csail.mit.edu/matei/papers/2015/sigmod_spark_sql.pdf">Spark SQL: Relational Data Processing in Spark</a>, published by Armbrust et al. in 2015</p>
+
+<!--more-->
+
+
+<h3>1. Intro</h3>
+
+<ul>
+<li>Earliest big data processing systems like MapReduce give users a low-level <strong>procedural</strong> programming interface, which was onerous and required manual optimization by the user to achieve high performance</li>
+<li>New systems sought to offer relational interfaces to big data, like Pig, Hive, Dremel and Shark</li>
+<li>Spark SQL is bridges the gap between relational systems and procedural systems through two contributions:
+
+<ul>
+<li>a <strong>DataFrame</strong> API that allows relational operations, similar to the data frame concept in R, but evaluates operations lazily</li>
+<li>an optimizer <strong>Catalyst</strong>, that make it easy to dd data sources, optimization rules and data types for domains such as machine learning</li>
+</ul>
+</li>
+</ul>
+
+
+<h3>2. Programming Interface</h3>
+
+<p>Spark SQL runs as a library on top of Spark and exposed SQL interfaces through JDBC/ODBC, command-line console or DataFrame API
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post6/spark_sql_diagram.png"></p>
+
+<h4>2.1 DataFrame API</h4>
+
+<ul>
+<li>A distributed collection of rows with the same schema (RDD of Row objects), equivalent to a table in relational database and can be manipulated with various relational operators</li>
+<li>DataFrames are lazy, in that each DataFrame object represents a <strong>logical plan</strong> to compute a dataset, but no execution occurs until the user calls an action</li>
+</ul>
+
+
+<h4>2.2 Data Model</h4>
+
+<ul>
+<li>Nested data model based on Hive and supports all major SQL data types</li>
+<li>Provides support for non-atomic data types like structs, arrays, maps and unions, which are not usually in RDMBS</li>
+</ul>
+
+
+<h4>2.3 DataFrames vs SQL</h4>
+
+<ul>
+<li>Easier to use due to integration in a full programming language</li>
+<li>Have full control building logical plan, which will be optimized by the Catalyst</li>
+<li>Able to store and access intermediate results</li>
+</ul>
+
+
+<h3>3. Catalyst Optimizer</h3>
+
+<ul>
+<li>Catalyst’s extensible design had two purposes
+
+<ul>
+<li>Make it easy to add new optimization techniques and features to Spark SQL</li>
+<li>Enable external developers to extend the optimizer</li>
+</ul>
+</li>
+<li>Catalyst core contains a general library for representing trees and applying rules to manipulate them</li>
+<li>Several sets of rules to handle different phases of query execution: analysis, logical optimization, physical planning and code generation to compile queries to Java bytecode</li>
+</ul>
+
+
+<h4>3.1 Trees</h4>
+
+<ul>
+<li>Main data type in Catalyst, composed of nodes</li>
+<li>Each node has a node type and zero or more children</li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post6/spark_tree.png"></p>
+
+<ul>
+<li>This translate to</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="nc">Add</span><span class="o">(</span><span class="nc">Attribute</span><span class="o">(</span><span class="n">x</span><span class="o">),</span> <span class="nc">Add</span><span class="o">(</span><span class="nc">Literal</span><span class="o">(</span><span class="mi">1</span><span class="o">),</span> <span class="nc">Literal</span><span class="o">(</span><span class="mi">2</span><span class="o">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>3.2 Rules</h4>
+
+<ul>
+<li>Trees can be manipulated using rules, which are functions from a tree to another tree</li>
+<li>Mostly common approach is Scala’s pattern matching</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">tree</span><span class="o">.</span><span class="n">transform</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">case</span> <span class="nc">Add</span><span class="o">(</span><span class="nc">Literal</span><span class="o">(</span><span class="n">c1</span><span class="o">),</span> <span class="nc">Literal</span><span class="o">(</span><span class="n">c2</span><span class="o">))</span> <span class="k">=&gt;</span> <span class="nc">Literal</span><span class="o">(</span><span class="n">c1</span><span class="o">+</span><span class="n">c2</span><span class="o">)</span>
+</span><span class='line'>  <span class="k">case</span> <span class="nc">Add</span><span class="o">(</span><span class="n">left</span><span class="o">,</span> <span class="nc">Literal</span><span class="o">(</span><span class="mi">0</span><span class="o">))</span> <span class="k">=&gt;</span> <span class="n">left</span>
+</span><span class='line'>  <span class="k">case</span> <span class="nc">Add</span><span class="o">(</span><span class="nc">Literal</span><span class="o">(</span><span class="mi">0</span><span class="o">),</span><span class="n">right</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">right</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>Catalyst groups rules into batches, and executes each batch until the trees stops changing after applying its rules</li>
+<li>For example, for (x+0) + (3+3), a first batch might analyze an expression to assign types to all of the attributes, while a second batch might use these types to do constant folding</li>
+</ul>
+
+
+<h4>3.3 Using Catalyst in Spark SQL</h4>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post6/spark_plan.png"></p>
+
+<p>Catalyst’s general tree transformation framework contains four phases</p>
+
+<ul>
+<li>Analyzing a logical plan to resolve references</li>
+<li>Logical plan optimization</li>
+<li>Physical Planning, catalyst may generate multiple plans and compare them based on cost</li>
+<li>Code generation to compile parts of the query to Java bytecode</li>
+</ul>
+
+
+<h5>3.3.1 Analysis</h5>
+
+<ul>
+<li>Spark SQL begins with a relation to be computed, which may contain unresolved attributes references or relations</li>
+<li>Spark SQL uses Catalyst rules and a Catalog object that trakcs the tables in all data source to resolve the unresolved attributes</li>
+<li>Example query: SELECT col FROM sales
+
+<ul>
+<li>Looking up relations by name form the catalog, such as SELECT</li>
+<li>Mapping named attributes, such as col, to the input provided</li>
+<li>Determining which attributes refer to the same value to give them a unique ID</li>
+<li>Propagating and coercing types through expressions</li>
+</ul>
+</li>
+</ul>
+
+
+<h5>3.3.2 Physical Planning</h5>
+
+<ul>
+<li>Spark SQL takes a logical plan and generates one or more physical plans, using physical operators that match the Spark execution engine</li>
+<li>Cost-based Optimization: selects a plan among all physical plans using a cost model</li>
+<li>Physical Planner also performs rule-based optimizations, such as pipelining projections or filters into one Spark map operation</li>
+</ul>
+
+
+<h5>3.3.3 Code generation</h5>
+
+<ul>
+<li>Need to support code generation to speed up execution, since Spark SQL operates on in-memory datasets where processing is CPU-bound</li>
+<li>Use Catalyst to transform a tree representing an expression in SQL to an AST for Scala code to evaluate that expression, and then compile and run the generated code</li>
+<li>Use a special feature of the Scala language: quasiquotes, which allows the programmatic construction of abstract syntax trees (AST)</li>
+</ul>
+
+
+<h5>3.3.4 Data Sources</h5>
+
+<ul>
+<li>Developers can define a new data soruce for Spark SQL, which expose varying degrees of possible optimization</li>
+<li>All data sources must implement a createRelation function that takes a set of key-value parameters and returns a BaseRelation object, which contains a schema and an optimal estimated size in bytes</li>
+<li><p>BaseRelation can implement one of several interfaces that let them expose varying degrees of sophistication</p>
+
+<ul>
+<li><strong>TableScan</strong>: return an RDD of Row objects for all the data in the table</li>
+<li><strong>PrunedScan</strong>: takes an array of column names to read and return Rows containing only those columns</li>
+<li><strong>PrunedFilteredScan</strong>: takes both desired column names and an array of Filter objects, which returns only rows passing each filters</li>
+<li><strong>CatalystScan</strong>: given a complete sequence of Catalyst expression trees to use in predicate pushdown</li>
+</ul>
+</li>
+<li><p>The following data sources has been implemented:</p>
+
+<ul>
+<li><strong>CSV files</strong>, which simply scan the whole file but allow users to specify a schema</li>
+<li><strong>Avro</strong>, a self-describing binary format for nested data</li>
+<li><strong>Parquet</strong>, a columnar file format for which column pruning as well as filters are supported</li>
+<li><strong>JDBC</strong> data source, which scans ranges of a table from an RDBMS in parallel and pushes filters into the RDBMS to minimize communication</li>
+</ul>
+</li>
+</ul>
+
+
+<h5>3.3.5 User-Defined Types(UDTs)</h5>
+
+<ul>
+<li>Allows user-defined types over relational tables</li>
+<li>Solve the issue by mapping UDTs to structures composed of Catalyst’s built-in types</li>
+<li>UDTs need to implement <strong>datatype</strong>, <strong>serialize</strong> and <strong>deserialize</strong> methods</li>
+</ul>
+
+
+<h3>4. Evaluation</h3>
+
+<h4>4.1 SQL Performance</h4>
+
+<ul>
+<li>Spark SQL is substantially faster than Shark and generally competitive with Impala</li>
+</ul>
+
+
+<h4>4.2 DataFrames vs. Native Spark Code</h4>
+
+<ul>
+<li>Spark SQL help non-SQL developers write simpler and more efficient Spark code through the DataFrame API, as Catalyst optimizes DataFrame operatons that are hard to do with hand written code</li>
+<li>Compare speed of computing the average of b for each value of a, for the dataset consists of 1 billion integer pairs (a,b) with 100,000 distinct values of a</li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">## Python API</span>
+</span><span class='line'><span class="n">sum_and_count</span> <span class="o">=</span>
+</span><span class='line'><span class="n">data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">b</span><span class="p">,</span><span class="mi">1</span><span class="p">)))</span>
+</span><span class='line'>       <span class="o">.</span><span class="n">reduceByKey</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+</span><span class='line'>       <span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</span><span class='line'><span class="c">## DataFrame API:</span>
+</span><span class='line'><span class="n">df</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>DataFrame API outperforms the hand written Python version by 12x, and outperforms Scala version 2x</li>
+</ul>
+
+
+<h4>4.3 Pipeline Performance</h4>
+
+<ul>
+<li>DataFrame API improves performance in applications that combine relational and procedural processing by letting developers write all operations in a single program and pipelining computation across relational and procedural code</li>
+<li>Compare speed of two stage pipeline that selects a subset of text messages from a corpus and computes the most frequent words</li>
+<li>Separate SQL query followed by a Scala-based Spark job, similar to a Hive query followed by a Spark job, vs the DataFrame API</li>
+<li>DataFrame API pipelines improves performance 2x, since it avoids the cost of saving the whole result of the SQL query to an HDFS file as an intermediate dataset, because SparkSQL pipelines the <strong>map</strong> for the word count with the relational operators for the filtering</li>
+</ul>
+
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    Your Name
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+</body>
+</html>

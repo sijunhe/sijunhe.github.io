@@ -1,0 +1,899 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: reading_notes | My Octopress Blog]]></title>
+  <link href="http://yoursite.com/blog/categories/reading-notes/atom.xml" rel="self"/>
+  <link href="http://yoursite.com/"/>
+  <updated>2018-04-02T00:55:31-07:00</updated>
+  <id>http://yoursite.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Reading | Highway Networks]]></title>
+    <link href="http://yoursite.com/blog/2018/01/21/reading-highway-network/"/>
+    <updated>2018-01-21T18:18:41-08:00</updated>
+    <id>http://yoursite.com/blog/2018/01/21/reading-highway-network</id>
+    <content type="html"><![CDATA[<p>I have been working on some NLP-related Kaggle competitions lately and have came across the <a href="https://arxiv.org/pdf/1505.00387.pdf">Highway Networks</a> in quite a few papers and models. The LSTM-inspired Highway Networks make it easier to train deep networks by adding a small twick to the vanilla feedforward layer. I am reading the paper to get an intuition of how they work.</p>
+
+<!--more-->
+
+
+<h2>1. Introduction</h2>
+
+<ul>
+<li>It&rsquo;s well known that deep networks can represent certain function classes exponentially more efficiently than shallow ones. However, optimization of deep networks is considerably more difficult.</li>
+<li>Srivastava et al. presented a architecture that enables the opmiziation of networks with virtually arbitary depth by a learned gating mechanism for regulating information flow. A network can have paths along which information can flow across several layers without attenuation.</li>
+</ul>
+
+
+<h2>2. Highway Networks</h2>
+
+<ul>
+<li><p>For a layer in a plain feedforward network
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H})$$
+where H is an affine transfor following by a non-linear activation function.</p></li>
+<li><p>For a highway network, we define two non-linear transforms $T(\mathbf{x}, \mathbf{W}_T)$ and $C(\mathbf{x}, \mathbf{W}_C)$ such that
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H}) \cdot T(\mathbf{x}, \mathbf{W}_T) + \mathbf{x} \cdot C(\mathbf{x}, \mathbf{W}_C)$$</p></li>
+<li><p>$T$ is the transform date and $C$ is the carry gate, each respectively express how much of the output is produced by transforming the input and carrying it.</p></li>
+<li><p>For simplicity, we set $C = 1 - T$, giving
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H}) \cdot T(\mathbf{x}, \mathbf{W}_T) + \mathbf{x} \cdot (1-T(\mathbf{x}, \mathbf{W}_C))$$</p></li>
+<li><p>This re-parametrization of the layer transformation is more flexible than the plain feedforward layer. Since
+$$ \mathbf{y} =
+\begin{cases}
+\mathbf{x},  &amp; \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 0 \\
+H(\mathbf{x}, \mathbf{W}_{H}), &amp; \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 1
+\end{cases}$$
+$$ \frac{d\mathbf{y}}{d\mathbf{x}} =
+\begin{cases}
+\mathbf{I} = 0 \\
+H'(\mathbf{x}, \mathbf{W}_{H}), &amp; \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 1
+\end{cases}$$</p></li>
+<li><p>Depending on the output of the transform gates $(\mathbf{x}, \mathbf{W}_C)$, a highway layer can smoothly vary its behavior between a plain layer and a layer that simply passes its inputs through.</p></li>
+<li><p>For highway layers, we user the tranform gate defined as
+$$T(\boldsymbol{x}) = \sigma(\boldsymbol{W}_T^T + \boldsymbol{b}_T)$$</p></li>
+<li><p>For training very deep networks, $\boldsymbol{b}_T$ can be initallzed with a negative value such that the network is initially biased towards <strong>carrry</strong> behavior.</p></li>
+</ul>
+
+
+<h2>Experiments and Analysis</h2>
+
+<ul>
+<li>Networks with depths of 10, 20, 50 and 100 plain or highway layers are trained.</li>
+<li><strong>Optimization</strong>: The performance of plain networks degrades significantly as depth increases, while highway networks do not seem to suffer from an increase in depth at all.</li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post14/highway_networks_depth.png" alt="highway_networks_depth" /></p>
+
+<ul>
+<li><p><strong>Performance</strong>: The performance of highway networks is similar to <a href="https://arxiv.org/abs/1412.6550">Fitnets</a> on CIFAR-10 and MNIST datasets. But highway network is much easier to train since no two-stage training procedure is needed.</p></li>
+<li><p><strong>Analysis</strong>: By analzing the biases of the transform gates and the outputs of the block, it was found that the strong negative biases at low depths are not used to shut down the gates, but to make them more selective.</p></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Reading | Crossing the Chasm]]></title>
+    <link href="http://yoursite.com/blog/2017/11/22/reading-crossing-the-chasm/"/>
+    <updated>2017-11-22T18:49:19-08:00</updated>
+    <id>http://yoursite.com/blog/2017/11/22/reading-crossing-the-chasm</id>
+    <content type="html"><![CDATA[<p>After hearing numerous quotes and ideas from it in meetings, I finally decided to read <a href="https://www.amazon.com/Crossing-Chasm-3rd-Disruptive-Mainstream/dp/0062292986/">Crossing the Chasm: Marketing and Selling Disruptive Products to Mainstream Customers</a>. I wanted to understand the fundamentals of high technology business development and the book did not disappoint. While there were portion of it that I couldn&rsquo;t understand fully due to lack of experience, I could resonate with the rest of it. It wouldn&rsquo;t be an overstatement to say that this book changed the way I looked at high-tech business.</p>
+
+<!--more-->
+
+
+<h1>1. High-Tech Marketing Illusion</h1>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post13/tech_adoption_cycle.png" alt="Tech_Adoption_Cycle" /></p>
+
+<h3>Technology Adoption Life Cycle</h3>
+
+<ul>
+<li>The <strong>Technology Adoption Life Cycle</strong> is a model for understanding the acceptance of new products.</li>
+<li>Each group represents a unique psychographical profile toward a discontinuous innovation based on a new technology
+
+<ul>
+<li><strong>Innovators</strong>: Pursue new technology produces aggresively. Intrigued with any fundamental advance and often make a technology purchase simply for the pleasure of exploring the new device&rsquo;s properties</li>
+<li><strong>early adopter</strong>: Buy into new product concepts very early in their life cycle. When there is a strong match, they are willing to base their buying decisions upon it. They do not rely on well-established references in marking these buying decisions.</li>
+<li><strong>early majority</strong>: Driven by a strong sense of practicality. They want well-established references before investing substantiall. Roughly <em>a third</em> of the whole adoption life cycle and winning their business is key to profit and growth.</li>
+<li><strong>late majority</strong>: They wait until something has become an established standard, even then they want to see lots of support and tend to buy from large, well-stablished companies. Roughly <em>a third</em> of the total buying population. Courting its favor is highly profitable.</li>
+<li><strong>laggard</strong>: Simply don&rsquo;t want anything to do with new technology. The only tie they ever buy a technological product is when it is buried very deep inside another product. Generally regarded as not worth pursuing.</li>
+</ul>
+</li>
+<li>The way to develop a high-tech market is to work the curve left to right and use each &ldquo;captured&rdquo; group as a reference base for going on to market to the next group.</li>
+</ul>
+
+
+<h1>2. High-Tech Marketing Enlightenment</h1>
+
+<h4>Innovators (Techies)</h4>
+
+<ul>
+<li>Innovators are those who appreciate the technology for its own sake. They are the gatekeepers for any new technology and the first key to any high-tech marketing effort.</li>
+<li>A small class of enthusiasts will want to try the product just to see if it works. Mostly, they are not powerful enough to dictate the buying decisions. But they represent a beachhead, a source of initial product or service references, and a test bed for the product.</li>
+<li>The other key to working with enthusiasts is to find the ones who are near or have access to the big boss, a.k.a the <em>early adopters</em> or the <em>visionaries</em>.</li>
+</ul>
+
+
+<h4>Early Adopters (visionaries)</h4>
+
+<ul>
+<li>Visionaries are early adopters of high-tech products, often working with budgets in the multiple millions. They are the least price-sensitive and are great reference. They are easy to sell but very hard to please.</li>
+<li>Visionaries are not looking for an <em>improvement</em>, they are looking for a fundamental <em>breakthrough</em>. They drive the high-tech industry because they see the potential for an &ldquo;order-of-magnitude&rdquo; return on investment and willingly take high risks to pursue that goal.</li>
+<li>They are an opportunity early in a product&rsquo;s life cycle to generate a burst of revenue and gain exceptional visibility. It also comes with a big price tag since they are highly-demanding. Visioanries are the ones who give high-tech companies their first biog break. It is hard to plan for them but it even harder to plan without them.</li>
+</ul>
+
+
+<h4>Early Majority (pragmatists)</h4>
+
+<ul>
+<li>Pragmatists are prudent souls who never volunteer to be an early test site and who have learned the hard way that the &ldquo;leading edge&rdquo; is too often the &ldquo;bleeding edge&rdquo;.</li>
+<li>The goal of pragmatists is to make a percentage improvement - incremental, measurable, predictable progress.</li>
+<li>They are hard to win over, but they are loyal once won. They are prudent and they are planning on living with this decision personally for a long time to come.</li>
+<li>They tend to be &ldquo;vertically&rdquo; oriented that they communicate more with others like themselves within their own industry than do techies or visionaries who communicate &ldquo;horizontally&rdquo; across industry boundaries. This means it is very hard to break into a new industry selling to pragmatists.</li>
+<li>They like to see competition and want to buy from proven market leaders because market-leading products create an <em>aftermarket</em> that other vendors service.They are reasonably price-sensitive and are willing to pay a modest premium for top quality service. In absence of any special differentiation, they want the test deal.</li>
+</ul>
+
+
+<h4>Late Majority (conservatives)</h4>
+
+<ul>
+<li>Conservatives are against discontinuous innovation and believe far more in tradition than in progress. They often succumb to new technology only to stay on par with the rest of the world.</li>
+<li>They often fear high tech a little bit hence they tend to invest only at the end of a technology life cycle, when products are extremely mature. They do not have high aspirations about their high-tech investments and hence will not support high price margins.</li>
+<li>They like to buy preassembled packages, with everything bundled, at a heavily discounted price. They like products decitated to a single function (i.e. word processors, calculators, copies and fax machine instead of a single computer).</li>
+<li>Conservatives have enormous value since they greatly extend the market for high-tech components that are no longer state-of-the-art. But high-tech business success within the conservatives market will require a new kind of marketing imagination likned to a less venturesome financial model.</li>
+</ul>
+
+
+<h4>Laggards (skeptics)</h4>
+
+<ul>
+<li>Skeptics do not participate in the high-tech marketplace except to block purchases. Thus, the primary function of high-tech marketing in relation to skeptics is to neuralize their influence.</li>
+<li>Their favorite arguments is that the billions of dollars invested in office automation have not improved the productivity of the office place.</li>
+<li>Ultimately the service that skeptics provide to high-tech marketers is to point continually to the discrepancies between the sales claims and the delivered product.</li>
+</ul>
+
+
+<h4>The Chasm</h4>
+
+<ul>
+<li>Visionaries tend to keep in touch with the techies and conservatives look to pragmatists to help lead them in terms of high-tech products.</li>
+<li>Between visionaries and pragmatists, there is a <strong>chasm</strong>, since visionaries are not the right sort of references for pragmatists since visionaries alienate pragmatists.</li>
+</ul>
+
+
+<h1>3. D-Day Analogy</h1>
+
+<h4>Overall Strategy</h4>
+
+<ul>
+<li>Long-term goal is to enter and take control of a mainstream market that is currently dominated by an entrenched competitor, while the immediate goal is to transition from an early market base to a <strong>strategic target market segment</strong> in the mainstream</li>
+<li>Cross the chasm by targeting a very specific niche market, drive competitiors out of that market niche, and then use it as a base for broader operations.</li>
+</ul>
+
+
+<h4>Starting a fire</h4>
+
+<ul>
+<li>When crossing the chasm, be a market-driven company, not a sales-driven company, since the sole goal of the company during this stage of market development must be to secure a beachhead in a mainstream market (create a pragmatist customer base that is referenceable)</li>
+<li>There are three compelling reasons that the sales-driven strategy should be avoided
+
+<ul>
+<li>We must ensure the customer gets the <strong>whole product</strong> - the complete set of products and services needed to achieve the desired result. Whole product commitments are expensive can only be made sparingly and strategically.</li>
+<li>Seeding a <strong>strong word-of-mouth reputation</strong> among buyers. Winning four or five customers in one segment wil create the desired word-of-mouth effect, while winning one or two in each of 5 or 10 different segments won&rsquo;t.</li>
+<li>Pragmatist customers want to buy from market leaders and the only right strategy is to take a **&ldquo;big fish, small pond&rdquo; approach</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>Beyond niche</h4>
+
+<ul>
+<li>The key to moving beyong one&rsquo;s initial target niche is to select <strong>strategic</strong> target market segments to begin with. Target a segment that creates an entry point into a larger segment.</li>
+<li><strong>Example of Mac crossing the chasm</strong>: Target niche was the graphic arts department in Fortune 500 companies. Apple then leverage its win into adjacent departmens within the corporation - first marketing, then sales. The beachhead in Graphic arts also extended into external markets - creative agencies, ad agencies and publishers.</li>
+</ul>
+
+
+<h4>Application vs. Platforms</h4>
+
+<ul>
+<li>Aplications have a huge advantage in chasm crossing since disruptive innovation are more likely to be championed by end users.</li>
+<li>Platforms are infrastructure and are slower in adoption. Vendor must tie them directly to an application in order to gain the end-user sponsorship.</li>
+<li>Platforms are likely to remian the market leader for a long time to come in any niche that you have saturated. When markets go mass, platforms have the advantage of participate openly in many value chains at the same time.</li>
+</ul>
+
+
+<h1>4. Target the Point of Attack</h1>
+
+<ul>
+<li>Choosing the niche market to target is a very important marketing decision <strong>with little or no useful hard information</strong>. No one has any direct experience in the product since we are introducing a discontinuous innovation.</li>
+<li>Need to understand that <strong>informed intuition</strong>, rather than analytics reason, is the most trustworthy decision-making tool to use. Informed intuition involves conclusions based on isolating a few high-quality images that are archetypes of a broader and more complex reality.</li>
+</ul>
+
+
+<h4>Target-Customer Characterization</h4>
+
+<ul>
+<li><p>A formal process for making up target customer image s, getting them out of individual heads and in front of a marketing decision-making group.</p></li>
+<li><p>The idea is to create as many characeterizations as possible and apply technique to reduce these images into a prioritized list of desirable target amrket segment opportunities.</p></li>
+<li>A representative format for target-customer scenarios include
+
+<ul>
+<li><strong>Header information</strong>: thumbnail info about end user, the technical buyer and the economic buyer.
+
+<ul>
+<li>Business markets: industry, geograph, department, job title</li>
+<li>Consumer markets: age, sex, economic status, social group</li>
+</ul>
+</li>
+<li><strong>A day in the life (before)</strong>: describe a situation in which the user in stuck, with significant consequences for the economic buyer
+
+<ul>
+<li>Catpures the five elements: <em>situation</em>, <em>desired outcome</em>, <em>attemtped approach</em>, <em>interfering factors</em>, <em>economic consequences</em></li>
+</ul>
+</li>
+<li><strong>A day in the life (after)</strong>: Take the same situation, same desired outcome and replay the scenario with the new technology in place.
+
+<ul>
+<li>Catpures the three elements: <em>new approach</em>, <em>enabling factors</em>, <em>economic rewards</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>Market Development Strategy Checklist</h4>
+
+<ul>
+<li>The scenerios are crude at best and we need to submit them to a refinery - the market development strategy checklist. The list consists of issues around which go-to-market plans are built.</li>
+<li>The <em>Show-stopper</em> issues are:
+
+<ul>
+<li><strong>Target customer</strong>: Is there a single, identifiable economic buyer, accessible to our sales channel  and sufficiently well-funded to pay the price?</li>
+<li><strong>Compelling reason to buy</strong>: Are the economic consequences sufficient to mandate any reasonable economic buyer to fix the problem?</li>
+<li><strong>Whole product</strong>: Can we field a complete solution tto the target customer&rsquo;s compelling reason to buy in the next three months?</li>
+<li><strong>Competition</strong>: Has this problem already been addressed by another compnay such that they have crossed the chasm ahead of us and occpied the space we would be targetting?</li>
+</ul>
+</li>
+<li><p>The <em>Nice to have</em> factors are:</p>
+
+<ul>
+<li><strong>Parnters and allies</strong>: Do we already have relationships begun with other companies needed to fulfill the whole product?</li>
+<li><strong>Distribution</strong>: Do we have a sales channel in place?</li>
+<li><strong>Pricing</strong>: Is the price of the whole product consistent with the target customer&rsquo;s budget and the values gained?</li>
+<li><strong>Positioning</strong>: Is the company credible as a provider of products and services to the target niche?</li>
+<li><strong>Next target customer</strong>: Does it have good &ldquo;bowling pin&rdquo; potential?</li>
+</ul>
+</li>
+<li><p><strong>Commiting</strong>: Don&rsquo;t have to pick the optimal beachhead to be successful. Just need to win the beachhead you have picked.</p></li>
+<li><strong>Target segment size</strong>: Pick somebody your own size.</li>
+</ul>
+
+
+<h1>5. Assemble the Invasion Force</h1>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post13/whole-product.png" alt="Whole Product Model" /> <img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post13/simplfied-whole-product.png" alt="Simplified Whole Product" /></p>
+
+<ul>
+<li>Wiring the marketplace starts with targetting markets that have a compelling reason to buy your product. The next step is to ensure that you have a monopoly over fulfilling that reason to buy. To secure that monopoly, you need to understand <strong>what a whole product consists of</strong> and <strong>how to organizae a marketplace to provide a whoel product</strong></li>
+</ul>
+
+
+<h4>The Whole Product Concept</h4>
+
+<ul>
+<li>There is a gap between the marketing promise made to the customer and the ability of the shipped product to fulfill that promise. The model identified four different perceptions of product:
+
+<ul>
+<li><strong>Generic product</strong>: what is shipped in the box and covered by the purchasing contract.</li>
+<li><strong>Expected product</strong>: the product that the consumer thought she was buying when you bought the generic product. The <em>minimum</em> product and services to have any chance of achieving the buying objective</li>
+<li><strong>Augmented product</strong>: the product that provide the <em>maximum</em> chance of achieving the buying objective.</li>
+<li><strong>Potential product</strong>: the product&rsquo;s room for growth</li>
+</ul>
+</li>
+<li>The marketing battle takes place at the level of the <strong>generic product</strong> for the <em>early market</em>. But as marketplaces develop as we enter the <em>mainstream market</em>, the battle shifts increasingly to the outer circles.</li>
+<li>Technology enthusiasts are the customers least in need of whole product support. Visionaries accept that they are going to have to take responsibility for creating the whole product under their own steam. <strong>Pragmatists evalulate and buy whole products.</strong></li>
+</ul>
+
+
+<h4>Whole Product Planning</h4>
+
+<ul>
+<li><strong>Winning the whole product battle means winning the war.</strong> Whole product planning is the centerpiece for developing a market domination strategy as pragmatists will hold off committing until they see a strong whole product.</li>
+<li>The focus should be on the minimum commitment to whole product needed to cross the chasm. There are two categories in the simplified model:
+
+<ul>
+<li>what we ship</li>
+<li>whatever else the customer need in order to achieve their compelling reason to buy</li>
+</ul>
+</li>
+<li>The contract does not require the compnay to deliver on the later, but the <em>customer relationship</em> does. Lack of attention to whole product marketing is the wellspring of high tech&rsquo;s inability to deliver on its promise.</li>
+</ul>
+
+
+<h4>Partners and Allies</h4>
+
+<ul>
+<li>The purpose of <strong>tactical alliances</strong> is to accelerate the formation of whole product infrastructre within a specific target market segment. The basic commitment is to codevelop a whole product and market it jointly.</li>
+<li>for any company crossing the chasm, fostering the initial partnerships to create the whole product is the equivalent of seeding the value chain, getting it started. Once the value starts being generated, the market system becomes self-reinforcing.</li>
+</ul>
+
+
+<h1>6. Define the Battle</h1>
+
+<ul>
+<li>To dominate our beachhead we need to understand who or what the competition is, what their current relationship to our target customer consist of, and how we can best <strong>position</strong> ourselves to force them out of our target market segmgent.</li>
+<li>One of the key things a pragmatist customer wants to see is strong compeition. In crossing the chasm, that competition is not likely to exist. What you have to do then is create it.</li>
+<li>When developing an early market, competition are usually from alternative modes of operation. Resistance are growing out of commitment to the status quo, fear, risk, or lack of compelling reason to buy. Our goal is to ennlist visionary sponsors to help overcome this resistance.</li>
+<li>In pragmatist&rsquo;s domain, competition is defined by <strong>comparative evaluations of products and vendors</strong> within a common category. These evaluations are extremely reassuring to the pragmatists, who are loath to buy until they can compare. <strong>Competition</strong>, therefore, becomes a fundamental condition for purchase.</li>
+<li>Creating your competition starts with locating your product within a buying category and position your product as the indisputably correct buying choice (with some rigging). The buying category need to be both credible and attractive.</li>
+</ul>
+
+
+<h4>Competitive-Positioning Compass</h4>
+
+<ul>
+<li>Crossing the chasm requires
+
+<ul>
+<li>moving from an environment of <strong>support</strong> by the visionaries to <strong>skepticism</strong> among the pragmatists</li>
+<li>moving from an <strong>product-oriented</strong> issues to <strong>market-oriented</strong> ones</li>
+<li>moving from the audience of like-minded <strong>specialists</strong> to essentially uninterested <strong>generalists</strong></li>
+</ul>
+</li>
+<li>It&rsquo;s the <strong>market-centric value system</strong> &ndash; supplemented by the product-centric ones &ndash; that must be the basis for the value profile of the target customers when crossing the chasm.</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th> Product-Centric          </th>
+<th> Market-Centric                  </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> Fastest product          </td>
+<td> Largest installed base          </td>
+</tr>
+<tr>
+<td> Easier to use            </td>
+<td> Most third party supporters     </td>
+</tr>
+<tr>
+<td> Elegant architecture     </td>
+<td> De facto standard               </td>
+</tr>
+<tr>
+<td> Product price            </td>
+<td> Cost of ownership               </td>
+</tr>
+<tr>
+<td> Unique functionality     </td>
+<td> Quality of support              </td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>Creating the Competition</h4>
+
+<ul>
+<li><strong>Market Alternative</strong>: a company that the target customer has been buying from for years. They address the problem that we will address. The market alternative helps people identify your target customer and your compelling reason to buy.</li>
+<li><strong>Product Alternative</strong>: a company that has also harnessed a discontinuous innovation. Their existence gives credibility to the notion that now is the time to embrace a discontinuity. The product alternative helps people appreciate your technology leverage.</li>
+<li><strong>Example 1</strong>: Silicon Graphics targetting post-production film editing process in Hollywood.
+
+<ul>
+<li>Market Alternative: Tradidional editing of cutting and splicing film.</li>
+<li>Product Alternative: Sun and HP workstations.</li>
+</ul>
+</li>
+<li><strong>Example 2</strong>: Quicken targetting home computer user who pay bills
+
+<ul>
+<li>Market Alternative: paper and pen checking.</li>
+<li>Product Alternative: Professional programs for financial enthusiasts.</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>Positioning</h4>
+
+<ul>
+<li>The goal of positioning is to make products easier to buy. There are four stages in this process, corresponding the the four primary psychographic types:
+
+<ul>
+<li><strong>Name it and frame it</strong>: What the product is and what category it falls under? Positioning for technology enthusiasts.</li>
+<li><strong>Who for and what for</strong>: Who is going to use it and for what purpose? Positioning for visionaries.</li>
+<li><strong>Competition and differentiation</strong>: a comparative context for the product? Positioning for pragmatists.</li>
+<li><strong>Financials and Futures</strong>: Is the product from a vendor with staying power? Positioning for conservative.</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>The Claim: Elevator Pitch</h4>
+
+<table>
+<thead>
+<tr>
+<th> Framework                                                                          </th>
+<th> Example (Intuit Quicken)                                           </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> <strong>For</strong> (target customers &ndash; beachhead segment only)                               </td>
+<td> For the bill-paying member of the family who also uses a home PC   </td>
+</tr>
+<tr>
+<td> <strong>Who are dissatisfied with</strong> (the current market alternative)                     </td>
+<td> Who is tired of filling out the same old checks month after month  </td>
+</tr>
+<tr>
+<td> <strong>Our product is a new</strong> (new product category)                                    </td>
+<td> Quicken is a PC home finance program                               </td>
+</tr>
+<tr>
+<td> <strong>That provides</strong> (key problem-solving capability)                                 </td>
+<td> That automatically creates and tracks all your check-writing       </td>
+</tr>
+<tr>
+<td> <strong>Unlike</strong> (the product alternative),                                              </td>
+<td> Unlike <em>Managing Your Money</em>, a financial analysis package,        </td>
+</tr>
+<tr>
+<td> <strong>We have assembled</strong> (key whole product features for your specific application).  </td>
+<td> Our system is optimized specifically fofr home bill-paying         </td>
+</tr>
+</tbody>
+</table>
+
+
+<h1>7. Launch the Invasion</h1>
+
+<ul>
+<li>The #1 corporate objective when crossing the chasm is to secure a <strong>channel</strong> into the mainstream market with which pragmatist customer will be comfortable.</li>
+<li>The fundamental function of pricing during this period is to <strong>motivate the channel</strong>.</li>
+</ul>
+
+
+<h4>The Structure of High-Tech Distribution</h4>
+
+<ul>
+<li><strong>Direct sales</strong>: dedicated sales force in the direct employ of the vendor. Optimized for creating demand.</li>
+<li><strong>Retail</strong>: the retail system works optimally when its job is to fulfill demand rather than to creat it. Structurally unsuited to solve the chasm problem.</li>
+<li><strong>Value-Added Reselling</strong>: for products that are too complex for retail. These are typically small companies which specialize in a particular technology or a particular vertical market. VARs are problematic to be mainstream distribution</li>
+</ul>
+
+
+<h4>The Right Choice</h4>
+
+<ul>
+<li>Use direct sales and support as a demand-creation channel to penetrate the initial target segment</li>
+<li>Once segment has become aware of your presence, transition to the most efficient fulfillment channel</li>
+</ul>
+
+
+<h4>Pricing</h4>
+
+<ul>
+<li><strong>Customer-Oriented Pricing</strong>: perspective of the customers varies among different psychographics
+
+<ul>
+<li>Visionaries: <strong>value-based pricing</strong>, price-insensitive and seeks an order-of-magnitude ROI</li>
+<li>Conservatives: <strong>cost-based pricing</strong>, wait until complete institutionalization of the product and keep their cost way down</li>
+<li>Pragmatists: <strong>competition-based pricing</strong>, want to back the market leader and would pay premium for the market leader</li>
+</ul>
+</li>
+<li><strong>Vendor-Oriented Pricing</strong>: function of internal issues, i.e. cost og foods, cost of capital, promised rate of return, etc. Unsuitable for for the chasm perid since we need to be entirely external focused.</li>
+<li><strong>Distribution-Oriented Pricing</strong>: price does not become a major issue during the sales cycle, price high enough for a sufficient margin to reward the channel</li>
+<li><strong>Overall Strategy</strong>:
+
+<ul>
+<li>price at the market leader price point</li>
+<li>build a disproportionally high reward for the channel. The reward should phased out as the product becomes established in the mainstream.</li>
+</ul>
+</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Reading | The Effective Engineer]]></title>
+    <link href="http://yoursite.com/blog/2017/10/12/reading-the-effective-engineer/"/>
+    <updated>2017-10-12T22:46:13-07:00</updated>
+    <id>http://yoursite.com/blog/2017/10/12/reading-the-effective-engineer</id>
+    <content type="html"><![CDATA[<p>I am always skeptical about productivity books since they can easily come off as very theoretical and of little use for my work. After recommendations from several friends, I decided to read <a href="https://www.amazon.com/Effective-Engineer-Engineering-Disproportionate-Meaningful/dp/0996128107">The Effective Engineer</a> and found it to be a <strong>highly leveraged</strong> use of my time! As a relatively new engineer, I can already resonate deeply with what Lau wrote. I also started to adopt some of the techniques Lau recommended and have seen good results. Here is my reading notes for <a href="https://www.amazon.com/Effective-Engineer-Engineering-Disproportionate-Meaningful/dp/0996128107">The Effective Engineer</a>.</p>
+
+<!--more-->
+
+
+<h1>1 Adopt the Right Mindsets</h1>
+
+<h2>1.1 Focus on High-Leverage Activities</h2>
+
+<ul>
+<li>Leverage is defined as
+$$\text{Leverage} = \frac{\text{Impact Produced}}{\text{Time Invested}}$$</li>
+<li>Example of high leverage activities <strong>mentoring new engineers</strong>. A new hire may spend 1% of the total time being mentored, but it can have an outsized infludnece on the productivity and effectiveness of the other 99% of work hours.</li>
+<li>As engineers, we can always ask ourselves about any activity we are working on:
+
+<ul>
+<li>How can I complete this activity in a shorter amount of time?</li>
+<li>How can I increase the value produced by this activity?</li>
+<li>Is there something else that I could spend my time on that would produce more value?</li>
+</ul>
+</li>
+<li>Many high-leverage activities require consistent applications of effort over long time periods to achieve impacts. An example is how Facebook built and maintain a strong hiring culture to attrack strong people.</li>
+</ul>
+
+
+<h2>1.2 Optimize for Learning</h2>
+
+<ul>
+<li><strong>Adopt a growth mindset</strong>. Believe that I can cultivate and grow their intelligence and skills through effort. View challenges and failures as opportunities to learn.</li>
+<li><strong>Invest in your learning rate</strong>. Learning compunds like interest. The earlier the compounding starts, the sooner you hit the region of rapid grwoth and reap its benefits. Optimize for learning over profitability, particularly early in your career.</li>
+<li><strong>Find work environments that can sustain your growth</strong>. Find out what opportunites a company provide for onboarding and mentoring, how transparent they are internally, how fast they move, what your prospective co-wrokers are like, and how much autonomy you&rsquo;ll have.</li>
+<li><strong>Learn at work</strong>. Work with and learn from your best co-workers. Dive into internal learning resource. Look into classes or books that your workplace might be willing to subsidize.</li>
+<li><strong>Learn outside of work</strong>. Challenge yourself to become better by just 1% a day, and not limited to engineering skills
+
+<ul>
+<li>Read books</li>
+<li>Attend talks and meetups</li>
+<li>Build and maintain network of relationships</li>
+<li>Read and follow blogs</li>
+<li>Write blogs</li>
+<li>Tinker on side projects</li>
+</ul>
+</li>
+</ul>
+
+
+<h2>1.3 Prioritize Regularly</h2>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post12/importance_urgency_quadrant.gif" alt="Importance_Urgency_Matrix" /></p>
+
+<ul>
+<li><strong>Write down and track To-Dos</strong>. Human brain is optimized for processing and not for storage, so treat your brain as a processor instad of a memory bank. Spend your mental energy on prioritizing and processing the tasks instead of remembering them. (<em>I have successfully persuaded myself and my team to adopt <a href="https://app.asana.com/">Asana</a></em>)</li>
+<li><strong>Work on both what directly leads to value and the Important &amp; Non-Urgent</strong>. Along with prioritizing the activities that directly produce value, we also need to prioritize the investments that increase our ability to deliver more value in the future.</li>
+<li><strong>Protect your Maker&rsquo;s schedule</strong>. Preserve larger blocks of focused time in the schedule to maintain the <em>flow</em>. Learn to say no to unimportant activities.</li>
+<li><strong>Reduce context switching</strong>. Limit the number of ongoing projects so that you don&rsquo;t spend your cognitive energy actively juggling tasks.</li>
+<li><strong>Make a routine of prioritization</strong>. Make prioritization part of your daily routine and it will help you to focus on and complete your highest-leverage activities.</li>
+</ul>
+
+
+<h1>2 Execute, Execute, Execute</h1>
+
+<h2>2.1 Invest in Iteration Speed</h2>
+
+<ul>
+<li><strong>Move fast to learn fast</strong>. The faster you can iterate, the more you can learn. Conversely, when you move too slowly trying to avoid mistakes, you lose opportunities.</li>
+<li><strong>Invest in time-saving tools</strong>. Time-saving tools pays-off large dividends. Faster compile times, faster deployment cyrcles and faster turnaround times for development all provide time-saving benefits that compound the more you use them.</li>
+<li><strong>Shorten debugging and validation loops</strong>. Create tight testing loops so we can debug faster and iterate quicker.</li>
+<li><strong>Master fundamentals of your craft</strong>. Get very comfortable with your dev environment (IDE) by learning and defining shortcuts. Use more keyboard than mouse. Learn UNIX shell commands and how to effectively pipe them together.</li>
+<li><strong>Think about your non-engineering bottlenecks</strong>. Find out where the biggest bottlenecks in your iteration cycle are, whether in engineering, cross-team dependencies, approvals from decision-makers, or organizational processes. Then, work to optimize them.</li>
+</ul>
+
+
+<h2>2.2 Measure What You Want to Improve</h2>
+
+<ul>
+<li><strong>Measure your progress</strong>. If you can&rsquo;t measure it, you can&rsquo;t improve it. Good metrics accomplish a number of goals, ranging from driveing forward progress to measuring effectiveness over time.</li>
+<li><strong>Pick the right metric</strong>. Different metrics incentivize different behaviors. Example here includes Google using &ldquo;long click-through rate&rdquo; to track search quality, companies use 95th/99th percentile of response times instead of average response time to hunt down the worest-case behavior in the system.</li>
+<li><strong>Instrument your system</strong>. Measure and instrument as much as possible to ensure you are not flying blind.</li>
+<li><strong>Internalize useful numbers</strong>. Memorize numbers that can benchmark your progress or help wit back-of-the-envelope calculations. Like the <a href="https://gist.github.com/jboner/2841832">table of common latency numbers</a></li>
+<li><strong>Prioritize data integrity</strong>. Having bad data is wrose than having no data because you will make the wrong decisions thinking that you are right. Here are some strategies you can use to increase confidence in your data integrity:
+
+<ul>
+<li>Log data liberally, in case it turns out to be useful later on.</li>
+<li>Build tools to iterate on data accuracy sooner</li>
+<li>Write end-too-end integration tests to validate your entire analytics pipeline</li>
+<li>Examine collected data sooner.</li>
+<li>Cross-validate data accuracy by computing the same metric in mulitple ways.</li>
+<li>When a number does look off, dig in to it early.</li>
+</ul>
+</li>
+</ul>
+
+
+<h2>2.3 Validate Your Ideas Early and Often</h2>
+
+<ul>
+<li><strong>Find low-effort ways to validate your work</strong>. Invest a little effort (i.e. minimum viable product) to figure out if the rest of your plan is worth doing.</li>
+<li><strong>Continously validate your product hypotheses</strong>. Use A/B testing to incremtnally develop a product and identify what works and doesn&rsquo;t work. This way, you increase the probability that your efforts are aligned with what users actually want.</li>
+<li><strong>Find way of soliciting feedback when working on solo projects</strong>. Being the one-man team runs the huge risk of overlooking something that , if spotted early, could save you lots of wasted effort. Some strategies are:
+
+<ul>
+<li>Ask to bounce ideas off your teammates.</li>
+<li>Send out a design document before devoting your energy to your code.</li>
+<li>Structure ongoing projects so that there is some shared context with your teammates.</li>
+<li>Solicit buy-in before investing too much time.</li>
+</ul>
+</li>
+</ul>
+
+
+<h2>2.4 Improve Your Project Estimation Skills</h2>
+
+<ul>
+<li><strong>Incorporate estimates into project planning</strong>. Use the estimates to inform project planning, not the other way around. Some concrete strategies that provide more accurate estimates are:
+
+<ul>
+<li>Decompose the project into granular tasks</li>
+<li>Think of estimates as probability distributions, not best-case scenarios</li>
+<li>Let the person doing the actual task make the estimate</li>
+<li>Beware of anchoring bias. Avoid committing to an initial number before actually outlining the tasks involved.</li>
+<li>Use timeboxing to constrain tasks that can grow in scope</li>
+</ul>
+</li>
+<li><strong>Budget for the unknown</strong>. Take into account competing work obligations, holidays, illnesses, etc. The longer a project, the higher the probability that some of these will occur.</li>
+<li><strong>Define measureable milestones</strong>. Define specific goals to reduce risk and efficiently allocate time, and outline milestones to track progress. This allows us to build alignment around what can tasks can be deferred and decreases the chance that a project inadvertently grows in scope.</li>
+<li><strong>Do the riskiest task first</strong>. Instead of giving yourself the illusion of progress by focusing first on what is easy to do, tackle the rickiest task first to reduce variance in your estimates and explore the unknown early on.</li>
+<li><strong>Don&rsquo;t sprint in the middle of a marathon</strong>. Don&rsquo;t sprint just because you are hebind. Work overtime only if you are confident that it will enable you to finish on time.</li>
+</ul>
+
+
+<h1>3 Build Long-Term Value</h1>
+
+<h2>3.1 Balance Quality with Pragmatism</h2>
+
+<ul>
+<li><strong>Establish a culture of reviewing code</strong>. Code reviews facilitate positive modeling of good coding practices. Find the right balance between code quality and development speed.</li>
+<li><strong>Manage complexity through abstraction</strong>. MapReduce illustrates how the right abstraction can dramatically amplify an engineer&rsquo;s output. Make sure you have complete information about use cases before building abstractions, or you will ned up with something clunky and unusable.</li>
+<li><strong>Scale code quality with automated testing</strong>. Automated testing provide a scalable way of managing a growing codebase with a large team without constantly breaking the build or the product.</li>
+<li><strong>Manage your technical debt</strong>. Incur technical debt when it&rsquo;s necessary to get things done for a deadline, but to pay off that debt periodically. Only repay the debt with the highest leverage.</li>
+</ul>
+
+
+<h2>3.2 Minimize Operational Burden</h2>
+
+<ul>
+<li><strong>Embrace operational simplicity</strong>. Simple solutions impose a lower operational burden because they are easier to understand, maintain, and modify. Always ask &ldquo;what is the simplest solution that can get the job done while also reducing our future operational burden&rdquo;?</li>
+<li><strong>Build systems to fail fast</strong>. Slow failing systems muddy the sources of code errors, making it difficult to debug. Building systems to fail fast helps reduce the time you spend maintaining and debugging software by surfacing problematic issues sooner and more directly.</li>
+<li><strong>Automate Mechanical Tasks</strong>. Every time you do something that a machine can do, ask yourself whether it&rsquo;s worthwhile to automate it.</li>
+<li><strong>Aim for idempotence</strong>. An <em>idempotent</em> process produces the same results regardless of whether it&rsquo;s run once or multiple times. Idempotence make it easier for you to retry actions in the face of failure.</li>
+<li><strong>Plan and practice failure modes</strong>. Building confidence in your ability to recover lets you proceed more boldly.</li>
+</ul>
+
+
+<h2>3.3 Invest in Your Team&rsquo;s Growth</h2>
+
+<ul>
+<li><strong>Help the peopel around you be successful</strong>. The higher you climb up the engineering ladder, the more your effectiveness will be measured not by your individual constributions, but by you rimpact on the people around you. &ldquo;If you are a staff engineer, you make a whole team better. You are a principal engineer if you are making the whole company better. And you are distinguished if you are improving the industry&rdquo;.</li>
+<li><strong>Make hiring a priority</strong>. Keep a high hiring bar and play an active role in growing your team.</li>
+<li><strong>Build shared ownership of code</strong>. Increase your bus factor to be greater than one so that you are not a bottleneck for development. This gives you the flexibility to focus on other high-leverage activities.</li>
+<li><strong>Document collective wisdom</strong>. Reflect on projects with team member, learn what worked and what didn&rsquo;t work, and document and share the lessions so that valuable wisdom doesn&rsquo;t get lost.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Reading | Fast (Feedforward) Style Transfer]]></title>
+    <link href="http://yoursite.com/blog/2017/04/21/reading-fast-feedforward-style-transfer/"/>
+    <updated>2017-04-21T15:15:34-07:00</updated>
+    <id>http://yoursite.com/blog/2017/04/21/reading-fast-feedforward-style-transfer</id>
+    <content type="html"><![CDATA[<p><a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16.pdf">Perceptual Losses for Real-Time Style Transfer and Super-Resolution</a> is the second paper in my reading series for Neural Style Transfer, where Johnson et al. built on the work of Gatys et al. and used feedforward networks to stylize image order of magnitudes faster than the previous optimization approach.</p>
+
+<!--more-->
+
+
+<h3>Intro</h3>
+
+<p>Two common approach for image transformation, where an input image is transformed into an output image:</p>
+
+<ul>
+<li>feed-forward CNN using <strong>per-pixel loss</strong> between the output and ground-truth image</li>
+<li>generate image by defining and optimizing <strong>perceptual loss</strong> based on high-level features extracted from pretrained networks</li>
+</ul>
+
+
+<p>The paper combined the benefits of both approaches and proposed a system that</p>
+
+<ul>
+<li>train feed-forward network using use perceptual loss functions that depend on high-level features from a pretrained loss network</li>
+<li>allow the feed-forward network to learn a artistic style during training and can stylize images in <strong>real-time</strong> at test time</li>
+</ul>
+
+
+<h3>Method</h3>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/fast_neural_style_system.png" alt="fast_neural_style_system" />
+The system consists of two components:</p>
+
+<ul>
+<li><strong>image transformation network $f_W$</strong>: a deep residual CNN parameterized by $W$ and transforms input images $x$ into output images $\hat{y} = f_W(x)$</li>
+<li><strong>loss network $\phi$</strong>: used to define several loss functions $l_1, \cdots, l_k$. Each loss function computes a scalar loss value $l_i(\hat{y}, y_i)$ that measures the difference between the output image $\hat{y}$ and a target image $y_i$.</li>
+</ul>
+
+
+<p>The network is trained using SGD to minimize a loss functions of
+$$W^{\ast}  = \text{argmin}_W \ \textbf{E}_{x, \{y_i\} } \left[ \sum_{i} \lambda_i l_i (f_W(x), y_i)\right]$$</p>
+
+<ul>
+<li>Inspired from the optimziation approach from Gatys et al. and others, the author use a pretrained network $\phi$ as a fixed loss network to define the loss functions.</li>
+<li>The loss network $\phi$ is used to define a <strong>feature reconstruction loss $l_{feat}^{\phi}$</strong> and <strong>style reconstruction loss $l_{style}^{\phi}$</strong> that measure differences in <strong>content</strong> and <strong>style</strong> between images.</li>
+<li>For each input image $x$, there is a <strong>content target $y_c$</strong> and a <strong>style target $y_s$</strong></li>
+<li>For <strong>style transfer</strong>, the content target $y_c$ is the input image $x$ and the style target $y_s$ is the designated style image. One network is trained for each style target.</li>
+</ul>
+
+
+<h3>Image Transformation Network</h3>
+
+<p>The image transformation network is a Deep Residual Network. More detail can be found in the <a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16Supplementary.pdf">supplementary notes</a> of the paper.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/deep_residual_network_architecture.png" alt="deep_residual_network_architecture" /></p>
+
+<h3>Loss Network</h3>
+
+<p>Johnson et al. defined the feature reconstruction loss and the style reconstruction loss in the same way as Gatys et al., though with a different notation. Let $\phi_{j}(x)$ be the $j$-th layer activations of the loss network for image $x$ with a shape $C_j \times H_j \times W_j$.</p>
+
+<h4>Feature Reconstruction Loss</h4>
+
+<ul>
+<li>Euclidean distance between feautre representations
+$$l_{feat}^{\phi, j}(\hat{y},y) = \frac{1}{C_j H_j W_j} ||\phi_j(\hat{y}) - \phi_j(y)||^2_2$$</li>
+<li><strong>Minimizing  $l_{feat}^{\phi}$ would reserve the image content and overall spatial structure, but not the color, texture or exacte shape</strong></li>
+</ul>
+
+
+<h4>Style Reconstruction Loss</h4>
+
+<ul>
+<li>Squared Frobenius norm of the distance between the <strong>Gram matrices</strong> between the output and target image</li>
+<li>Gram matrix $G_j^\phi(x)$ is a $C_j \times C_j$ whose elements are the inner product between the two channels $c$ and $c'$ of activations
+$$G_j^\phi(x)_{c,c'} = \frac{1}{C_j H_j W_j} \sum_{h=1}^{H_j} \sum_{w=1}^{W_j} \phi_j(x)_{h,w,c} \phi_j(x)_{h,w,c'}$$
+$$l_{style}^{\phi, j}(\hat{y},y) = ||G^\phi_j(\hat{y}) - G^\phi_j(y)||^2_F$$</li>
+<li><strong>Minimizing  $l_{style}^{\phi}$ would reserve the stylistic features, but not its spatial structure</strong></li>
+</ul>
+
+
+<h4>Total Variation Regularization</h4>
+
+<p>Other than the $l_{feat}^{\phi}$ and $l_{style}^{\phi}$, Johnson et al. also defined a loss function $l_{TV}(\hat{y})$ to encourage spatial smoothness in the output image $\hat{y}$.</p>
+
+<h3>Experiments and Training Details</h3>
+
+<ul>
+<li>The goal of style transfer is to generate an image $\hat{y}$ that combines the content of the content target $y_c$ with the style of the style target $y_s$.</li>
+<li>Gatsy et al. formulate the problem as a optimization problem. An image $\hat{y}$ is generated by solving the problem
+$$\hat{y} = \text{argmin}_y \ \lambda_c l_{feat}^{\phi, j}(y, y_c) + \lambda_s l_{style}^{\phi, j}(y, y_s) + \lambda_{TV} l_{TV}(y)$$</li>
+<li>However, the method is slow since satifactory results takes about 500 iterations and each iterations requires a forward and a backward pass</li>
+<li>The result from the style transfer network is <strong>qualitatively similar to Gatsy et al&rsquo;s method</strong>, but can be run in real time during test time</li>
+<li>Even though the style transfer network is trained on $256 \times 256$ images, they also <strong>perform satisfactorily in higher resolution</strong> of $512 \times 512$ and $1024 \times 1024$, achieving a performance comparable to 50-100 iterations of Gatsy et al&rsquo;s method</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Reading | Neural Style Transform]]></title>
+    <link href="http://yoursite.com/blog/2017/04/18/reading-notes-neural-style-transform/"/>
+    <updated>2017-04-18T13:59:48-07:00</updated>
+    <id>http://yoursite.com/blog/2017/04/18/reading-notes-neural-style-transform</id>
+    <content type="html"><![CDATA[<p>Neural Style transfer is the technique of recomposing images in the style of other images using Deep Learning techniques and it has gotten very popular recently. I will be reading two papers related to Neural Style Transfer <form></form> <a href="http://cs231n.stanford.edu/">CS231N: Convolutional Neural Networks for Visual Recognition</a>. Starting with the first one, <a href="https://arxiv.org/abs/1508.06576">A Neural Algorithm of Artistic Style</a> by Gatys, Ecker and Bethge.</p>
+
+<!--more-->
+
+
+<ul>
+<li><p>The paper introduces a system based on Deep Neural Networks that composes a interplay between the content and style of an image.</p></li>
+<li><p>The key finding of the paper is that representations of content and style in Convolutional Neural Networks (CNN) are separable. The system uses neural representations to separate and recombine the content style of images</p></li>
+</ul>
+
+
+<h3>Content Representation</h3>
+
+<ul>
+<li>Each layer of CNN can be understood as a collectin of image filters which outputs a differently filtered versins of the imput image</li>
+<li>When CNN are trained on object recognition, they develop a representation of the image that increasingly care about the actual <strong>content</strong> of the image, as opposed to its detailed pixel values</li>
+<li><strong>Content Reconstruction</strong>: The inforamtion each layer contains about the input image can be visualized by reconstructing the image only from the feature map in that layer</li>
+</ul>
+
+
+<h3>Style Representation</h3>
+
+<ul>
+<li>To obtain a representation of the style of an input image, we use a feature space originally designed to <strong>capture texture information</strong></li>
+<li>The feature space is built on top of the filter responses in each layer of the network and consists of the correlations between the different filters over the spatial extent of the feature maps. The style features captures the general appearance of the image in terms of color and local structures, which increases along the hierarchy</li>
+<li><strong>Style Reconstruction</strong>: The information captured by style feature spaces built on different layers can be visualized by constructing an image that matches the style represntation</li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post10/content_style_reconstruction.png" alt="content_style_reconstruction" /></p>
+
+<h5>Figure 1:</h5>
+
+<ul>
+<li>Top half shows that reconstructing style feature spaces with higher layers matches the style of a given image on an increasing
+scale while discarding information of the global arrangement of the scene.</li>
+<li>Bottom half shows that reconstructing ccontent with higher layers preserve high-level content of the image while losing detailed pixel information</li>
+</ul>
+
+
+<h3>Style Transfer</h3>
+
+<ul>
+<li>We can generate images that mix the content and style representation from two different source images</li>
+<li>While the global arrangement of the original photograph is preserved, the colors and local structures are provided by the artwork</li>
+<li>Style can be more <strong>local</strong> if only lower layers are included. Matching the style representations up to higher layers leads to <strong>larger local image structures</strong>, thus a smoother and more continuous visual experience</li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post10/local_image_structure.png" alt="local_image_structure" /></p>
+
+<h5>Figure 2:</h5>
+
+<ul>
+<li>Comparisions between rows shows that style representation is more global (smoother) when higher layers are used and more local (pixelated) when only lower layers are used</li>
+<li>Comparisions between columns shows different relative weightings between the content and style reconstruction</li>
+</ul>
+
+
+<h3>Method</h3>
+
+<ul>
+<li>The style transfer result were generated on the basis of 19 layer <a href="https://arxiv.org/abs/1409.1556">VGG-Network</a>, a CNN with 16 convolutional and 5 pooling layers.</li>
+<li>The fully connected layers are not used.</li>
+<li>For image synthesis, max-pooling was replaced by average pooling.</li>
+<li>A layer with $N_l$ distinct filters has $N_l$ feature maps each of size $M_t$, where $M_t$ is the height times the width of the feature map. The response in a layer $l$ can be stored in a matrix $F^l \in \mathcal{R}^{N_t \times M_t}$</li>
+</ul>
+
+
+<h4>Content Reconstruction</h4>
+
+<ul>
+<li><p>To visualize the image information encoded at different layers of the hierarchy, gradient descent is performed on a white noise image to find another image $\overset{\rightarrow}{x}$ with feature responses $F^l$ that matches the feature responses $P^l$of the original image $\overset{\rightarrow}{p}$. We define the loss as the L-2 loss between the feature representations
+$$\mathcal{L}_{content}(\overset{\rightarrow}{p}, \overset{\rightarrow}{x}, P^l, F^l) = \frac{1}{2} \sum_{i,j} (F_{ij}^l - P_{ij}^l)^2$$</p></li>
+<li><p>The derivative of the loss is
+$$\frac{\partial \mathcal{L}}{\partial F_{ij}^l} =
+\begin{cases}
+(F_{ij}^l - P_{ij}^l),  &amp; F_{ij}^l > 0 \\
+0, &amp; F_{ij}^l &lt; 0
+\end{cases}$$</p></li>
+</ul>
+
+
+<h4>Style Reconstruction</h4>
+
+<ul>
+<li>The style representation is built by computing the correlations between the different filter responses. The feature correlations are given by the Gram matrix $G^l \in \mathcal{R}^{N_t \times N_l}$, where $G^l_{ij}$ is the inner product between the feature map $i$ and $j$ in layer $l$
+$$G^l_{ij} = \sum_k F^l_{ik}F^l_{jk}$$</li>
+<li><p>To generate a texture that matches the style of a given image, gradient descent is performed on a white noise image to find another image $\overset{\rightarrow}{x}$ with style representation $G^l$ that matches the style representation $A^l$of the original image $\overset{\rightarrow}{a}$.
+The contribution of each layer $l$ to the total loss is
+$$E_l = \frac{1}{4N_l^2M_l^2} \sum_{i,j} (G_{ij}^l - A_{ij}^l)^2$$
+And the total loss is the weighted sum of the loss from each layer $l$
+$$\mathcal{L}_{style} = \sum_l w_l E_l$$</p></li>
+<li><p>The derivative of $E_l$ with trespect to the activations in layer $l$ is
+$$\frac{\partial E_l}{\partial F_{ij}^l} =
+\begin{cases}
+\frac{1}{N_l^2M_l^2}[(F^l)^T(F^l - A^l)]_{ji},  &amp; F_{ij}^l > 0 \\
+0, &amp; F_{ij}^l &lt; 0
+\end{cases}$$</p></li>
+</ul>
+
+
+<h4>Style Transfer Reconstruction</h4>
+
+<ul>
+<li>To mix the content of an image with the style of another image, we minimize the distance of a white noise image $\overset{\rightarrow}{x}$ from the <strong>content representation</strong> of the content image $\overset{\rightarrow}{p}$ in <strong>one layer</strong> of the network and the <strong>style representation</strong> of the style image $\overset{\rightarrow}{a}$ in <strong>a number of layers</strong> of the CNN</li>
+</ul>
+
+
+<p>$$\mathcal{L}_{total}(\overset{\rightarrow}{p}, \overset{\rightarrow}{a}, \overset{\rightarrow}{x}) = \alpha \mathcal{L}_{content}(\overset{\rightarrow}{p}, \overset{\rightarrow}{x}) + \beta \mathcal{L}_{style}(\overset{\rightarrow}{a}, \overset{\rightarrow}{x})$$</p>
+]]></content>
+  </entry>
+  
+</feed>

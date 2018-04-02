@@ -1,0 +1,193 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Reading | Highway Networks - My Octopress Blog</title>
+	<meta name="author" content="Your Name">
+
+	
+	<meta name="description" content="Reading | Highway Networks I have been working on some NLP-related Kaggle competitions lately and have came across the Highway Networks in quite a &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="My Octopress Blog" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://yoursite.com/blog/2018/01/21/reading-highway-network/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='https://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!--- MathJax Configuration -->
+	<script type="text/x-mathjax-config">
+  		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script type="text/javascript" async
+	  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+	</script>
+	
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><img src= 'https://s3-us-west-1.amazonaws.com/sijunhe-blog/images/name_white.png' height: 150px width: 150px >
+<nav id="main-nav">
+<ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/blog/categories">Categories</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Reading | Highway Networks</h1>
+	<div class="entry-content" itemprop="articleBody"><p>I have been working on some NLP-related Kaggle competitions lately and have came across the <a href="https://arxiv.org/pdf/1505.00387.pdf">Highway Networks</a> in quite a few papers and models. The LSTM-inspired Highway Networks make it easier to train deep networks by adding a small twick to the vanilla feedforward layer. I am reading the paper to get an intuition of how they work.</p>
+
+<!--more-->
+
+
+<h2>1. Introduction</h2>
+
+<ul>
+<li>It&rsquo;s well known that deep networks can represent certain function classes exponentially more efficiently than shallow ones. However, optimization of deep networks is considerably more difficult.</li>
+<li>Srivastava et al. presented a architecture that enables the opmiziation of networks with virtually arbitary depth by a learned gating mechanism for regulating information flow. A network can have paths along which information can flow across several layers without attenuation.</li>
+</ul>
+
+
+<h2>2. Highway Networks</h2>
+
+<ul>
+<li><p>For a layer in a plain feedforward network
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H})$$
+where H is an affine transfor following by a non-linear activation function.</p></li>
+<li><p>For a highway network, we define two non-linear transforms $T(\mathbf{x}, \mathbf{W}_T)$ and $C(\mathbf{x}, \mathbf{W}_C)$ such that
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H}) \cdot T(\mathbf{x}, \mathbf{W}_T) + \mathbf{x} \cdot C(\mathbf{x}, \mathbf{W}_C)$$</p></li>
+<li><p>$T$ is the transform date and $C$ is the carry gate, each respectively express how much of the output is produced by transforming the input and carrying it.</p></li>
+<li><p>For simplicity, we set $C = 1 - T$, giving
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H}) \cdot T(\mathbf{x}, \mathbf{W}_T) + \mathbf{x} \cdot (1-T(\mathbf{x}, \mathbf{W}_C))$$</p></li>
+<li><p>This re-parametrization of the layer transformation is more flexible than the plain feedforward layer. Since
+$$ \mathbf{y} =
+\begin{cases}
+\mathbf{x},  &amp; \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 0 \\
+H(\mathbf{x}, \mathbf{W}_{H}), &amp; \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 1
+\end{cases}$$
+$$ \frac{d\mathbf{y}}{d\mathbf{x}} =
+\begin{cases}
+\mathbf{I} = 0 \\
+H'(\mathbf{x}, \mathbf{W}_{H}), &amp; \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 1
+\end{cases}$$</p></li>
+<li><p>Depending on the output of the transform gates $(\mathbf{x}, \mathbf{W}_C)$, a highway layer can smoothly vary its behavior between a plain layer and a layer that simply passes its inputs through.</p></li>
+<li><p>For highway layers, we user the tranform gate defined as
+$$T(\boldsymbol{x}) = \sigma(\boldsymbol{W}_T^T + \boldsymbol{b}_T)$$</p></li>
+<li><p>For training very deep networks, $\boldsymbol{b}_T$ can be initallzed with a negative value such that the network is initially biased towards <strong>carrry</strong> behavior.</p></li>
+</ul>
+
+
+<h2>Experiments and Analysis</h2>
+
+<ul>
+<li>Networks with depths of 10, 20, 50 and 100 plain or highway layers are trained.</li>
+<li><strong>Optimization</strong>: The performance of plain networks degrades significantly as depth increases, while highway networks do not seem to suffer from an increase in depth at all.</li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post14/highway_networks_depth.png" alt="highway_networks_depth" /></p>
+
+<ul>
+<li><p><strong>Performance</strong>: The performance of highway networks is similar to <a href="https://arxiv.org/abs/1412.6550">Fitnets</a> on CIFAR-10 and MNIST datasets. But highway network is much easier to train since no two-stage training procedure is needed.</p></li>
+<li><p><strong>Analysis</strong>: By analzing the biases of the transform gates and the outputs of the block, it was found that the strong negative biases at low depths are not used to shut down the gates, but to make them more selective.</p></li>
+</ul>
+
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    Your Name
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+</body>
+</html>

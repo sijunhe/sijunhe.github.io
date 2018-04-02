@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: miscellaneous | My Octopress Blog]]></title>
+  <link href="http://yoursite.com/blog/categories/miscellaneous/atom.xml" rel="self"/>
+  <link href="http://yoursite.com/"/>
+  <updated>2018-04-02T00:55:31-07:00</updated>
+  <id>http://yoursite.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[The Stack and The Heap]]></title>
+    <link href="http://yoursite.com/blog/2016/07/05/the-stack-and-the-heap/"/>
+    <updated>2016-07-05T16:47:13-07:00</updated>
+    <id>http://yoursite.com/blog/2016/07/05/the-stack-and-the-heap</id>
+    <content type="html"><![CDATA[<p>As a self-taught programmer, my biggest weakness has always been in the computer systems area, since I never had the luxury of taking a series of foundational systems courses like the <a href="https://web.stanford.edu/class/cs107/" title="CS107">CS107</a> - <a href="http://web.stanford.edu/class/cs110/" title="CS110">CS110</a> - <a href="http://cs140.stanford.edu/" title="CS140">CS140</a> series at Stanford. While I don&rsquo;t find them indispensable in pursuing my interest of data science yet, it is always to catch up on things that I don&rsquo;t know. So here are some reading notes for the comparison between the Stack and the Heap in RAM.</p>
+
+<!--more-->
+
+
+<h3>The Stack</h3>
+
+<ul>
+<li>A region of your computer&rsquo;s memory that stores temporary variables created by each function</li>
+<li>Freeing memory is easy since it&rsquo;s LIFO, just need to adjust one pointer</li>
+<li>Very fast and efficient access since the Stack is managed by the CPU</li>
+<li>The size is limited</li>
+<li>When a function exits, <strong>all</strong> variables defined pushed on the Stack by that function is freed</li>
+<li>Variables in the Stack can only be accessed locally, unless specified by the keyword <strong>static</strong> in C</li>
+</ul>
+
+
+<h3>The Heap</h3>
+
+<ul>
+<li>A region of your computer&rsquo;s memory that is not managed automatically</li>
+<li>Slower access since it&rsquo;s not as tightly managed by the CPU as the Stack</li>
+<li>The size is unlimited</li>
+<li>Need to manually allocate and free memory, like <strong>malloc()</strong> and <strong>free()</strong> in C. Failing to do so will result in memory leak</li>
+<li>Variables available globally</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>
