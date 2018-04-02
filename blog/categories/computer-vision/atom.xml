@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: computer_vision | My Octopress Blog]]></title>
-  <link href="http://yoursite.com/blog/categories/computer-vision/atom.xml" rel="self"/>
-  <link href="http://yoursite.com/"/>
-  <updated>2018-04-02T00:55:31-07:00</updated>
-  <id>http://yoursite.com/</id>
+  <link href="http://sijunhe.github.io/blog/categories/computer-vision/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2018-04-02T01:01:59-07:00</updated>
+  <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Reading | Fast (Feedforward) Style Transfer]]></title>
-    <link href="http://yoursite.com/blog/2017/04/21/reading-fast-feedforward-style-transfer/"/>
+    <link href="http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer/"/>
     <updated>2017-04-21T15:15:34-07:00</updated>
-    <id>http://yoursite.com/blog/2017/04/21/reading-fast-feedforward-style-transfer</id>
+    <id>http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer</id>
     <content type="html"><![CDATA[<p><a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16.pdf">Perceptual Losses for Real-Time Style Transfer and Super-Resolution</a> is the second paper in my reading series for Neural Style Transfer, where Johnson et al. built on the work of Gatys et al. and used feedforward networks to stylize image order of magnitudes faster than the previous optimization approach.</p>
 
 <!--more-->
@@ -113,9 +113,9 @@ $$\hat{y} = \text{argmin}_y \ \lambda_c l_{feat}^{\phi, j}(y, y_c) + \lambda_s l
   
   <entry>
     <title type="html"><![CDATA[Reading | Neural Style Transform]]></title>
-    <link href="http://yoursite.com/blog/2017/04/18/reading-notes-neural-style-transform/"/>
+    <link href="http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform/"/>
     <updated>2017-04-18T13:59:48-07:00</updated>
-    <id>http://yoursite.com/blog/2017/04/18/reading-notes-neural-style-transform</id>
+    <id>http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform</id>
     <content type="html"><![CDATA[<p>Neural Style transfer is the technique of recomposing images in the style of other images using Deep Learning techniques and it has gotten very popular recently. I will be reading two papers related to Neural Style Transfer <form></form> <a href="http://cs231n.stanford.edu/">CS231N: Convolutional Neural Networks for Visual Recognition</a>. Starting with the first one, <a href="https://arxiv.org/abs/1508.06576">A Neural Algorithm of Artistic Style</a> by Gatys, Ecker and Bethge.</p>
 
 <!--more-->

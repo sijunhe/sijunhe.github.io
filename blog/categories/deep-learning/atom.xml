@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: deep_learning | My Octopress Blog]]></title>
-  <link href="http://yoursite.com/blog/categories/deep-learning/atom.xml" rel="self"/>
-  <link href="http://yoursite.com/"/>
-  <updated>2018-04-02T00:55:31-07:00</updated>
-  <id>http://yoursite.com/</id>
+  <link href="http://sijunhe.github.io/blog/categories/deep-learning/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2018-04-02T01:01:59-07:00</updated>
+  <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Reading | Highway Networks]]></title>
-    <link href="http://yoursite.com/blog/2018/01/21/reading-highway-network/"/>
+    <link href="http://sijunhe.github.io/blog/2018/01/21/reading-highway-network/"/>
     <updated>2018-01-21T18:18:41-08:00</updated>
-    <id>http://yoursite.com/blog/2018/01/21/reading-highway-network</id>
+    <id>http://sijunhe.github.io/blog/2018/01/21/reading-highway-network</id>
     <content type="html"><![CDATA[<p>I have been working on some NLP-related Kaggle competitions lately and have came across the <a href="https://arxiv.org/pdf/1505.00387.pdf">Highway Networks</a> in quite a few papers and models. The LSTM-inspired Highway Networks make it easier to train deep networks by adding a small twick to the vanilla feedforward layer. I am reading the paper to get an intuition of how they work.</p>
 
 <!--more-->
@@ -80,9 +80,9 @@ $$T(\boldsymbol{x}) = \sigma(\boldsymbol{W}_T^T + \boldsymbol{b}_T)$$</p></li>
   
   <entry>
     <title type="html"><![CDATA[Reading | Fast (Feedforward) Style Transfer]]></title>
-    <link href="http://yoursite.com/blog/2017/04/21/reading-fast-feedforward-style-transfer/"/>
+    <link href="http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer/"/>
     <updated>2017-04-21T15:15:34-07:00</updated>
-    <id>http://yoursite.com/blog/2017/04/21/reading-fast-feedforward-style-transfer</id>
+    <id>http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer</id>
     <content type="html"><![CDATA[<p><a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16.pdf">Perceptual Losses for Real-Time Style Transfer and Super-Resolution</a> is the second paper in my reading series for Neural Style Transfer, where Johnson et al. built on the work of Gatys et al. and used feedforward networks to stylize image order of magnitudes faster than the previous optimization approach.</p>
 
 <!--more-->
@@ -178,9 +178,9 @@ $$\hat{y} = \text{argmin}_y \ \lambda_c l_{feat}^{\phi, j}(y, y_c) + \lambda_s l
   
   <entry>
     <title type="html"><![CDATA[Reading | Neural Style Transform]]></title>
-    <link href="http://yoursite.com/blog/2017/04/18/reading-notes-neural-style-transform/"/>
+    <link href="http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform/"/>
     <updated>2017-04-18T13:59:48-07:00</updated>
-    <id>http://yoursite.com/blog/2017/04/18/reading-notes-neural-style-transform</id>
+    <id>http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform</id>
     <content type="html"><![CDATA[<p>Neural Style transfer is the technique of recomposing images in the style of other images using Deep Learning techniques and it has gotten very popular recently. I will be reading two papers related to Neural Style Transfer <form></form> <a href="http://cs231n.stanford.edu/">CS231N: Convolutional Neural Networks for Visual Recognition</a>. Starting with the first one, <a href="https://arxiv.org/abs/1508.06576">A Neural Algorithm of Artistic Style</a> by Gatys, Ecker and Bethge.</p>
 
 <!--more-->
@@ -296,9 +296,9 @@ $$\frac{\partial E_l}{\partial F_{ij}^l} =
   
   <entry>
     <title type="html"><![CDATA[Reading | The 1986 Backpropagation Paper]]></title>
-    <link href="http://yoursite.com/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper/"/>
+    <link href="http://sijunhe.github.io/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper/"/>
     <updated>2017-03-27T15:18:09-07:00</updated>
-    <id>http://yoursite.com/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper</id>
+    <id>http://sijunhe.github.io/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper</id>
     <content type="html"><![CDATA[<p>Deep learning is without doubt the hottest topic in both the academia and the industry at the moment, as it enables machines to recognize objects, translate speech or even play chess at human or super-human level. The workhorse behind the training of every neural network is backpropagation, where the weights of connections between neurons get adjusted to minimize the difference between the output of the neural network and the desired target. The idea of backpropagation came around in 1960 - 1970, but it wasn&rsquo;t until 1986 when it was formally introduced as the learning procedure to train neural networks. This is my reading notes of the famous 1986 paper in Nature <a href="https://www.iro.umontreal.ca/~vincentp/ift3395/lectures/backprop_old.pdf">Learning Representations by Back-propagating Errors</a> by Rumelhart, Hinton and Williams.</p>
 
 <!--more-->

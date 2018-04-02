@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: r | My Octopress Blog]]></title>
-  <link href="http://yoursite.com/blog/categories/r/atom.xml" rel="self"/>
-  <link href="http://yoursite.com/"/>
-  <updated>2018-04-02T00:55:31-07:00</updated>
-  <id>http://yoursite.com/</id>
+  <link href="http://sijunhe.github.io/blog/categories/r/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2018-04-02T01:01:59-07:00</updated>
+  <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Linear Regression and the KNN]]></title>
-    <link href="http://yoursite.com/blog/2017/02/08/linear-regression-and-the-knn/"/>
+    <link href="http://sijunhe.github.io/blog/2017/02/08/linear-regression-and-the-knn/"/>
     <updated>2017-02-08T17:09:38-08:00</updated>
-    <id>http://yoursite.com/blog/2017/02/08/linear-regression-and-the-knn</id>
+    <id>http://sijunhe.github.io/blog/2017/02/08/linear-regression-and-the-knn</id>
     <content type="html"><![CDATA[<p>This was an homework problem in <a href="http://statweb.stanford.edu/~tibs/stat315a.html">STATS315A Applied Modern Statistics: Learning</a> at Stanford and I thought it is worth sharing. It runs a simulation to compare KNN and linear regression in terms of their performance as a classifier, in the presence of an increasing number of noise variables.</p>
 
 <!--more-->
@@ -163,9 +163,9 @@ legend("bottom",legend_names,fill=c(colors, "black", "brown"),ncol=4, cex = 0.9)
   
   <entry>
     <title type="html"><![CDATA[San Francisco Crime Visualization]]></title>
-    <link href="http://yoursite.com/blog/2015/12/15/san-francisco-crime-visualization/"/>
+    <link href="http://sijunhe.github.io/blog/2015/12/15/san-francisco-crime-visualization/"/>
     <updated>2015-12-15T15:42:11-08:00</updated>
-    <id>http://yoursite.com/blog/2015/12/15/san-francisco-crime-visualization</id>
+    <id>http://sijunhe.github.io/blog/2015/12/15/san-francisco-crime-visualization</id>
     <content type="html"><![CDATA[<p>The purpose of this post is two-folded</p>
 
 <ul>

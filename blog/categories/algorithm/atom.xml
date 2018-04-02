@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: algorithm | My Octopress Blog]]></title>
-  <link href="http://yoursite.com/blog/categories/algorithm/atom.xml" rel="self"/>
-  <link href="http://yoursite.com/"/>
-  <updated>2018-04-02T00:55:31-07:00</updated>
-  <id>http://yoursite.com/</id>
+  <link href="http://sijunhe.github.io/blog/categories/algorithm/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2018-04-02T01:01:59-07:00</updated>
+  <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Reading | The 1986 Backpropagation Paper]]></title>
-    <link href="http://yoursite.com/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper/"/>
+    <link href="http://sijunhe.github.io/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper/"/>
     <updated>2017-03-27T15:18:09-07:00</updated>
-    <id>http://yoursite.com/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper</id>
+    <id>http://sijunhe.github.io/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper</id>
     <content type="html"><![CDATA[<p>Deep learning is without doubt the hottest topic in both the academia and the industry at the moment, as it enables machines to recognize objects, translate speech or even play chess at human or super-human level. The workhorse behind the training of every neural network is backpropagation, where the weights of connections between neurons get adjusted to minimize the difference between the output of the neural network and the desired target. The idea of backpropagation came around in 1960 - 1970, but it wasn&rsquo;t until 1986 when it was formally introduced as the learning procedure to train neural networks. This is my reading notes of the famous 1986 paper in Nature <a href="https://www.iro.umontreal.ca/~vincentp/ift3395/lectures/backprop_old.pdf">Learning Representations by Back-propagating Errors</a> by Rumelhart, Hinton and Williams.</p>
 
 <!--more-->
@@ -81,9 +81,9 @@ $$\frac{\partial E}{\partial y_i} = \sum_j \frac{\partial E}{\partial x_j} W_{ji
   
   <entry>
     <title type="html"><![CDATA[Learning Dynamic Programming]]></title>
-    <link href="http://yoursite.com/blog/2016/09/26/learning-dynamic-programming/"/>
+    <link href="http://sijunhe.github.io/blog/2016/09/26/learning-dynamic-programming/"/>
     <updated>2016-09-26T16:50:00-07:00</updated>
-    <id>http://yoursite.com/blog/2016/09/26/learning-dynamic-programming</id>
+    <id>http://sijunhe.github.io/blog/2016/09/26/learning-dynamic-programming</id>
     <content type="html"><![CDATA[<p>Dynamic programming is a commonly-used method in a programmer&rsquo;s algorithm toolbox and one that I have yet to learn. Thus I am writing this post to document what I learned in Stanford&rsquo;s <a href="https://www.coursera.org/learn/algorithm-design-analysis-2">Design and Analysis of Algorithms</a>.</p>
 
 <p>Dynamic programming is based on the idea of solving a complex problem by breaking it down into many simpler subproblems, solving each of the subproblems just once and storing the solution. When the same subproblem occurs again, the solution can be simply looked up from storage, thus saves time at the expense of space.</p>
@@ -190,9 +190,9 @@ for i in range(1, n+1):
   
   <entry>
     <title type="html"><![CDATA[Detecting Community Structures in Networks]]></title>
-    <link href="http://yoursite.com/blog/2016/04/05/detecting-community-structures-in-networks/"/>
+    <link href="http://sijunhe.github.io/blog/2016/04/05/detecting-community-structures-in-networks/"/>
     <updated>2016-04-05T16:46:58-07:00</updated>
-    <id>http://yoursite.com/blog/2016/04/05/detecting-community-structures-in-networks</id>
+    <id>http://sijunhe.github.io/blog/2016/04/05/detecting-community-structures-in-networks</id>
     <content type="html"><![CDATA[<p>The purpose of this post is two-folded</p>
 
 <ul>
@@ -316,9 +316,9 @@ for i in range(1, n+1):
   
   <entry>
     <title type="html"><![CDATA[Friends You Might Know]]></title>
-    <link href="http://yoursite.com/blog/2016/01/19/friends-you-might-know/"/>
+    <link href="http://sijunhe.github.io/blog/2016/01/19/friends-you-might-know/"/>
     <updated>2016-01-19T15:46:36-08:00</updated>
-    <id>http://yoursite.com/blog/2016/01/19/friends-you-might-know</id>
+    <id>http://sijunhe.github.io/blog/2016/01/19/friends-you-might-know</id>
     <content type="html"><![CDATA[<p>This is a problem from <a href="http://web.stanford.edu/class/cs246/">CS246</a>: Mining Massive Datasets from Stanford University. The idea behind the original &ldquo;People You Might Know&rdquo; friendship recommendation algorithm is that if two people share a high number of mutual friends, they are more likely to know each other and thus the system would recommend that they connect with each other.</p>
 
 <!--more-->
@@ -570,9 +570,9 @@ public class FriendRecommendation extends Configured implements Tool {
   
   <entry>
     <title type="html"><![CDATA[Quora Challenges - Upvotes]]></title>
-    <link href="http://yoursite.com/blog/2015/11/20/quora-challenges-upvotes/"/>
+    <link href="http://sijunhe.github.io/blog/2015/11/20/quora-challenges-upvotes/"/>
     <updated>2015-11-20T15:14:56-08:00</updated>
-    <id>http://yoursite.com/blog/2015/11/20/quora-challenges-upvotes</id>
+    <id>http://sijunhe.github.io/blog/2015/11/20/quora-challenges-upvotes</id>
     <content type="html"><![CDATA[<p>Quora Challenges are basically a set of programming problems posted on the <a href="https://www.quora.com/challenges">website</a>, used as like a backdoor of recruiting. <a href="https://www.quora.com/Is-it-necessary-to-solve-a-programming-challenge-to-get-an-internship-interview-with-Quora">Rumor</a> has it that whoever can solve one of these would guarantee an interview with Quora, skipping the resume selection process.</p>
 
 <!--more-->

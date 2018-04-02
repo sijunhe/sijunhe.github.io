@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: miscellaneous | My Octopress Blog]]></title>
-  <link href="http://yoursite.com/blog/categories/miscellaneous/atom.xml" rel="self"/>
-  <link href="http://yoursite.com/"/>
-  <updated>2018-04-02T00:55:31-07:00</updated>
-  <id>http://yoursite.com/</id>
+  <link href="http://sijunhe.github.io/blog/categories/miscellaneous/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2018-04-02T01:01:59-07:00</updated>
+  <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[The Stack and The Heap]]></title>
-    <link href="http://yoursite.com/blog/2016/07/05/the-stack-and-the-heap/"/>
+    <link href="http://sijunhe.github.io/blog/2016/07/05/the-stack-and-the-heap/"/>
     <updated>2016-07-05T16:47:13-07:00</updated>
-    <id>http://yoursite.com/blog/2016/07/05/the-stack-and-the-heap</id>
+    <id>http://sijunhe.github.io/blog/2016/07/05/the-stack-and-the-heap</id>
     <content type="html"><![CDATA[<p>As a self-taught programmer, my biggest weakness has always been in the computer systems area, since I never had the luxury of taking a series of foundational systems courses like the <a href="https://web.stanford.edu/class/cs107/" title="CS107">CS107</a> - <a href="http://web.stanford.edu/class/cs110/" title="CS110">CS110</a> - <a href="http://cs140.stanford.edu/" title="CS140">CS140</a> series at Stanford. While I don&rsquo;t find them indispensable in pursuing my interest of data science yet, it is always to catch up on things that I don&rsquo;t know. So here are some reading notes for the comparison between the Stack and the Heap in RAM.</p>
 
 <!--more-->

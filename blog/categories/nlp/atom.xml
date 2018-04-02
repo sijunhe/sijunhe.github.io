@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: nlp | My Octopress Blog]]></title>
-  <link href="http://yoursite.com/blog/categories/nlp/atom.xml" rel="self"/>
-  <link href="http://yoursite.com/"/>
-  <updated>2018-04-02T00:55:31-07:00</updated>
-  <id>http://yoursite.com/</id>
+  <link href="http://sijunhe.github.io/blog/categories/nlp/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2018-04-02T01:01:59-07:00</updated>
+  <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Kaggle | Mercari Price Suggestion]]></title>
-    <link href="http://yoursite.com/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/"/>
+    <link href="http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/"/>
     <updated>2018-03-02T21:46:50-08:00</updated>
-    <id>http://yoursite.com/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge</id>
+    <id>http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge</id>
     <content type="html"><![CDATA[<p>One of my first data science experience was with Kaggle more than two years ago when I played around with the <a href="https://sijunhe.github.io/blog/2015/10/31/kaggle-titanic-part-i/">Titanic competition</a>. While the competition itself was minimal, the experience was magical, intuitive and one of the reasons I got into data science.</p>
 
 <p>Two years later, I work full-time as a data scientist. One night, I decided to challenge myself on a whim and ended up spending all of my free time on this competition for two weeks.</p>
@@ -146,9 +146,9 @@
   
   <entry>
     <title type="html"><![CDATA[Reading | Highway Networks]]></title>
-    <link href="http://yoursite.com/blog/2018/01/21/reading-highway-network/"/>
+    <link href="http://sijunhe.github.io/blog/2018/01/21/reading-highway-network/"/>
     <updated>2018-01-21T18:18:41-08:00</updated>
-    <id>http://yoursite.com/blog/2018/01/21/reading-highway-network</id>
+    <id>http://sijunhe.github.io/blog/2018/01/21/reading-highway-network</id>
     <content type="html"><![CDATA[<p>I have been working on some NLP-related Kaggle competitions lately and have came across the <a href="https://arxiv.org/pdf/1505.00387.pdf">Highway Networks</a> in quite a few papers and models. The LSTM-inspired Highway Networks make it easier to train deep networks by adding a small twick to the vanilla feedforward layer. I am reading the paper to get an intuition of how they work.</p>
 
 <!--more-->
@@ -211,9 +211,9 @@ $$T(\boldsymbol{x}) = \sigma(\boldsymbol{W}_T^T + \boldsymbol{b}_T)$$</p></li>
   
   <entry>
     <title type="html"><![CDATA[Reading | LDA, the Most Commonly-Used Topic Model]]></title>
-    <link href="http://yoursite.com/blog/2017/04/04/reading-notes-lda/"/>
+    <link href="http://sijunhe.github.io/blog/2017/04/04/reading-notes-lda/"/>
     <updated>2017-04-04T21:54:13-07:00</updated>
-    <id>http://yoursite.com/blog/2017/04/04/reading-notes-lda</id>
+    <id>http://sijunhe.github.io/blog/2017/04/04/reading-notes-lda</id>
     <content type="html"><![CDATA[<p>I have been working on projects related to user profiles lately at <a href="http://www.autodesk.com/">Autodesk</a>. An important part of the project are extracting information out of command usage data, of which <a href="http://www.cs.columbia.edu/~blei/papers/BleiNgJordan2003.pdf">Latent Dirichlet Allocation</a> has been the main driving force. Hoping to get a better grasp of the underlying principles of LDA, I am reading this one of the most cited papers in Computer Science, by Blei, Ng and Jordan. Admittedly, the Bayesian math was a bit hard for me and I was not able to fully comprehend the material (never a big fan of Bayesian Statistics). Maybe I should have taken <a href="http://cs.stanford.edu/~ermon/cs228/index.html">CS 228: Probabilistic Graphical Models</a></p>
 
 <!--more-->

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: visualization | My Octopress Blog]]></title>
-  <link href="http://yoursite.com/blog/categories/visualization/atom.xml" rel="self"/>
-  <link href="http://yoursite.com/"/>
-  <updated>2018-04-02T00:55:31-07:00</updated>
-  <id>http://yoursite.com/</id>
+  <link href="http://sijunhe.github.io/blog/categories/visualization/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2018-04-02T01:01:59-07:00</updated>
+  <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Detecting Community Structures in Networks]]></title>
-    <link href="http://yoursite.com/blog/2016/04/05/detecting-community-structures-in-networks/"/>
+    <link href="http://sijunhe.github.io/blog/2016/04/05/detecting-community-structures-in-networks/"/>
     <updated>2016-04-05T16:46:58-07:00</updated>
-    <id>http://yoursite.com/blog/2016/04/05/detecting-community-structures-in-networks</id>
+    <id>http://sijunhe.github.io/blog/2016/04/05/detecting-community-structures-in-networks</id>
     <content type="html"><![CDATA[<p>The purpose of this post is two-folded</p>
 
 <ul>
@@ -141,9 +141,9 @@
   
   <entry>
     <title type="html"><![CDATA[San Francisco Crime Visualization]]></title>
-    <link href="http://yoursite.com/blog/2015/12/15/san-francisco-crime-visualization/"/>
+    <link href="http://sijunhe.github.io/blog/2015/12/15/san-francisco-crime-visualization/"/>
     <updated>2015-12-15T15:42:11-08:00</updated>
-    <id>http://yoursite.com/blog/2015/12/15/san-francisco-crime-visualization</id>
+    <id>http://sijunhe.github.io/blog/2015/12/15/san-francisco-crime-visualization</id>
     <content type="html"><![CDATA[<p>The purpose of this post is two-folded</p>
 
 <ul>

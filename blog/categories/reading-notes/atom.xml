@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: reading_notes | My Octopress Blog]]></title>
-  <link href="http://yoursite.com/blog/categories/reading-notes/atom.xml" rel="self"/>
-  <link href="http://yoursite.com/"/>
-  <updated>2018-04-02T00:55:31-07:00</updated>
-  <id>http://yoursite.com/</id>
+  <link href="http://sijunhe.github.io/blog/categories/reading-notes/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2018-04-02T01:01:59-07:00</updated>
+  <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Reading | Highway Networks]]></title>
-    <link href="http://yoursite.com/blog/2018/01/21/reading-highway-network/"/>
+    <link href="http://sijunhe.github.io/blog/2018/01/21/reading-highway-network/"/>
     <updated>2018-01-21T18:18:41-08:00</updated>
-    <id>http://yoursite.com/blog/2018/01/21/reading-highway-network</id>
+    <id>http://sijunhe.github.io/blog/2018/01/21/reading-highway-network</id>
     <content type="html"><![CDATA[<p>I have been working on some NLP-related Kaggle competitions lately and have came across the <a href="https://arxiv.org/pdf/1505.00387.pdf">Highway Networks</a> in quite a few papers and models. The LSTM-inspired Highway Networks make it easier to train deep networks by adding a small twick to the vanilla feedforward layer. I am reading the paper to get an intuition of how they work.</p>
 
 <!--more-->
@@ -80,9 +80,9 @@ $$T(\boldsymbol{x}) = \sigma(\boldsymbol{W}_T^T + \boldsymbol{b}_T)$$</p></li>
   
   <entry>
     <title type="html"><![CDATA[Reading | Crossing the Chasm]]></title>
-    <link href="http://yoursite.com/blog/2017/11/22/reading-crossing-the-chasm/"/>
+    <link href="http://sijunhe.github.io/blog/2017/11/22/reading-crossing-the-chasm/"/>
     <updated>2017-11-22T18:49:19-08:00</updated>
-    <id>http://yoursite.com/blog/2017/11/22/reading-crossing-the-chasm</id>
+    <id>http://sijunhe.github.io/blog/2017/11/22/reading-crossing-the-chasm</id>
     <content type="html"><![CDATA[<p>After hearing numerous quotes and ideas from it in meetings, I finally decided to read <a href="https://www.amazon.com/Crossing-Chasm-3rd-Disruptive-Mainstream/dp/0062292986/">Crossing the Chasm: Marketing and Selling Disruptive Products to Mainstream Customers</a>. I wanted to understand the fundamentals of high technology business development and the book did not disappoint. While there were portion of it that I couldn&rsquo;t understand fully due to lack of experience, I could resonate with the rest of it. It wouldn&rsquo;t be an overstatement to say that this book changed the way I looked at high-tech business.</p>
 
 <!--more-->
@@ -512,9 +512,9 @@ $$T(\boldsymbol{x}) = \sigma(\boldsymbol{W}_T^T + \boldsymbol{b}_T)$$</p></li>
   
   <entry>
     <title type="html"><![CDATA[Reading | The Effective Engineer]]></title>
-    <link href="http://yoursite.com/blog/2017/10/12/reading-the-effective-engineer/"/>
+    <link href="http://sijunhe.github.io/blog/2017/10/12/reading-the-effective-engineer/"/>
     <updated>2017-10-12T22:46:13-07:00</updated>
-    <id>http://yoursite.com/blog/2017/10/12/reading-the-effective-engineer</id>
+    <id>http://sijunhe.github.io/blog/2017/10/12/reading-the-effective-engineer</id>
     <content type="html"><![CDATA[<p>I am always skeptical about productivity books since they can easily come off as very theoretical and of little use for my work. After recommendations from several friends, I decided to read <a href="https://www.amazon.com/Effective-Engineer-Engineering-Disproportionate-Meaningful/dp/0996128107">The Effective Engineer</a> and found it to be a <strong>highly leveraged</strong> use of my time! As a relatively new engineer, I can already resonate deeply with what Lau wrote. I also started to adopt some of the techniques Lau recommended and have seen good results. Here is my reading notes for <a href="https://www.amazon.com/Effective-Engineer-Engineering-Disproportionate-Meaningful/dp/0996128107">The Effective Engineer</a>.</p>
 
 <!--more-->
@@ -682,9 +682,9 @@ $$\text{Leverage} = \frac{\text{Impact Produced}}{\text{Time Invested}}$$</li>
   
   <entry>
     <title type="html"><![CDATA[Reading | Fast (Feedforward) Style Transfer]]></title>
-    <link href="http://yoursite.com/blog/2017/04/21/reading-fast-feedforward-style-transfer/"/>
+    <link href="http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer/"/>
     <updated>2017-04-21T15:15:34-07:00</updated>
-    <id>http://yoursite.com/blog/2017/04/21/reading-fast-feedforward-style-transfer</id>
+    <id>http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer</id>
     <content type="html"><![CDATA[<p><a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16.pdf">Perceptual Losses for Real-Time Style Transfer and Super-Resolution</a> is the second paper in my reading series for Neural Style Transfer, where Johnson et al. built on the work of Gatys et al. and used feedforward networks to stylize image order of magnitudes faster than the previous optimization approach.</p>
 
 <!--more-->
@@ -780,9 +780,9 @@ $$\hat{y} = \text{argmin}_y \ \lambda_c l_{feat}^{\phi, j}(y, y_c) + \lambda_s l
   
   <entry>
     <title type="html"><![CDATA[Reading | Neural Style Transform]]></title>
-    <link href="http://yoursite.com/blog/2017/04/18/reading-notes-neural-style-transform/"/>
+    <link href="http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform/"/>
     <updated>2017-04-18T13:59:48-07:00</updated>
-    <id>http://yoursite.com/blog/2017/04/18/reading-notes-neural-style-transform</id>
+    <id>http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform</id>
     <content type="html"><![CDATA[<p>Neural Style transfer is the technique of recomposing images in the style of other images using Deep Learning techniques and it has gotten very popular recently. I will be reading two papers related to Neural Style Transfer <form></form> <a href="http://cs231n.stanford.edu/">CS231N: Convolutional Neural Networks for Visual Recognition</a>. Starting with the first one, <a href="https://arxiv.org/abs/1508.06576">A Neural Algorithm of Artistic Style</a> by Gatys, Ecker and Bethge.</p>
 
 <!--more-->

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[My Octopress Blog]]></title>
-  <link href="http://yoursite.com/atom.xml" rel="self"/>
-  <link href="http://yoursite.com/"/>
-  <updated>2018-04-02T00:55:31-07:00</updated>
-  <id>http://yoursite.com/</id>
+  <link href="http://sijunhe.github.io/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2018-04-02T01:01:59-07:00</updated>
+  <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Kaggle | Mercari Price Suggestion]]></title>
-    <link href="http://yoursite.com/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/"/>
+    <link href="http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/"/>
     <updated>2018-03-02T21:46:50-08:00</updated>
-    <id>http://yoursite.com/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge</id>
+    <id>http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge</id>
     <content type="html"><![CDATA[<p>One of my first data science experience was with Kaggle more than two years ago when I played around with the <a href="https://sijunhe.github.io/blog/2015/10/31/kaggle-titanic-part-i/">Titanic competition</a>. While the competition itself was minimal, the experience was magical, intuitive and one of the reasons I got into data science.</p>
 
 <p>Two years later, I work full-time as a data scientist. One night, I decided to challenge myself on a whim and ended up spending all of my free time on this competition for two weeks.</p>
@@ -146,9 +146,9 @@
   
   <entry>
     <title type="html"><![CDATA[Reading | Highway Networks]]></title>
-    <link href="http://yoursite.com/blog/2018/01/21/reading-highway-network/"/>
+    <link href="http://sijunhe.github.io/blog/2018/01/21/reading-highway-network/"/>
     <updated>2018-01-21T18:18:41-08:00</updated>
-    <id>http://yoursite.com/blog/2018/01/21/reading-highway-network</id>
+    <id>http://sijunhe.github.io/blog/2018/01/21/reading-highway-network</id>
     <content type="html"><![CDATA[<p>I have been working on some NLP-related Kaggle competitions lately and have came across the <a href="https://arxiv.org/pdf/1505.00387.pdf">Highway Networks</a> in quite a few papers and models. The LSTM-inspired Highway Networks make it easier to train deep networks by adding a small twick to the vanilla feedforward layer. I am reading the paper to get an intuition of how they work.</p>
 
 <!--more-->
@@ -211,9 +211,9 @@ $$T(\boldsymbol{x}) = \sigma(\boldsymbol{W}_T^T + \boldsymbol{b}_T)$$</p></li>
   
   <entry>
     <title type="html"><![CDATA[Reading | Crossing the Chasm]]></title>
-    <link href="http://yoursite.com/blog/2017/11/22/reading-crossing-the-chasm/"/>
+    <link href="http://sijunhe.github.io/blog/2017/11/22/reading-crossing-the-chasm/"/>
     <updated>2017-11-22T18:49:19-08:00</updated>
-    <id>http://yoursite.com/blog/2017/11/22/reading-crossing-the-chasm</id>
+    <id>http://sijunhe.github.io/blog/2017/11/22/reading-crossing-the-chasm</id>
     <content type="html"><![CDATA[<p>After hearing numerous quotes and ideas from it in meetings, I finally decided to read <a href="https://www.amazon.com/Crossing-Chasm-3rd-Disruptive-Mainstream/dp/0062292986/">Crossing the Chasm: Marketing and Selling Disruptive Products to Mainstream Customers</a>. I wanted to understand the fundamentals of high technology business development and the book did not disappoint. While there were portion of it that I couldn&rsquo;t understand fully due to lack of experience, I could resonate with the rest of it. It wouldn&rsquo;t be an overstatement to say that this book changed the way I looked at high-tech business.</p>
 
 <!--more-->
@@ -643,9 +643,9 @@ $$T(\boldsymbol{x}) = \sigma(\boldsymbol{W}_T^T + \boldsymbol{b}_T)$$</p></li>
   
   <entry>
     <title type="html"><![CDATA[Reading | The Effective Engineer]]></title>
-    <link href="http://yoursite.com/blog/2017/10/12/reading-the-effective-engineer/"/>
+    <link href="http://sijunhe.github.io/blog/2017/10/12/reading-the-effective-engineer/"/>
     <updated>2017-10-12T22:46:13-07:00</updated>
-    <id>http://yoursite.com/blog/2017/10/12/reading-the-effective-engineer</id>
+    <id>http://sijunhe.github.io/blog/2017/10/12/reading-the-effective-engineer</id>
     <content type="html"><![CDATA[<p>I am always skeptical about productivity books since they can easily come off as very theoretical and of little use for my work. After recommendations from several friends, I decided to read <a href="https://www.amazon.com/Effective-Engineer-Engineering-Disproportionate-Meaningful/dp/0996128107">The Effective Engineer</a> and found it to be a <strong>highly leveraged</strong> use of my time! As a relatively new engineer, I can already resonate deeply with what Lau wrote. I also started to adopt some of the techniques Lau recommended and have seen good results. Here is my reading notes for <a href="https://www.amazon.com/Effective-Engineer-Engineering-Disproportionate-Meaningful/dp/0996128107">The Effective Engineer</a>.</p>
 
 <!--more-->
@@ -813,9 +813,9 @@ $$\text{Leverage} = \frac{\text{Impact Produced}}{\text{Time Invested}}$$</li>
   
   <entry>
     <title type="html"><![CDATA[Reading | Fast (Feedforward) Style Transfer]]></title>
-    <link href="http://yoursite.com/blog/2017/04/21/reading-fast-feedforward-style-transfer/"/>
+    <link href="http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer/"/>
     <updated>2017-04-21T15:15:34-07:00</updated>
-    <id>http://yoursite.com/blog/2017/04/21/reading-fast-feedforward-style-transfer</id>
+    <id>http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer</id>
     <content type="html"><![CDATA[<p><a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16.pdf">Perceptual Losses for Real-Time Style Transfer and Super-Resolution</a> is the second paper in my reading series for Neural Style Transfer, where Johnson et al. built on the work of Gatys et al. and used feedforward networks to stylize image order of magnitudes faster than the previous optimization approach.</p>
 
 <!--more-->
@@ -911,9 +911,9 @@ $$\hat{y} = \text{argmin}_y \ \lambda_c l_{feat}^{\phi, j}(y, y_c) + \lambda_s l
   
   <entry>
     <title type="html"><![CDATA[Reading | Neural Style Transform]]></title>
-    <link href="http://yoursite.com/blog/2017/04/18/reading-notes-neural-style-transform/"/>
+    <link href="http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform/"/>
     <updated>2017-04-18T13:59:48-07:00</updated>
-    <id>http://yoursite.com/blog/2017/04/18/reading-notes-neural-style-transform</id>
+    <id>http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform</id>
     <content type="html"><![CDATA[<p>Neural Style transfer is the technique of recomposing images in the style of other images using Deep Learning techniques and it has gotten very popular recently. I will be reading two papers related to Neural Style Transfer <form></form> <a href="http://cs231n.stanford.edu/">CS231N: Convolutional Neural Networks for Visual Recognition</a>. Starting with the first one, <a href="https://arxiv.org/abs/1508.06576">A Neural Algorithm of Artistic Style</a> by Gatys, Ecker and Bethge.</p>
 
 <!--more-->
@@ -1029,9 +1029,9 @@ $$\frac{\partial E_l}{\partial F_{ij}^l} =
   
   <entry>
     <title type="html"><![CDATA[Reading | LDA, the Most Commonly-Used Topic Model]]></title>
-    <link href="http://yoursite.com/blog/2017/04/04/reading-notes-lda/"/>
+    <link href="http://sijunhe.github.io/blog/2017/04/04/reading-notes-lda/"/>
     <updated>2017-04-04T21:54:13-07:00</updated>
-    <id>http://yoursite.com/blog/2017/04/04/reading-notes-lda</id>
+    <id>http://sijunhe.github.io/blog/2017/04/04/reading-notes-lda</id>
     <content type="html"><![CDATA[<p>I have been working on projects related to user profiles lately at <a href="http://www.autodesk.com/">Autodesk</a>. An important part of the project are extracting information out of command usage data, of which <a href="http://www.cs.columbia.edu/~blei/papers/BleiNgJordan2003.pdf">Latent Dirichlet Allocation</a> has been the main driving force. Hoping to get a better grasp of the underlying principles of LDA, I am reading this one of the most cited papers in Computer Science, by Blei, Ng and Jordan. Admittedly, the Bayesian math was a bit hard for me and I was not able to fully comprehend the material (never a big fan of Bayesian Statistics). Maybe I should have taken <a href="http://cs.stanford.edu/~ermon/cs228/index.html">CS 228: Probabilistic Graphical Models</a></p>
 
 <!--more-->
@@ -1120,9 +1120,9 @@ However, explicitly finding the maximum log likihood is often hard for models wi
   
   <entry>
     <title type="html"><![CDATA[Reading | The 1986 Backpropagation Paper]]></title>
-    <link href="http://yoursite.com/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper/"/>
+    <link href="http://sijunhe.github.io/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper/"/>
     <updated>2017-03-27T15:18:09-07:00</updated>
-    <id>http://yoursite.com/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper</id>
+    <id>http://sijunhe.github.io/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper</id>
     <content type="html"><![CDATA[<p>Deep learning is without doubt the hottest topic in both the academia and the industry at the moment, as it enables machines to recognize objects, translate speech or even play chess at human or super-human level. The workhorse behind the training of every neural network is backpropagation, where the weights of connections between neurons get adjusted to minimize the difference between the output of the neural network and the desired target. The idea of backpropagation came around in 1960 - 1970, but it wasn&rsquo;t until 1986 when it was formally introduced as the learning procedure to train neural networks. This is my reading notes of the famous 1986 paper in Nature <a href="https://www.iro.umontreal.ca/~vincentp/ift3395/lectures/backprop_old.pdf">Learning Representations by Back-propagating Errors</a> by Rumelhart, Hinton and Williams.</p>
 
 <!--more-->
@@ -1186,9 +1186,9 @@ $$\frac{\partial E}{\partial y_i} = \sum_j \frac{\partial E}{\partial x_j} W_{ji
   
   <entry>
     <title type="html"><![CDATA[Case-control Sampling In Imbalanced Datasets]]></title>
-    <link href="http://yoursite.com/blog/2017/03/25/case-sampling-in-imbalanced-datasets/"/>
+    <link href="http://sijunhe.github.io/blog/2017/03/25/case-sampling-in-imbalanced-datasets/"/>
     <updated>2017-03-25T21:37:28-07:00</updated>
-    <id>http://yoursite.com/blog/2017/03/25/case-sampling-in-imbalanced-datasets</id>
+    <id>http://sijunhe.github.io/blog/2017/03/25/case-sampling-in-imbalanced-datasets</id>
     <content type="html"><![CDATA[<p>This problem was briefly introduced in <a href="http://statweb.stanford.edu/~tibs/stat315a.html">STATS315A Applied Modern Statistics: Learning</a> by the renowned Professor <a href="https://web.stanford.edu/~hastie/">Trevor Hastie</a>. Given that the imbalanced dataset problem is ubiquitous in data science, such as modeling click through rate or anomaly detection, I think the case-sampling trick was one of the most practical tricks I have learned in this class.</p>
 
 <!--more-->
@@ -1220,9 +1220,9 @@ A more detailed proof can be found with <a href="http://www.ams.org/mathscinet-g
   
   <entry>
     <title type="html"><![CDATA[Linear Regression and the KNN]]></title>
-    <link href="http://yoursite.com/blog/2017/02/08/linear-regression-and-the-knn/"/>
+    <link href="http://sijunhe.github.io/blog/2017/02/08/linear-regression-and-the-knn/"/>
     <updated>2017-02-08T17:09:38-08:00</updated>
-    <id>http://yoursite.com/blog/2017/02/08/linear-regression-and-the-knn</id>
+    <id>http://sijunhe.github.io/blog/2017/02/08/linear-regression-and-the-knn</id>
     <content type="html"><![CDATA[<p>This was an homework problem in <a href="http://statweb.stanford.edu/~tibs/stat315a.html">STATS315A Applied Modern Statistics: Learning</a> at Stanford and I thought it is worth sharing. It runs a simulation to compare KNN and linear regression in terms of their performance as a classifier, in the presence of an increasing number of noise variables.</p>
 
 <!--more-->
@@ -1469,9 +1469,9 @@ In our case, we can find the closest location vector to an observation and assig
   
   <entry>
     <title type="html"><![CDATA[Learning Dynamic Programming]]></title>
-    <link href="http://yoursite.com/blog/2016/09/26/learning-dynamic-programming/"/>
+    <link href="http://sijunhe.github.io/blog/2016/09/26/learning-dynamic-programming/"/>
     <updated>2016-09-26T16:50:00-07:00</updated>
-    <id>http://yoursite.com/blog/2016/09/26/learning-dynamic-programming</id>
+    <id>http://sijunhe.github.io/blog/2016/09/26/learning-dynamic-programming</id>
     <content type="html"><![CDATA[<p>Dynamic programming is a commonly-used method in a programmer&rsquo;s algorithm toolbox and one that I have yet to learn. Thus I am writing this post to document what I learned in Stanford&rsquo;s <a href="https://www.coursera.org/learn/algorithm-design-analysis-2">Design and Analysis of Algorithms</a>.</p>
 
 <p>Dynamic programming is based on the idea of solving a complex problem by breaking it down into many simpler subproblems, solving each of the subproblems just once and storing the solution. When the same subproblem occurs again, the solution can be simply looked up from storage, thus saves time at the expense of space.</p>
@@ -1593,9 +1593,9 @@ In our case, we can find the closest location vector to an observation and assig
   
   <entry>
     <title type="html"><![CDATA[Reading | Apache Spark Research Paper III]]></title>
-    <link href="http://yoursite.com/blog/2016/08/25/reading-notes-apache-spark-research-paper-iii/"/>
+    <link href="http://sijunhe.github.io/blog/2016/08/25/reading-notes-apache-spark-research-paper-iii/"/>
     <updated>2016-08-25T17:49:35-07:00</updated>
-    <id>http://yoursite.com/blog/2016/08/25/reading-notes-apache-spark-research-paper-iii</id>
+    <id>http://sijunhe.github.io/blog/2016/08/25/reading-notes-apache-spark-research-paper-iii</id>
     <content type="html"><![CDATA[<p>This follows up the last post and I will read the third Apache Spark paper <a href="http://people.csail.mit.edu/matei/papers/2015/sigmod_spark_sql.pdf">Spark SQL: Relational Data Processing in Spark</a>, published by Armbrust et al. in 2015</p>
 
 <!--more-->
@@ -1845,9 +1845,9 @@ In our case, we can find the closest location vector to an observation and assig
   
   <entry>
     <title type="html"><![CDATA[Reading | Apache Spark Research Paper II]]></title>
-    <link href="http://yoursite.com/blog/2016/08/21/reading-notes-apache-spark-research-paper-ii/"/>
+    <link href="http://sijunhe.github.io/blog/2016/08/21/reading-notes-apache-spark-research-paper-ii/"/>
     <updated>2016-08-21T17:49:26-07:00</updated>
-    <id>http://yoursite.com/blog/2016/08/21/reading-notes-apache-spark-research-paper-ii</id>
+    <id>http://sijunhe.github.io/blog/2016/08/21/reading-notes-apache-spark-research-paper-ii</id>
     <content type="html"><![CDATA[<p>This follows up the last post and I will read the second Apache Spark paper <a href="http://people.csail.mit.edu/matei/papers/2012/nsdi_spark.pdf">Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing</a>, published by Matei Zaharia et al. in 2012.</p>
 
 <!--more-->
@@ -1980,9 +1980,9 @@ In our case, we can find the closest location vector to an observation and assig
   
   <entry>
     <title type="html"><![CDATA[Reading | Apache Spark Research Paper I]]></title>
-    <link href="http://yoursite.com/blog/2016/08/16/reading-notes-apache-spark-research-paper-i/"/>
+    <link href="http://sijunhe.github.io/blog/2016/08/16/reading-notes-apache-spark-research-paper-i/"/>
     <updated>2016-08-16T17:49:21-07:00</updated>
-    <id>http://yoursite.com/blog/2016/08/16/reading-notes-apache-spark-research-paper-i</id>
+    <id>http://sijunhe.github.io/blog/2016/08/16/reading-notes-apache-spark-research-paper-i</id>
     <content type="html"><![CDATA[<p>For my summer internship at <a href="http://www.autodesk.com">Autodesk</a>, I have been heavily using Apache Spark for data analytics and machine learning. I believe a thorough understanding of the underlying principles and mechanisms of Apache Spark would be conducive to writing elegant and efficient Spark programs. Speaking of learning Spark, nothing is better than learning from the original authors. Therefore, I will read the three research papers out of The AMPLab at UC Berkeley that laid the groundwork for Apache Spark. I will start with the first paper <a href="http://people.csail.mit.edu/matei/papers/2010/hotcloud_spark.pdf">Spark: Cluster Computing with Working Sets</a>, published by Matei Zaharia in 2010.</p>
 
 <!--more-->
@@ -2051,9 +2051,9 @@ In our case, we can find the closest location vector to an observation and assig
   
   <entry>
     <title type="html"><![CDATA[Bitwise Operation in Java]]></title>
-    <link href="http://yoursite.com/blog/2016/08/16/bitwise-operation-in-java/"/>
+    <link href="http://sijunhe.github.io/blog/2016/08/16/bitwise-operation-in-java/"/>
     <updated>2016-08-16T16:47:25-07:00</updated>
-    <id>http://yoursite.com/blog/2016/08/16/bitwise-operation-in-java</id>
+    <id>http://sijunhe.github.io/blog/2016/08/16/bitwise-operation-in-java</id>
     <content type="html"><![CDATA[<p>Recently, I have been playing with <a href="https://leetcode.com/">LeetCode</a> a bit in preparation for the upcoming job hunting season and I found a class of problems related to <strong>bitwise operations</strong>. While I may never use low level bitwise operations as a data scientist, they are quite fun to work with. Plus it would be virtually impossible to solve bitwise operation problems without reading into it before hand. So here are my reading notes for bitwise operations in Java.</p>
 
 <!--more-->
@@ -2207,9 +2207,9 @@ In our case, we can find the closest location vector to an observation and assig
   
   <entry>
     <title type="html"><![CDATA[The Stack and The Heap]]></title>
-    <link href="http://yoursite.com/blog/2016/07/05/the-stack-and-the-heap/"/>
+    <link href="http://sijunhe.github.io/blog/2016/07/05/the-stack-and-the-heap/"/>
     <updated>2016-07-05T16:47:13-07:00</updated>
-    <id>http://yoursite.com/blog/2016/07/05/the-stack-and-the-heap</id>
+    <id>http://sijunhe.github.io/blog/2016/07/05/the-stack-and-the-heap</id>
     <content type="html"><![CDATA[<p>As a self-taught programmer, my biggest weakness has always been in the computer systems area, since I never had the luxury of taking a series of foundational systems courses like the <a href="https://web.stanford.edu/class/cs107/" title="CS107">CS107</a> - <a href="http://web.stanford.edu/class/cs110/" title="CS110">CS110</a> - <a href="http://cs140.stanford.edu/" title="CS140">CS140</a> series at Stanford. While I don&rsquo;t find them indispensable in pursuing my interest of data science yet, it is always to catch up on things that I don&rsquo;t know. So here are some reading notes for the comparison between the Stack and the Heap in RAM.</p>
 
 <!--more-->
@@ -2242,9 +2242,9 @@ In our case, we can find the closest location vector to an observation and assig
   
   <entry>
     <title type="html"><![CDATA[Detecting Community Structures in Networks]]></title>
-    <link href="http://yoursite.com/blog/2016/04/05/detecting-community-structures-in-networks/"/>
+    <link href="http://sijunhe.github.io/blog/2016/04/05/detecting-community-structures-in-networks/"/>
     <updated>2016-04-05T16:46:58-07:00</updated>
-    <id>http://yoursite.com/blog/2016/04/05/detecting-community-structures-in-networks</id>
+    <id>http://sijunhe.github.io/blog/2016/04/05/detecting-community-structures-in-networks</id>
     <content type="html"><![CDATA[<p>The purpose of this post is two-folded</p>
 
 <ul>
@@ -2389,9 +2389,9 @@ In our case, we can find the closest location vector to an observation and assig
   
   <entry>
     <title type="html"><![CDATA[Friends You Might Know]]></title>
-    <link href="http://yoursite.com/blog/2016/01/19/friends-you-might-know/"/>
+    <link href="http://sijunhe.github.io/blog/2016/01/19/friends-you-might-know/"/>
     <updated>2016-01-19T15:46:36-08:00</updated>
-    <id>http://yoursite.com/blog/2016/01/19/friends-you-might-know</id>
+    <id>http://sijunhe.github.io/blog/2016/01/19/friends-you-might-know</id>
     <content type="html"><![CDATA[<p>This is a problem from <a href="http://web.stanford.edu/class/cs246/">CS246</a>: Mining Massive Datasets from Stanford University. The idea behind the original &ldquo;People You Might Know&rdquo; friendship recommendation algorithm is that if two people share a high number of mutual friends, they are more likely to know each other and thus the system would recommend that they connect with each other.</p>
 
 <!--more-->
@@ -2837,9 +2837,9 @@ Degree 2 friends could potentially be degree 1 friends as well and we are intere
   
   <entry>
     <title type="html"><![CDATA[San Francisco Crime Visualization]]></title>
-    <link href="http://yoursite.com/blog/2015/12/15/san-francisco-crime-visualization/"/>
+    <link href="http://sijunhe.github.io/blog/2015/12/15/san-francisco-crime-visualization/"/>
     <updated>2015-12-15T15:42:11-08:00</updated>
-    <id>http://yoursite.com/blog/2015/12/15/san-francisco-crime-visualization</id>
+    <id>http://sijunhe.github.io/blog/2015/12/15/san-francisco-crime-visualization</id>
     <content type="html"><![CDATA[<p>The purpose of this post is two-folded</p>
 
 <ul>
@@ -2968,9 +2968,9 @@ Degree 2 friends could potentially be degree 1 friends as well and we are intere
   
   <entry>
     <title type="html"><![CDATA[Quora Challenges - Upvotes]]></title>
-    <link href="http://yoursite.com/blog/2015/11/20/quora-challenges-upvotes/"/>
+    <link href="http://sijunhe.github.io/blog/2015/11/20/quora-challenges-upvotes/"/>
     <updated>2015-11-20T15:14:56-08:00</updated>
-    <id>http://yoursite.com/blog/2015/11/20/quora-challenges-upvotes</id>
+    <id>http://sijunhe.github.io/blog/2015/11/20/quora-challenges-upvotes</id>
     <content type="html"><![CDATA[<p>Quora Challenges are basically a set of programming problems posted on the <a href="https://www.quora.com/challenges">website</a>, used as like a backdoor of recruiting. <a href="https://www.quora.com/Is-it-necessary-to-solve-a-programming-challenge-to-get-an-internship-interview-with-Quora">Rumor</a> has it that whoever can solve one of these would guarantee an interview with Quora, skipping the resume selection process.</p>
 
 <!--more-->

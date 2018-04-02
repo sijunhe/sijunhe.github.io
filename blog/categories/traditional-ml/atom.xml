@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: traditional_ml | My Octopress Blog]]></title>
-  <link href="http://yoursite.com/blog/categories/traditional-ml/atom.xml" rel="self"/>
-  <link href="http://yoursite.com/"/>
-  <updated>2018-04-02T00:55:31-07:00</updated>
-  <id>http://yoursite.com/</id>
+  <link href="http://sijunhe.github.io/blog/categories/traditional-ml/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2018-04-02T01:01:59-07:00</updated>
+  <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Reading | LDA, the Most Commonly-Used Topic Model]]></title>
-    <link href="http://yoursite.com/blog/2017/04/04/reading-notes-lda/"/>
+    <link href="http://sijunhe.github.io/blog/2017/04/04/reading-notes-lda/"/>
     <updated>2017-04-04T21:54:13-07:00</updated>
-    <id>http://yoursite.com/blog/2017/04/04/reading-notes-lda</id>
+    <id>http://sijunhe.github.io/blog/2017/04/04/reading-notes-lda</id>
     <content type="html"><![CDATA[<p>I have been working on projects related to user profiles lately at <a href="http://www.autodesk.com/">Autodesk</a>. An important part of the project are extracting information out of command usage data, of which <a href="http://www.cs.columbia.edu/~blei/papers/BleiNgJordan2003.pdf">Latent Dirichlet Allocation</a> has been the main driving force. Hoping to get a better grasp of the underlying principles of LDA, I am reading this one of the most cited papers in Computer Science, by Blei, Ng and Jordan. Admittedly, the Bayesian math was a bit hard for me and I was not able to fully comprehend the material (never a big fan of Bayesian Statistics). Maybe I should have taken <a href="http://cs.stanford.edu/~ermon/cs228/index.html">CS 228: Probabilistic Graphical Models</a></p>
 
 <!--more-->
@@ -106,9 +106,9 @@ However, explicitly finding the maximum log likihood is often hard for models wi
   
   <entry>
     <title type="html"><![CDATA[Case-control Sampling In Imbalanced Datasets]]></title>
-    <link href="http://yoursite.com/blog/2017/03/25/case-sampling-in-imbalanced-datasets/"/>
+    <link href="http://sijunhe.github.io/blog/2017/03/25/case-sampling-in-imbalanced-datasets/"/>
     <updated>2017-03-25T21:37:28-07:00</updated>
-    <id>http://yoursite.com/blog/2017/03/25/case-sampling-in-imbalanced-datasets</id>
+    <id>http://sijunhe.github.io/blog/2017/03/25/case-sampling-in-imbalanced-datasets</id>
     <content type="html"><![CDATA[<p>This problem was briefly introduced in <a href="http://statweb.stanford.edu/~tibs/stat315a.html">STATS315A Applied Modern Statistics: Learning</a> by the renowned Professor <a href="https://web.stanford.edu/~hastie/">Trevor Hastie</a>. Given that the imbalanced dataset problem is ubiquitous in data science, such as modeling click through rate or anomaly detection, I think the case-sampling trick was one of the most practical tricks I have learned in this class.</p>
 
 <!--more-->
@@ -140,9 +140,9 @@ A more detailed proof can be found with <a href="http://www.ams.org/mathscinet-g
   
   <entry>
     <title type="html"><![CDATA[Linear Regression and the KNN]]></title>
-    <link href="http://yoursite.com/blog/2017/02/08/linear-regression-and-the-knn/"/>
+    <link href="http://sijunhe.github.io/blog/2017/02/08/linear-regression-and-the-knn/"/>
     <updated>2017-02-08T17:09:38-08:00</updated>
-    <id>http://yoursite.com/blog/2017/02/08/linear-regression-and-the-knn</id>
+    <id>http://sijunhe.github.io/blog/2017/02/08/linear-regression-and-the-knn</id>
     <content type="html"><![CDATA[<p>This was an homework problem in <a href="http://statweb.stanford.edu/~tibs/stat315a.html">STATS315A Applied Modern Statistics: Learning</a> at Stanford and I thought it is worth sharing. It runs a simulation to compare KNN and linear regression in terms of their performance as a classifier, in the presence of an increasing number of noise variables.</p>
 
 <!--more-->

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: books | My Octopress Blog]]></title>
-  <link href="http://yoursite.com/blog/categories/books/atom.xml" rel="self"/>
-  <link href="http://yoursite.com/"/>
-  <updated>2018-04-02T00:55:31-07:00</updated>
-  <id>http://yoursite.com/</id>
+  <link href="http://sijunhe.github.io/blog/categories/books/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2018-04-02T01:01:59-07:00</updated>
+  <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Reading | Crossing the Chasm]]></title>
-    <link href="http://yoursite.com/blog/2017/11/22/reading-crossing-the-chasm/"/>
+    <link href="http://sijunhe.github.io/blog/2017/11/22/reading-crossing-the-chasm/"/>
     <updated>2017-11-22T18:49:19-08:00</updated>
-    <id>http://yoursite.com/blog/2017/11/22/reading-crossing-the-chasm</id>
+    <id>http://sijunhe.github.io/blog/2017/11/22/reading-crossing-the-chasm</id>
     <content type="html"><![CDATA[<p>After hearing numerous quotes and ideas from it in meetings, I finally decided to read <a href="https://www.amazon.com/Crossing-Chasm-3rd-Disruptive-Mainstream/dp/0062292986/">Crossing the Chasm: Marketing and Selling Disruptive Products to Mainstream Customers</a>. I wanted to understand the fundamentals of high technology business development and the book did not disappoint. While there were portion of it that I couldn&rsquo;t understand fully due to lack of experience, I could resonate with the rest of it. It wouldn&rsquo;t be an overstatement to say that this book changed the way I looked at high-tech business.</p>
 
 <!--more-->
@@ -447,9 +447,9 @@
   
   <entry>
     <title type="html"><![CDATA[Reading | The Effective Engineer]]></title>
-    <link href="http://yoursite.com/blog/2017/10/12/reading-the-effective-engineer/"/>
+    <link href="http://sijunhe.github.io/blog/2017/10/12/reading-the-effective-engineer/"/>
     <updated>2017-10-12T22:46:13-07:00</updated>
-    <id>http://yoursite.com/blog/2017/10/12/reading-the-effective-engineer</id>
+    <id>http://sijunhe.github.io/blog/2017/10/12/reading-the-effective-engineer</id>
     <content type="html"><![CDATA[<p>I am always skeptical about productivity books since they can easily come off as very theoretical and of little use for my work. After recommendations from several friends, I decided to read <a href="https://www.amazon.com/Effective-Engineer-Engineering-Disproportionate-Meaningful/dp/0996128107">The Effective Engineer</a> and found it to be a <strong>highly leveraged</strong> use of my time! As a relatively new engineer, I can already resonate deeply with what Lau wrote. I also started to adopt some of the techniques Lau recommended and have seen good results. Here is my reading notes for <a href="https://www.amazon.com/Effective-Engineer-Engineering-Disproportionate-Meaningful/dp/0996128107">The Effective Engineer</a>.</p>
 
 <!--more-->
