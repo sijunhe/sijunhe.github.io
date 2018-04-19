@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://sijunhe.github.io/blog/2018/04/03/nb-svm/</loc>
+<lastmod>2018-04-03T16:42:23-07:00</lastmod>
+</url>
+<url>
 <loc>http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/</loc>
 <lastmod>2018-03-02T21:46:50-08:00</lastmod>
 </url>
@@ -89,16 +93,16 @@
 <lastmod>2015-10-31T03:07:00-07:00</lastmod>
 </url>
 <url>
-<loc>http://sijunhe.github.io/</loc>
-</url>
-<url>
 <loc>http://sijunhe.github.io/blog/archives/</loc>
 </url>
 <url>
-<loc>http://sijunhe.github.io/about/</loc>
+<loc>http://sijunhe.github.io/</loc>
 </url>
 <url>
 <loc>http://sijunhe.github.io/blog/categories/</loc>
+</url>
+<url>
+<loc>http://sijunhe.github.io/about/</loc>
 </url>
 <url>
 <loc>http://sijunhe.github.io/blog/categories/python/</loc>
@@ -156,5 +160,11 @@
 </url>
 <url>
 <loc>http://sijunhe.github.io/blog/categories/non-technical/</loc>
+</url>
+<url>
+<loc>http://sijunhe.github.io/posts/2/</loc>
+</url>
+<url>
+<loc>http://sijunhe.github.io/posts/3/</loc>
 </url>
 </urlset>
