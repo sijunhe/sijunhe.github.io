@@ -4,7 +4,7 @@ title: "Kaggle | Mercari Price Suggestion"
 subtitle: "Learning and Reflection from the Mercari Price Suggestion Challenge"
 date: 2018-03-02 21:46:50 -0800
 comments: true
-categories: kaggle NLP Python
+categories: kaggle NLP Python Deep_Learning
 ---
 
 One of my first data science experience was with Kaggle more than two years ago when I played around with the [Titanic competition](https://sijunhe.github.io/blog/2015/10/31/kaggle-titanic-part-i/). While the competition itself was minimal, the experience was magical, intuitive and one of the reasons I got into data science. 
@@ -12,11 +12,12 @@ One of my first data science experience was with Kaggle more than two years ago 
 Two years later, I work full-time as a data scientist. One night, I decided to challenge myself on a whim and ended up spending all of my free time on this competition for two weeks.
 
 **TL;DR I had my first serious Kaggle competition and ranked 65th out of 2384 teams (top 3%)**
+![mecari](https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/mercari_rank.png)
 
 <!--more-->
 
 ## 1. The Competition
-The competition was to build an algorithm that automatically suggests the right product prices with provided user-inputted text descriptions of their products, including details like product category name, brand name, and item condition. 
+The [Mercari Price Suggestion Challenge](https://www.kaggle.com/c/mercari-price-suggestion-challenge) was to build an algorithm that automatically suggests the right product prices with provided user-inputted text descriptions of their products, including details like product category name, brand name, and item condition. 
 
 The most challenging part was that this was a **kernel-only** competition, which meant the training and inference of the model would be in a container environment provided by Kaggle. The script had to finish within 60 minutes and consumed no more than 16 GB of RAM. The test dataset was also quite large so that it couldn't be loaded into memory at once for inference, and batch inference was required. Overall, the idea of submitting a script to train a model and do inference on an unknown dataset was very unsettling, compared with a normal Kaggle competition where models are trained locally.
 

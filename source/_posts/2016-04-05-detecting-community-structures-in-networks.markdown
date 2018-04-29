@@ -4,7 +4,7 @@ title: "Detecting Community Structures in Networks"
 subtitle: "Implementing the Girvan-Newman Algorithm in Java"
 date: 2016-04-05 15:46:58 -0800
 comments: true
-categories: Visualization Java Algorithm
+categories: Visualization Java Algorithms
 ---
 
 The purpose of this post is two-folded
