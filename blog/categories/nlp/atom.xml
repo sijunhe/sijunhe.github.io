@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: nlp | Sijun's Data Science Odyssey]]></title>
+  <title><![CDATA[Category: nlp | Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/blog/categories/nlp/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2018-04-19T00:33:41-07:00</updated>
+  <updated>2018-04-28T23:23:03-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -135,14 +135,15 @@ $$</p></li>
 
 <p>Two years later, I work full-time as a data scientist. One night, I decided to challenge myself on a whim and ended up spending all of my free time on this competition for two weeks.</p>
 
-<p><strong>TL;DR I had my first serious Kaggle competition and ranked 65th out of 2384 teams (top 3%)</strong></p>
+<p><strong>TL;DR I had my first serious Kaggle competition and ranked 65th out of 2384 teams (top 3%)</strong>
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/mercari_rank.png" alt="mecari" /></p>
 
 <!--more-->
 
 
 <h2>1. The Competition</h2>
 
-<p>The competition was to build an algorithm that automatically suggests the right product prices with provided user-inputted text descriptions of their products, including details like product category name, brand name, and item condition.</p>
+<p>The <a href="https://www.kaggle.com/c/mercari-price-suggestion-challenge">Mercari Price Suggestion Challenge</a> was to build an algorithm that automatically suggests the right product prices with provided user-inputted text descriptions of their products, including details like product category name, brand name, and item condition.</p>
 
 <p>The most challenging part was that this was a <strong>kernel-only</strong> competition, which meant the training and inference of the model would be in a container environment provided by Kaggle. The script had to finish within 60 minutes and consumed no more than 16 GB of RAM. The test dataset was also quite large so that it couldn&rsquo;t be loaded into memory at once for inference, and batch inference was required. Overall, the idea of submitting a script to train a model and do inference on an unknown dataset was very unsettling, compared with a normal Kaggle competition where models are trained locally.</p>
 

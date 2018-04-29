@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: reading_notes | Sijun's Data Science Odyssey]]></title>
+  <title><![CDATA[Category: reading_notes | Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/blog/categories/reading-notes/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2018-04-19T00:33:41-07:00</updated>
+  <updated>2018-04-28T23:23:03-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -12,6 +12,167 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Reading | On Factorization Models]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/04/19/factorization-machines/"/>
+    <updated>2018-04-19T16:37:42-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/04/19/factorization-machines</id>
+    <content type="html"><![CDATA[<p>Recently, I have been working on the <a href="https://www.kaggle.com/c/talkingdata-adtracking-fraud-detection">TalkingData AdTracking Fraud Detection Challenge</a>. This is my first experience with CTR prediction, which is similar to NLP and Recommendation Systems in a way that features are very sparse. <a href="https://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf">Field-aware Factorization Models</a> have been dominating the last few CTR prediction competitions on Kaggle so here is my a little write-up for <a href="https://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf">Field-aware Factorization Models</a> and the its origin - <a href="https://www.csie.ntu.edu.tw/~b97053/paper/Rendle2010FM.pdf">Factorization Model</a>.</p>
+
+<!--more-->
+
+
+<h2>1. Factorization Machines (FM)</h2>
+
+<ul>
+<li>The most common prediction task is to estimate a function $y: \mathcal{R}^n \rightarrow T$ from a real valued feature vector $\textbf{x} \in \mathcal{R}^n$ to a target domain $T$ ($T = \mathcal{R}$ for regression or $T = \{+, -\}$ for classification)</li>
+<li>Under sparsity, almost all of the elements in $\textbf{x}$ are zero. Huge sparsity appears in many real-world data like recommender systems or text analysis. One reason for huge sparsity is that the underlying problem deals with large categorical variable domains.</li>
+<li>The paper uses the following example of transaction data of a movie review system, with user $u \in U$ rates a movie $i \in I$ at a time $t \in \mathcal{R}$ with a rating $r = \{1, 2, 3, 4, 5\}$
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post15/fm_example.png" alt="fm_example" /></li>
+<li>The above figure shows an example of how feature vectors can be created.
+
+<ul>
+<li>$|U|$ and $|I|$ binary indicators variables for the active user and item, respectively</li>
+<li>Implicit indicators of all other movies the users has ever rated, normalized to sum up to 1</li>
+<li>Binary indicators of the last movie rated before the current one</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>1.1 Factorization Machine Model</h4>
+
+<ul>
+<li><p>The equation for a factorization machine of degree $d = 2$
+$$\hat{y}(\textbf{x}) = w_0 + \sum_{i=1}^n w_i x_i + \sum_{i=1}^n \sum_{j=i+1}^n \langle \textbf{v}_i, \textbf{v}_j \rangle x_i x_j \tag{1}$$
+where $w_0 \in \mathcal{R} \ \  \textbf{w} \in \mathcal{R}^n \ \ \textbf{V} \in \mathcal{R}^{n \times k}$</p></li>
+<li><p>A row $\textbf{v}_i$ describes the <em>i</em>-th variable with <em>k</em>-factors. $k$ is a hyperparameter that defines the dimensionality of the factorization</p></li>
+<li><p>The 2-way FM captures all single and pairwise interactions between variables</p>
+
+<ul>
+<li>$w_0$ is the global bias, $w_i$ models the strength of the i-th variable</li>
+<li>$\hat{w}_{i,j} = \langle \textbf{v}_i, \textbf{v}_j \rangle$ models the interaction between i-th and j-th variable. The FM models the interaction by factorizing it, which is the key point which allows high quality parameter estimates of higher-order interactions under sparsity</li>
+</ul>
+</li>
+<li><p><strong>Expressiveness</strong>: For any positive definite matrix $\textbf{W}$, there exists a matrix $\textbf{V}$ such that $W = \textbf{V}\textbf{V}^T$ if $k$ is large enough. Thus, FM can express any interaction matrix $\textbf{W}$ if $k$ is chosen large enough. However, in sparse settings, typically a small $k$ should be chosen because there is not enough data to estimate complex interactions. <strong>Restricting $k$ and the expressiveness of FM often lead to better generalization under sparsity.</strong></p></li>
+<li><p><strong>Parameter Estimation Under Sparsity</strong>: FM can estimate interactions even in sparse settings well because they break the independence of the interaction parameters by factorizing them. This means that the data for one interaction helps also to estimate the parameters for related interactions.</p></li>
+<li><p><strong>Computation</strong>: The complexity of straight forward computational of Eq. 1 is in $O(kn^2)$ due to pairwise interactions. With the kernel trick, the model equation can be computed in linear time $O(kn)$</p></li>
+</ul>
+
+
+<p>$$\begin{align}
+\sum_{i=1}^n \sum_{j=i+1}^n \langle \textbf{v}_i, \textbf{v}_j \rangle x_i x_j &amp;= \frac{1}{2} \left[ \sum_{i=1}^n \sum_{j=1}^n \langle \textbf{v}_i, \textbf{v}_j \rangle x_i x_j - \sum_{i=1}^n \langle \textbf{v}_i, \textbf{v}_i \rangle x_i^2 \right] \\
+&amp;= \frac{1}{2} \left[ \sum_{i=1}^n \sum_{j=1}^n \sum_{f=1}^k v_{i,f} v_{j,f}  x_i x_j - \sum_{i=1}^n  \sum_{f=1}^k v_{i,f} v_{i,f} x_i^2 \right] \\
+&amp;= \frac{1}{2} \sum_{f=1}^k \left[ \left( \sum_{i=1}^n v_{i,f} x_i \right)  \left( \sum_{j=1}^n v_{j,f} x_j \right) - \sum_{i=1}^n v_{i,f}^2 x_i^2 \right] \\
+&amp;= \frac{1}{2} \sum_{f=1}^k \left[ \left( \sum_{i=1}^n v_{i,f} x_i \right)^2 - \sum_{i=1}^n v_{i,f}^2 x_i^2 \right]
+\end{align}$$</p>
+
+<h4>1.2 Loss Function of FM</h4>
+
+<ul>
+<li><strong>Regression</strong>: $\hat{y}(\textbf{x})$ can be used directly as the predicator and the loss is MSE</li>
+<li><strong>Binary Classification</strong> the sign of $\hat{y}(\textbf{x})$ is used and the loss is the hinge loss or logit loss</li>
+<li><strong>Ranking</strong>: the vectorr $\textbf{x}$ are odered by the score of $\hat{y}(\textbf{x})$ and loss is calculated over pairs of vectors with a pairwise classification loss</li>
+</ul>
+
+
+<h4>1.3 Learning Factorization Machines</h4>
+
+<p>Since FM has a closed model equation, the model parameters $w_0, \textbf{w}, \textbf{V}$ can be learned efficiently by gradient descent methods for a varity of loss.</p>
+
+<p>$$\frac{\partial }{\partial \theta}\hat{y}(\textbf{x}) =
+\begin{cases}
+1,  &amp; \theta = w_0 \\
+x_i, &amp; \theta = w_i \\
+x_i \sum_{i=1}^n v_{i,f} x_i - v_{i,f} x_i^2, &amp; \theta = v_{i, f}
+\end{cases}$$</p>
+
+<h4>1.4 d-way FM</h4>
+
+<p>The 2-way FM can easily be generalized into a d-way FM and it can still be computed in linear time.</p>
+
+<h2>2. FM vs SVM</h2>
+
+<ul>
+<li>The model equation of an SVm can be expressed as the dot product between the transformed input $\textbf{x}$ and model parameter $\textbf{w}$, $\hat{y}(\textbf{x}) = \langle \phi(\textbf{x}), \textbf{w} \rangle$, where $\phi$ is a mapping from the feature space $\mathcal{R}^n$ to a more complex space $\mathcal{F}$.</li>
+<li>We can define the kernel as $K(\textbf{x}, \textbf{z}) = \langle \phi(\textbf{x}), \phi(\textbf{z}) \rangle$</li>
+</ul>
+
+
+<h4>2.1 SVM Model</h4>
+
+<h5>Linear Kernel</h5>
+
+<ul>
+<li>The linear kernel is $K(\textbf{x}, \textbf{z}) = 1 + \langle \textbf{x}, \textbf{z} \rangle$, which translate to the mapping $\theta(\textbf{x}) = [1, x_1, \cdots, x_n]$.</li>
+<li>The model equation of a linear SVM can also be written as $\hat{y}(\textbf{x}) = w_0 + \sum_{i=1}^n w_i x_i$, which is identical to FM with degree $d = 1$</li>
+</ul>
+
+
+<h5>Polynomial Kernel</h5>
+
+<ul>
+<li>The polynomial kernel  $K(\textbf{x}, \textbf{z}) = (1 + \langle \textbf{x}, \textbf{z} \rangle)^d$ allow the SVM to model higher interactions between variables.</li>
+<li>For $d = 2$, the polynomial SVMs can be written as
+$$\hat{y}(\textbf{x}) = w_0 + \sqrt{2}\sum_{i=1}^n w_i x_i + \sum_{i=1}^n w_{i,i}^{(2)} x_i^2 + \sqrt{2}\sum_{i=1}^n \sum_{j=i+1}^n w_{i,j}^{(2)} x_i \tag{1}$$</li>
+<li>The main difference between a polynomial SVM (eq (2)) and the FM with degree $d = 2$ (eq (1)) is the parameterization: <strong>all interaction parameters $w_{i,j}$ of SVMs are completely independent</strong>. In contrast to the this, <strong>interaction parameters of FMs are factorized</strong> and $\langle \textbf{v}_i, \textbf{v}_j \rangle$ and $\langle \textbf{v}_i, \textbf{v}_l \rangle$ dependent on each other</li>
+</ul>
+
+
+<h4>2.2 Parameter Estimation Under Sparsity</h4>
+
+<ul>
+<li>For very sparse problems in collaborative filtering settings, linear and polynomial SVMs fail.</li>
+<li>This is primarily due to the fact that all interaction parameters of SVMs are independent. For a reliable estimate of the interaction parameter $w_{i,j}$, there must be enough data points where $x_i \neq 0$ and $x_j \neq 0$. As soon as either $x_i = 0$ or $x_j$, the case $\textbf{x}$ cannot be used for estimating the parameter $w_{i,j}$. If the data is too sprase, SVMs are likely to fail due to too few or even no cases for $(i,j)$</li>
+</ul>
+
+
+<h2>3. Field-aware Factorization Machine (FFM)</h2>
+
+<ul>
+<li>A variant of FMs, field-aware factorization machiens (FFMs), have been outperforming existing models in a number of CTR-prediction competitions (<a href="https://www.kaggle.com/c/avazu-ctr-prediction">Avazu CTR Prediction</a> and <a href="https://www.kaggle.com/c/criteo-display-ad-challenge">Criteo CTR Prediction</a>)</li>
+<li>The key idea in FFM is <strong>field</strong> and each feature has several latent vectors, depending on the field of other features.</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th style="text-align:center;"> Clicked </th>
+<th style="text-align:center;"> Publisher (P) </th>
+<th style="text-align:center;"> Advertiser (A) </th>
+<th style="text-align:center;"> Gender (G) </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;"> Yes     </td>
+<td style="text-align:center;"> ESPN </td>
+<td style="text-align:center;"> Nike </td>
+<td style="text-align:center;"> Male </td>
+</tr>
+</tbody>
+</table>
+
+
+<ul>
+<li>For the above example, FM will model it as (neglecting the bias terms),
+$$\hat{y}_{FM} = \langle v_{ESPN}, v_{Nike} \rangle + \langle v_{ESPN}, v_{Male} \rangle + \langle v_{Male}, v_{Nike} \rangle$$</li>
+<li>In FM, eveyr feature has only one latent vector to learn the latent effect with any other features. $v_{ESPN}$ is used to learn the latent effect with Nike $\langle v_{ESPN}, v_{Nike} \rangle$ and Male $\langle v_{ESPN}, v_{Male} \rangle$. However, Nike and Male belong to different fields so the latent efects of (ESPN, Nike) and (ESPN, Male) may be different.</li>
+<li><p>In FFM, each feature has several latent vectors. Depending on the field of other features, one of them is used to do the inner product. For the same example, FFM will model it as
+$$\hat{y}_{FFM} = \langle v_{ESPN,A}, v_{Nike,P} \rangle + \langle v_{ESPN,G}, v_{Male,P} \rangle + \langle v_{Male,G}, v_{Nike,A} \rangle$$</p></li>
+<li><p>Neglecting the global bias terms, the model equation of degree $d = 2$ FM is defined as
+$$\hat{y}(\textbf{x}) = \sum_{i=1}^n \sum_{j=i+1}^n \langle \textbf{v}_i, \textbf{v}_j \rangle x_i x_j \tag{3}$$</p></li>
+<li>the model equation of degree $d = 2$ FFM is defined as
+$$\hat{y}(\textbf{x}) = \sum_{i=1}^n \sum_{j=i+1}^n \langle \textbf{v}_i^{(J)}, \textbf{v}_j^{(I)} \rangle x_i x_j \tag{4}$$
+where $I$ and $J$ are the fields of $i, j$</li>
+<li>If $m$ is the number of fields, the total parameters of FFM is $mnk$ and the total parameter of FM is $nk$</li>
+<li>The time complexity of FFM is $O(kn^2)$ and the time complexity of FM is $O(kn)$</li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Reading | NB-SVM]]></title>
@@ -788,104 +949,6 @@ $$\text{Leverage} = \frac{\text{Impact Produced}}{\text{Time Invested}}$$</li>
 <li><strong>Make hiring a priority</strong>. Keep a high hiring bar and play an active role in growing your team.</li>
 <li><strong>Build shared ownership of code</strong>. Increase your bus factor to be greater than one so that you are not a bottleneck for development. This gives you the flexibility to focus on other high-leverage activities.</li>
 <li><strong>Document collective wisdom</strong>. Reflect on projects with team member, learn what worked and what didn&rsquo;t work, and document and share the lessions so that valuable wisdom doesn&rsquo;t get lost.</li>
-</ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Reading | Fast (Feedforward) Style Transfer]]></title>
-    <link href="http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer/"/>
-    <updated>2017-04-21T15:15:34-07:00</updated>
-    <id>http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer</id>
-    <content type="html"><![CDATA[<p><a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16.pdf">Perceptual Losses for Real-Time Style Transfer and Super-Resolution</a> is the second paper in my reading series for Neural Style Transfer, where Johnson et al. built on the work of Gatys et al. and used feedforward networks to stylize image order of magnitudes faster than the previous optimization approach.</p>
-
-<!--more-->
-
-
-<h3>Intro</h3>
-
-<p>Two common approach for image transformation, where an input image is transformed into an output image:</p>
-
-<ul>
-<li>feed-forward CNN using <strong>per-pixel loss</strong> between the output and ground-truth image</li>
-<li>generate image by defining and optimizing <strong>perceptual loss</strong> based on high-level features extracted from pretrained networks</li>
-</ul>
-
-
-<p>The paper combined the benefits of both approaches and proposed a system that</p>
-
-<ul>
-<li>train feed-forward network using use perceptual loss functions that depend on high-level features from a pretrained loss network</li>
-<li>allow the feed-forward network to learn a artistic style during training and can stylize images in <strong>real-time</strong> at test time</li>
-</ul>
-
-
-<h3>Method</h3>
-
-<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/fast_neural_style_system.png" alt="fast_neural_style_system" />
-The system consists of two components:</p>
-
-<ul>
-<li><strong>image transformation network $f_W$</strong>: a deep residual CNN parameterized by $W$ and transforms input images $x$ into output images $\hat{y} = f_W(x)$</li>
-<li><strong>loss network $\phi$</strong>: used to define several loss functions $l_1, \cdots, l_k$. Each loss function computes a scalar loss value $l_i(\hat{y}, y_i)$ that measures the difference between the output image $\hat{y}$ and a target image $y_i$.</li>
-</ul>
-
-
-<p>The network is trained using SGD to minimize a loss functions of
-$$W^{\ast}  = \text{argmin}_W \ \textbf{E}_{x, \{y_i\} } \left[ \sum_{i} \lambda_i l_i (f_W(x), y_i)\right]$$</p>
-
-<ul>
-<li>Inspired from the optimziation approach from Gatys et al. and others, the author use a pretrained network $\phi$ as a fixed loss network to define the loss functions.</li>
-<li>The loss network $\phi$ is used to define a <strong>feature reconstruction loss $l_{feat}^{\phi}$</strong> and <strong>style reconstruction loss $l_{style}^{\phi}$</strong> that measure differences in <strong>content</strong> and <strong>style</strong> between images.</li>
-<li>For each input image $x$, there is a <strong>content target $y_c$</strong> and a <strong>style target $y_s$</strong></li>
-<li>For <strong>style transfer</strong>, the content target $y_c$ is the input image $x$ and the style target $y_s$ is the designated style image. One network is trained for each style target.</li>
-</ul>
-
-
-<h3>Image Transformation Network</h3>
-
-<p>The image transformation network is a Deep Residual Network. More detail can be found in the <a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16Supplementary.pdf">supplementary notes</a> of the paper.</p>
-
-<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/deep_residual_network_architecture.png" alt="deep_residual_network_architecture" /></p>
-
-<h3>Loss Network</h3>
-
-<p>Johnson et al. defined the feature reconstruction loss and the style reconstruction loss in the same way as Gatys et al., though with a different notation. Let $\phi_{j}(x)$ be the $j$-th layer activations of the loss network for image $x$ with a shape $C_j \times H_j \times W_j$.</p>
-
-<h4>Feature Reconstruction Loss</h4>
-
-<ul>
-<li>Euclidean distance between feautre representations
-$$l_{feat}^{\phi, j}(\hat{y},y) = \frac{1}{C_j H_j W_j} ||\phi_j(\hat{y}) - \phi_j(y)||^2_2$$</li>
-<li><strong>Minimizing  $l_{feat}^{\phi}$ would reserve the image content and overall spatial structure, but not the color, texture or exacte shape</strong></li>
-</ul>
-
-
-<h4>Style Reconstruction Loss</h4>
-
-<ul>
-<li>Squared Frobenius norm of the distance between the <strong>Gram matrices</strong> between the output and target image</li>
-<li>Gram matrix $G_j^\phi(x)$ is a $C_j \times C_j$ whose elements are the inner product between the two channels $c$ and $c'$ of activations
-$$G_j^\phi(x)_{c,c'} = \frac{1}{C_j H_j W_j} \sum_{h=1}^{H_j} \sum_{w=1}^{W_j} \phi_j(x)_{h,w,c} \phi_j(x)_{h,w,c'}$$
-$$l_{style}^{\phi, j}(\hat{y},y) = ||G^\phi_j(\hat{y}) - G^\phi_j(y)||^2_F$$</li>
-<li><strong>Minimizing  $l_{style}^{\phi}$ would reserve the stylistic features, but not its spatial structure</strong></li>
-</ul>
-
-
-<h4>Total Variation Regularization</h4>
-
-<p>Other than the $l_{feat}^{\phi}$ and $l_{style}^{\phi}$, Johnson et al. also defined a loss function $l_{TV}(\hat{y})$ to encourage spatial smoothness in the output image $\hat{y}$.</p>
-
-<h3>Experiments and Training Details</h3>
-
-<ul>
-<li>The goal of style transfer is to generate an image $\hat{y}$ that combines the content of the content target $y_c$ with the style of the style target $y_s$.</li>
-<li>Gatsy et al. formulate the problem as a optimization problem. An image $\hat{y}$ is generated by solving the problem
-$$\hat{y} = \text{argmin}_y \ \lambda_c l_{feat}^{\phi, j}(y, y_c) + \lambda_s l_{style}^{\phi, j}(y, y_s) + \lambda_{TV} l_{TV}(y)$$</li>
-<li>However, the method is slow since satifactory results takes about 500 iterations and each iterations requires a forward and a backward pass</li>
-<li>The result from the style transfer network is <strong>qualitatively similar to Gatsy et al&rsquo;s method</strong>, but can be run in real time during test time</li>
-<li>Even though the style transfer network is trained on $256 \times 256$ images, they also <strong>perform satisfactorily in higher resolution</strong> of $512 \times 512$ and $1024 \times 1024$, achieving a performance comparable to 50-100 iterations of Gatsy et al&rsquo;s method</li>
 </ul>
 
 ]]></content>

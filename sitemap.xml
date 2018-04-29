@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://sijunhe.github.io/blog/2018/04/19/factorization-machines/</loc>
+<lastmod>2018-04-19T16:37:42-07:00</lastmod>
+</url>
+<url>
 <loc>http://sijunhe.github.io/blog/2018/04/03/nb-svm/</loc>
 <lastmod>2018-04-03T16:42:23-07:00</lastmod>
 </url>
@@ -132,6 +136,9 @@
 <loc>http://sijunhe.github.io/blog/categories/bigdata/</loc>
 </url>
 <url>
+<loc>http://sijunhe.github.io/blog/categories/algorithms/</loc>
+</url>
+<url>
 <loc>http://sijunhe.github.io/blog/categories/miscellaneous/</loc>
 </url>
 <url>
@@ -160,6 +167,9 @@
 </url>
 <url>
 <loc>http://sijunhe.github.io/blog/categories/non-technical/</loc>
+</url>
+<url>
+<loc>http://sijunhe.github.io/blog/categories/ctr/</loc>
 </url>
 <url>
 <loc>http://sijunhe.github.io/posts/2/</loc>

@@ -5,7 +5,7 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>Kaggle | Mercari Price Suggestion - Sijun's Data Science Odyssey</title>
+	<title>Kaggle | Mercari Price Suggestion - Blog | Sijun He</title>
 	<meta name="author" content="Sijun He">
 
 	
@@ -17,7 +17,7 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<link href="/atom.xml" rel="alternate" title="Sijun's Data Science Odyssey" type="application/atom+xml">
+	<link href="" rel="alternate" title="Blog | Sijun He" type="application/atom+xml">
 	
 	<link rel="canonical" href="http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/">
 	<link href="/favicon.png" rel="shortcut icon">
@@ -79,21 +79,23 @@
 		
 		
 		
-		
-		
-		
-			<a class="linkedin" href="http://www.linkedin.com/in/sijun-he" title="LinkedIn">LinkedIn</a>
-		
+			<a class="github" href="https://github.com/sijunhe" title="GitHub">GitHub</a>
 		
 		
 		
 		
+			<a class="linkedin" href="http://www.linkedin.com/in/sijunhe48" title="LinkedIn">LinkedIn</a>
+		
+		
+		
+		
+		
+		
+			<a class="quora" href="https://quora.com/Sijun-He-1" title="Quora">Quora</a>
 		
 		
     	
     	
-			<a class="rss" href="/atom.xml" title="RSS">RSS</a>
-		
 	</div>
 </nav>
 </header>				
@@ -110,14 +112,15 @@
 
 <p>Two years later, I work full-time as a data scientist. One night, I decided to challenge myself on a whim and ended up spending all of my free time on this competition for two weeks.</p>
 
-<p><strong>TL;DR I had my first serious Kaggle competition and ranked 65th out of 2384 teams (top 3%)</strong></p>
+<p><strong>TL;DR I had my first serious Kaggle competition and ranked 65th out of 2384 teams (top 3%)</strong>
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/mercari_rank.png" alt="mecari" /></p>
 
 <!--more-->
 
 
 <h2>1. The Competition</h2>
 
-<p>The competition was to build an algorithm that automatically suggests the right product prices with provided user-inputted text descriptions of their products, including details like product category name, brand name, and item condition.</p>
+<p>The <a href="https://www.kaggle.com/c/mercari-price-suggestion-challenge">Mercari Price Suggestion Challenge</a> was to build an algorithm that automatically suggests the right product prices with provided user-inputted text descriptions of their products, including details like product category name, brand name, and item condition.</p>
 
 <p>The most challenging part was that this was a <strong>kernel-only</strong> competition, which meant the training and inference of the model would be in a container environment provided by Kaggle. The script had to finish within 60 minutes and consumed no more than 16 GB of RAM. The test dataset was also quite large so that it couldn&rsquo;t be loaded into memory at once for inference, and batch inference was required. Overall, the idea of submitting a script to train a model and do inference on an unknown dataset was very unsettling, compared with a normal Kaggle competition where models are trained locally.</p>
 
@@ -246,6 +249,12 @@
 </div>
 
 
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
 </div>
 			</div>
 			<footer id="footer" class="inner">Copyright &copy; 2018
@@ -257,6 +266,22 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
 		</div>
 	</div>
 	
+
+<script type="text/javascript">
+      var disqus_shortname = 'sijunhe';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/';
+        var disqus_url = 'http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
 
 
 

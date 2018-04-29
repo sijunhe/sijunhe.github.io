@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: java | Blog | Sijun He]]></title>
-  <link href="http://sijunhe.github.io/blog/categories/java/atom.xml" rel="self"/>
+  <title><![CDATA[Category: algorithms | Blog | Sijun He]]></title>
+  <link href="http://sijunhe.github.io/blog/categories/algorithms/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
   <updated>2018-04-28T23:23:03-07:00</updated>
   <id>http://sijunhe.github.io/</id>
@@ -12,6 +12,115 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Learning Dynamic Programming]]></title>
+    <link href="http://sijunhe.github.io/blog/2016/09/26/learning-dynamic-programming/"/>
+    <updated>2016-09-26T16:50:00-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2016/09/26/learning-dynamic-programming</id>
+    <content type="html"><![CDATA[<p>Dynamic programming is a commonly-used method in a programmer&rsquo;s algorithm toolbox and one that I have yet to learn. Thus I am writing this post to document what I learned in Stanford&rsquo;s <a href="https://www.coursera.org/learn/algorithm-design-analysis-2">Design and Analysis of Algorithms</a>.</p>
+
+<p>Dynamic programming is based on the idea of solving a complex problem by breaking it down into many simpler subproblems, solving each of the subproblems just once and storing the solution. When the same subproblem occurs again, the solution can be simply looked up from storage, thus saves time at the expense of space.</p>
+
+<!--more-->
+
+
+<h2>Principles of Dynamic Programming</h2>
+
+<ol>
+<li>Identify a small number of subproblems</li>
+<li>Quickly and correctly solve &ldquo;larger&rdquo; subproblems, given the solutions to smaller subproblems</li>
+<li>After solving all subproblems, the final solution can be quickly computed</li>
+</ol>
+
+
+<h2>Example Problem 1: Weighted Independent Sets in Path Graphs</h2>
+
+<h3>Problem Statement</h3>
+
+<p>Path graphs are basically graphs like a linked list. The input for the Weighted Independent Sets (WIS) problem is a path graph with non-negative weights on the vertices. And the desired output would be the subset of non-adjacent vertices, also called independent set, with maximum total weight.</p>
+
+<pre><code class="python">o --- o --- o --- o --- 0
+5     2     1     3     4
+</code></pre>
+
+<h3>Subproblem</h3>
+
+<p>Let $S$ be the max-weight independent set of the path graph $G$ and $V_n$ to be the last vertex of the path. Let $G'$ be the path graph $G$ with  $V_n$ deleted</p>
+
+<ul>
+<li>Case 1: If $V_n \notin S$, then $S$ is also the max-weight IS of $G'$.</li>
+<li>Case 2: If $V_n \in S$, then $S - $V_n$ is the max-weight IS of $G'&lsquo;$, which is $G$ with  $V_{n-1}$ and $V_n$ deleted</li>
+</ul>
+
+
+<p>Hence, we know a max-weight IS $S$ must be either</p>
+
+<ul>
+<li>a max-weight IS of $G'$ or</li>
+<li>a max-weight IS of $G'&lsquo;$ + $V_n$</li>
+</ul>
+
+
+<h3>The Dynamic Programming Solution</h3>
+
+<p>Let $G_i$ be the first $i$ vertices of $G$ and we populate an array $A$ from left to right with $A[i]$ being the value of the max-weight IS of $G_i$. Let array $W$ store the weights of the vertices.</p>
+
+<pre><code class="python">A[0] = 0;
+A[1] = W[1];
+for i in range(2, n+1):
+    A[i] = max(A[i-1], A[i-2] + W[i])    
+</code></pre>
+
+<h3>Complexity Analysis</h3>
+
+<p>Time complexity is $O(n)$ since it is constant time per iteration. Space complexity is also $O(n)$ from the memoization array $A$.</p>
+
+<h2>Example Problem 2: The Knapsack Problem</h2>
+
+<h3>Problem Statement</h3>
+
+<p>The Knapsack problem mimics the situation where a thief breaks into a store with a knapsack. The knapsack can only carry certain weight so the thief needs to put in items with the most total value while stay under the knapsack&rsquo;s weight limit.</p>
+
+<p>Input: $n$ items, each with a non-negative integer value $v_i$ and a non-negative integer weight $w_i$. The weight constraint is $W$.</p>
+
+<p>Output: a subset $S$ of all the items that maximizes $\sum<em>{i \in S} v_i$ subjected to $\sum</em>{i \in S} w_i \leq W$</p>
+
+<h3>Subproblems</h3>
+
+<p>Let $S$ be the max-value solution to an knapsack with capacity $W$ and for item $n$ be the last of all the available items</p>
+
+<ul>
+<li>Case 1: If $n \notin S$, then S must also be the max-value solution to the first $(n-1)$ items</li>
+<li>Case 2: If $n \in S$, then then $S - {n}$ is the max-value solution to the first $(n-1)$ items and the knapsack with capacity of $W - w_n$</li>
+</ul>
+
+
+<p>Hence, we know a max-value solution $V_{i,x}$ must be the maximum of</p>
+
+<ul>
+<li>$V_{i-1,W}$, the max-value solution for the first $(n-1)$ items with the same capacity</li>
+<li>$V_{i-1,W-w_i} + v_i$, the sum of the max-value solution for the first $(n-1)$ items with the capacity of $W-w_i$ and value of the ith item $v_i$</li>
+</ul>
+
+
+<h3>The Dynamic Programming Solution</h3>
+
+<p>Since we are searching all the possible combination of items and capacities, we use an 2D array $A$ for memoization. Let array $w$ and $v$ store the weights and values of the items.</p>
+
+<pre><code class="python">for x in range(0, W+1):
+    A[0,x] = 0
+
+for i in range(1, n+1):
+    for x in range(0, W+1):
+        A[i, x] = max(A[i - 1, x], A[i - 1, x - w[i] + v[i])    
+</code></pre>
+
+<h3>Complexity Analysis</h3>
+
+<p>Both the time complexity and the space complexity is also $O(nW)$, since there&rsquo;re $O(nW)$ subproblems and each can be solved in constant time and space.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Detecting Community Structures in Networks]]></title>
