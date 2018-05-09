@@ -4,7 +4,7 @@
   <title><![CDATA[Category: python | Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2018-05-08T22:24:31-07:00</updated>
+  <updated>2018-05-08T22:37:18-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -101,41 +101,59 @@ text = re.sub('8=+D', 'dick', text)
 
 <p>Since the data size is relatively small, the competition is the perfect candidate for stacking. We split the dataset into 10 folds, trained L1 models and produced out-of-fold predictions to the train L2 model. We had about 35 L1 models from a wide range of performances. The 2 L2 model we experimented with were XGBoost and LASSO. Their performance were comparable at <code>0.9871</code>. A simple average of the two stacking model gave us our best and final model at <code>0.9872</code>.</p>
 
-<h3>2.5 Model Summary</h3>
+<h3>2.5 Selected Model Performance</h3>
 
 <table>
 <thead>
 <tr>
 <th> Model            </th>
+<th style="text-align:center;"> Private Leaderboard </th>
 <th style="text-align:center;"> Public Leaderboard </th>
-<th style="text-align:center;"> Public Leaderboard </th>
-<th> Overfitting Delta </th>
+<th style="text-align:center;"> Overfitting Delta </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td> Baseline Bi-GRU  </td>
-<td style="text-align:center;"> 0.9862 </td>
-<td></td>
-<td></td>
+<td> Extra Tree         </td>
+<td style="text-align:center;"> 0.9792 </td>
+<td style="text-align:center;"> 0.9805 </td>
+<td style="text-align:center;"> -0.0013 </td>
 </tr>
 <tr>
-<td> + train-time augmentation      </td>
-<td style="text-align:center;"> 0.9867      </td>
-<td></td>
-<td></td>
+<td> NB-SVM             </td>
+<td style="text-align:center;"> 0.9821 </td>
+<td style="text-align:center;"> 0.9813 </td>
+<td style="text-align:center;"> <strong>+0.0008</strong> </td>
 </tr>
 <tr>
-<td> + test-time augmentation       </td>
-<td style="text-align:center;"> 0.9865      </td>
-<td></td>
-<td></td>
+<td> Shallow &amp; Wide CNN </td>
+<td style="text-align:center;"> 0.9835 </td>
+<td style="text-align:center;"> 0.9846 </td>
+<td style="text-align:center;"> -0.0011 </td>
 </tr>
 <tr>
-<td> + train/test-time augmentation </td>
-<td style="text-align:center;"> 0.9874      </td>
-<td></td>
-<td></td>
+<td> RNN + Attention    </td>
+<td style="text-align:center;"> 0.9856 </td>
+<td style="text-align:center;"> 0.9864 </td>
+<td style="text-align:center;"> -0.0008 </td>
+</tr>
+<tr>
+<td> Lasso Stacking     </td>
+<td style="text-align:center;"> 0.9870 </td>
+<td style="text-align:center;"> 0.9874 </td>
+<td style="text-align:center;"> -0.0004 </td>
+</tr>
+<tr>
+<td> XGBoost Stacking   </td>
+<td style="text-align:center;"> 0.9870 </td>
+<td style="text-align:center;"> 0.9873 </td>
+<td style="text-align:center;"> -0.0003 </td>
+</tr>
+<tr>
+<td> <strong>Average of Lasso &amp; XGBoost Stacking</strong>   </td>
+<td style="text-align:center;"> <strong>0.9872</strong> </td>
+<td style="text-align:center;"> <strong>0.9875</strong> </td>
+<td style="text-align:center;"> <strong>-0.0003</strong> </td>
 </tr>
 </tbody>
 </table>
