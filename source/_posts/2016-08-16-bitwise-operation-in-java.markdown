@@ -3,7 +3,7 @@ layout: post
 title: "Bitwise Operation in Java"
 date: 2016-08-16 15:47:25 -0800
 comments: true
-categories: 
+categories: java basics
 ---
 Recently, I have been playing with [LeetCode](https://leetcode.com/ "") a bit in preparation for the upcoming job hunting season and I found a class of problems related to **bitwise operations**. While I may never use low level bitwise operations as a data scientist, they are quite fun to work with. Plus it would be virtually impossible to solve bitwise operation problems without reading into it before hand. So here are my reading notes for bitwise operations in Java.
 

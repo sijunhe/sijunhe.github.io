@@ -3,7 +3,7 @@ layout: post
 title: "Quora Challenges - Upvotes"
 date: 2015-11-20 15:14:56 -0800
 comments: true
-categories: Python Algorithm Quora
+categories: python algorithms
 ---
 
 Quora Challenges are basically a set of programming problems posted on the [website](https://www.quora.com/challenges), used as like a backdoor of recruiting. [Rumor](https://www.quora.com/Is-it-necessary-to-solve-a-programming-challenge-to-get-an-internship-interview-with-Quora) has it that whoever can solve one of these would guarantee an interview with Quora, skipping the resume selection process.   

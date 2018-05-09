@@ -4,7 +4,7 @@ title: "Friends You Might Know"
 subtitle: "Friend Recommendation with Hadoop"
 date: 2016-01-19 15:46:36 -0800
 comments: true
-categories: Java Hadoop BigData Algorithms
+categories: java hadoop big-data algorithms
 ---
 This is a problem from [CS246](http://web.stanford.edu/class/cs246/): Mining Massive Datasets from Stanford University. The idea behind the original "People You Might Know" friendship recommendation algorithm is that if two people share a high number of mutual friends, they are more likely to know each other and thus the system would recommend that they connect with each other. 
 

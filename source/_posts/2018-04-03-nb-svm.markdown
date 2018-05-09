@@ -4,7 +4,7 @@ title: "Reading | NB-SVM"
 subtitle: "Baselines and Bigrams: Simple, Good Sentiment and Topic Classification"
 date: 2018-04-03 16:42:23 -0700
 comments: true
-categories: Reading_Notes NLP 
+categories: reading-notes nlp
 ---
 A commonly-used baseline for text classification competitions on Kaggle is NB-SVM, introduced by Sida Wang and Chris Manning in the paper [Baselines and Bigrams: Simple, Good Sentiment and Topic Classification](https://nlp.stanford.edu/pubs/sidaw12_simple_sentiment.pdf) in 2012. With Deep Learning based models dominating the field of NLP, it is nice to have a bag-of-words model that trains with a fraction of the resource (time & compute) but performs only slightly worse.
 

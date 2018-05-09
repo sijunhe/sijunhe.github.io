@@ -3,7 +3,7 @@ layout: post
 title: "Reading | Highway Networks"
 date: 2018-01-21 18:18:41 -0800
 comments: true
-categories: Reading_Notes NLP Deep_Learning
+categories: reading-notes deep-learning
 ---
 
 I have been working on some NLP-related Kaggle competitions lately and have came across the [Highway Networks](https://arxiv.org/pdf/1505.00387.pdf) in quite a few papers and models. The LSTM-inspired Highway Networks make it easier to train deep networks by adding a small twick to the vanilla feedforward layer. I am reading the paper to get an intuition of how they work.

@@ -3,7 +3,7 @@ layout: post
 title: "The Stack and The Heap"
 date: 2016-07-05 15:47:13 -0800
 comments: true
-categories: Miscellaneous Basics
+categories: miscellaneous basics
 ---
 
 As a self-taught programmer, my biggest weakness has always been in the computer systems area, since I never had the luxury of taking a series of foundational systems courses like the [CS107](https://web.stanford.edu/class/cs107/ "CS107") - [CS110](http://web.stanford.edu/class/cs110/ "CS110") - [CS140](http://cs140.stanford.edu/ "CS140") series at Stanford. While I don't find them indispensable in pursuing my interest of data science yet, it is always to catch up on things that I don't know. So here are some reading notes for the comparison between the Stack and the Heap in RAM. 

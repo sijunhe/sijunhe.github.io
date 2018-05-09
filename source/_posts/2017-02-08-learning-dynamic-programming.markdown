@@ -3,7 +3,7 @@ layout: post
 title: "Learning Dynamic Programming"
 date: 2016-09-26 15:50:00 -0800
 comments: true
-categories: Algorithms
+categories: algorithms basics
 ---
 Dynamic programming is a commonly-used method in a programmer's algorithm toolbox and one that I have yet to learn. Thus I am writing this post to document what I learned in Stanford's [Design and Analysis of Algorithms](https://www.coursera.org/learn/algorithm-design-analysis-2 "").
 

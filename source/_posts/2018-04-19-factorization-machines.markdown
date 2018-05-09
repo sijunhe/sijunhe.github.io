@@ -4,7 +4,7 @@ title: "Reading | On Factorization Models"
 subtitle: "Factorization Machines (FM) and Field-aware Factorization Machines (FFM)"
 date: 2018-04-19 16:37:42 -0700
 comments: true
-categories: Reading_Notes CTR
+categories: reading-notes ctr
 ---
 
 Recently, I have been working on the [TalkingData AdTracking Fraud Detection Challenge](https://www.kaggle.com/c/talkingdata-adtracking-fraud-detection). This is my first experience with CTR prediction, which is similar to NLP and Recommendation Systems in a way that features are very sparse. [Field-aware Factorization Models](https://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf) have been dominating the last few CTR prediction competitions on Kaggle so here is my a little write-up for [Field-aware Factorization Models](https://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf) and the its origin - [Factorization Model](https://www.csie.ntu.edu.tw/~b97053/paper/Rendle2010FM.pdf).

@@ -4,7 +4,7 @@ title: "Reading | Crossing the Chasm"
 subtitle: "Marketing and Selling Disruptive Products to Mainstream Customers"
 date: 2017-11-22 19:49:19 -0700
 comments: true
-categories: Reading_Notes Books Non_Technical
+categories: reading-notes book non-technical
 ---
 
 After hearing numerous quotes and ideas from it in meetings, I finally decided to read [Crossing the Chasm: Marketing and Selling Disruptive Products to Mainstream Customers](https://www.amazon.com/Crossing-Chasm-3rd-Disruptive-Mainstream/dp/0062292986/). I wanted to understand the fundamentals of high technology business development and the book did not disappoint. While there were portion of it that I couldn't understand fully due to lack of experience, I could resonate with the rest of it. It wouldn't be an overstatement to say that this book changed the way I looked at high-tech business.

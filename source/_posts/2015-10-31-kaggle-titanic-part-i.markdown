@@ -4,7 +4,7 @@ title: "Kaggle | Titanic Part I"
 subtitle: "Machine Learning From Disaster"
 date: 2015-10-31 02:07:00 -0800
 comments: true
-categories: Python Kaggle
+categories: python kaggle
 ---
 
 <!--more-->

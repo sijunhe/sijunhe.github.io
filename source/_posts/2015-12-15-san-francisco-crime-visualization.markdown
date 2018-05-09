@@ -4,7 +4,7 @@ title: "San Francisco Crime Visualization"
 subtitle: "Coursera Homework / Practicing visualization with R"
 date: 2015-12-15 15:42:11 -0800
 comments: true
-categories: R Visualization Kaggle
+categories: r visualization kaggle
 ---
 The purpose of this post is two-folded
 

@@ -4,7 +4,7 @@ title: "Reading | Fast (Feedforward) Style Transfer"
 subtitle: "Perceptual Losses for Real-Time Style Transfer and Super-Resolution"
 date: 2017-04-21 15:15:34 -0700
 comments: true
-categories: Deep_Learning Computer_Vision Reading_Notes
+categories: deep-learning reading-notes computer-vision
 ---
 
 [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16.pdf) is the second paper in my reading series for Neural Style Transfer, where Johnson et al. built on the work of Gatys et al. and used feedforward networks to stylize image order of magnitudes faster than the previous optimization approach.
