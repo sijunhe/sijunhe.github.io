@@ -4,7 +4,7 @@
   <title><![CDATA[Category: reading-notes | Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/blog/categories/reading-notes/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2018-05-08T22:37:18-07:00</updated>
+  <updated>2018-06-15T00:56:39-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -12,6 +12,204 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Reading | On Normalization Layers]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/06/11/on-normalization-layers/"/>
+    <updated>2018-06-11T14:34:57-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/06/11/on-normalization-layers</id>
+    <content type="html"><![CDATA[<p>Reading notes / survey of three papers related to Batch Normalization</p>
+
+<ul>
+<li><a href="https://arxiv.org/pdf/1502.03167.pdf">Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</a>, the paper that introduced Batch Normalization, one of the breakthroughs in Deep Learning</li>
+<li><a href="https://arxiv.org/pdf/1607.06450.pdf">Layer Normalization</a> that extended Batch Normalization to RNNs</li>
+<li><a href="https://arxiv.org/pdf/1805.11604.pdf">How Does Batch Normalization Help Optimization?(No, It Is Not About Internal Covariate Shift)</a>, a paper (barely one week old at the time of writing) that dived into the fundamental factors for Batch Normalization&rsquo;s success empirically and theoretically</li>
+</ul>
+
+
+<!--more-->
+
+
+<h2>1. Why Normalization?</h2>
+
+<h4>Covariate Shift</h4>
+
+<p>Covariate Shift refers to the change in the distribution of the input variables $X$ between a source domain $\mathcal{s}$ and a target domain $\mathcal{t}$. We assume $P_{\mathcal{s}}(Y|X) = P_{\mathcal{t}}(Y|X)$ but a different marginal distribution $P_{\mathcal{s}}(X) \neq P_{\mathcal{t}}(X)$.</p>
+
+<p>We are interested in modeling $P(Y|X)$. However, we can only observe $P_{\mathcal{s}}(Y|X)$. The optimal model for source domain $\mathcal{s}$ will be different from the optimal model for target domain $\mathcal{t}$. The intuition, as shown in the diagram below, is that the optimal model for $P_{\mathcal{s}}(X)$ will put more weights and perform better in dense area of $P_{\mathcal{s}}(X)$, which is different from the dense area of $P_{\mathcal{t}}(X)$.
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/covariate_shift.png" height="400" width="400" alt="covariate_shift" />
+<em>Covariate Shift Diagram <a href="http://iwann.ugr.es/2011/pdfInvitedTalk-FHerrera-IWANN11.pdf">Source</a></em></p>
+
+<h4>Internal Covariate Shift (ICS)</h4>
+
+<p>In Neural Networks (NN), we face a similar situation like Covariate Shift. A layer $l$ in a vanilla feedforward NN can be defined as</p>
+
+<p>$$X^{l} = f\left(X^{l-1}W^{l} + b^l \right) \ \ \ $$</p>
+
+<p>where $X^{l-1}$ is $m \times n_{in}$  and $W^{l}$ is $n_{in} \times n_{out}$. $m$ is the number of samples in the batch. $n_{in}$ and $n_{out}$ are the input and output feature dimension of the layer.</p>
+
+<p>The weights $W^{l}$ is learned to approximate $P_{\mathcal{s}}(X^{l}|X^{l-1})$. However, the input from last layer $X^{l-1}$ is constantly changing so $W^{l}$ needs to continuously adapt to the new distribution of $X^{l-1}$. <a href="https://arxiv.org/pdf/1502.03167.pdf">Ioffe et al.</a> defined such change in the distributions of internal nodes of a deep network during training as <strong>Internal Covariate Shift</strong>.</p>
+
+<h2>2. Batch Normalization (BN)</h2>
+
+<p>An obvious procedure to reduce ICS is to fix the input distribution to each layer. And that is exactly what Ioffe et al. proposed. Batch Normalization (BN) is a layer that normalizes each input feature to have mean of 0 and variance of 1. For a BN layer with $d$-dimensional input $X = (x^{1}, \cdots, x^{d})$, each feature is normalized as</p>
+
+<p>$$\hat{x}^{(k)} = \frac{x^{(k)} - \mu_{x^{(k)}}}{\sigma_{x^{(k)}}}$$</p>
+
+<h4>Mini Batch Statistics</h4>
+
+<p>Computing the mean and standard deviation of each feature requires iterating through the whole dataset, which is impractical. Thus, $\mu_{x^{(k)}}$ and $\sigma_{x^{(k)}}$ are estimated using the empirical samples from the current batch.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/bn.png" height="10" width="300" alt="bn" /></p>
+
+<h4>Scale and Shift Parameters</h4>
+
+<p>To compensate for the loss of expressiveness due to normalization, a pair of parameters $\gamma^{(k)}$ and $\beta^{(k)}$ are trained to scale and shift the normalized value.</p>
+
+<p>$$y^{(k)} = \gamma^{(k)} x^{(k)} + \beta^{(k)}$$</p>
+
+<p>The scale and shift parameters restore the representation power of the network. By setting $\beta^{(k)} = \mu_{x^{(k)}}$ and $\gamma^{(k)} = \sigma_{x^{(k)}}$, the original activations could be recovered, if that were the optimal thing to do.</p>
+
+<h4>Batch Normalization in Feed-forward NN</h4>
+
+<p>Consider the <em>l</em>-th hidden layer in a feed-forward NN. The summed inputs are computed through a linear projection with the weight matrix $W^l$ and the bottom-up inputs $X^l$. The summed inputs are passed through a BN layer and then an activation layer (<em>whether to apply BN before or after the activation layer is a topic of debate</em>), as following:</p>
+
+<p>$Z^{l}$ is a</p>
+
+<p>$$Z^{l} = X^{l-1}W^{l} + b^l \ \ \ \ \
+\hat{Z}^{l} = \textbf{BN}_{\gamma, \beta}(Z^{l}) \ \ \ \ \
+X^{l} = f(\hat{Z}^{l})$$</p>
+
+<p>$Z^{l}$ is a $m \times n_{out}$ matrix, whose element $z_{ij}$ is the summed input to the <em>j</em>-th neuron from the <em>i</em>-th sample in the mini-batch.</p>
+
+<p>$$ Z^{l} =
+\begin{bmatrix}
+z_{11} &amp; \cdots &amp; z_{1n_{out}} \\
+\vdots &amp; \ddots &amp; \vdots \\
+z_{m1} &amp; \cdots &amp; z_{mn_{out}}
+\end{bmatrix} =
+\begin{bmatrix}
+| &amp; | &amp; \cdots &amp;| \\
+\textbf{z}_{1} &amp; \textbf{z}_{2} &amp; \cdots &amp; \textbf{z}_{n_{out}} \\
+| &amp; | &amp; \cdots&amp; | \\
+\end{bmatrix}
+$$</p>
+
+<p>$$\textbf{BN}_{\gamma, \beta}(Z^{l}) =
+\begin{bmatrix}
+| &amp; | &amp; \cdots &amp;| \\
+\gamma_1 \hat{\textbf{z}}_{1} + \beta_1 &amp; \gamma_2 \hat{\textbf{z}}_{2} + \beta_2 &amp; \cdots &amp; \gamma_{n_{out}} \hat{\textbf{z}}_{n_{out}} + \beta_{n_{out}} \\
+| &amp; | &amp; \cdots&amp; | \\
+\end{bmatrix}
+$$</p>
+
+<p>Column <em>j</em> of $Z^{l}$ is the summed inputs to the <em>j</em>-th neuron from each <em>m</em> samples in the mini-batch. The BN layer is a <strong>whitening / column-wise normalization</strong> procedure to normalize $\left[ \textbf{z}_{1}, \textbf{z}_{2}, \cdots, \textbf{z}_{n_{out}}\right]$ to $\mathcal{N}(0,1)$. Each neuron/column has a pair of scale $\gamma$ and shift parameters $\beta$.</p>
+
+<h2>3. Layer Normalization (LN)</h2>
+
+<p>BN has had a lot of success in Deep Learning, especially in Computer Vision due to its effect on CNNs. However, it also has a few shortcomings:</p>
+
+<ul>
+<li>BN replies on mini-batch statistics and is thus dependent on the mini-batch size. BN cannot be applied to to online learning tasks (batch size of 1) or tasks that require a small batch size.</li>
+<li>There is no elegant way to apply BN to RNNs. Applying BN to RNNs requires computing and storing batch statistics for each time step in a sequence.</li>
+</ul>
+
+
+<p>To tackle the above issues, <a href="https://arxiv.org/pdf/1607.06450.pdf">Ba et al.</a> proposed Layer Normalization(LN), a transpose of BN that computes the mean and variance used for normalization from all of the summed inputs to the neurons in a layer on a <strong>single</strong> training sample.</p>
+
+<p>Using the same notation as above, we have $Z^{l}$ is a $m \times n_{out}$ matrix, whose element $z_{ij}$ is the summed input to the <em>j</em>-th neuron from the <em>i</em>-th sample in the mini-batch. Row <em>i</em> of $Z^{l}$ is the summed inputs to the all neuron in the <em>l</em>-th layer from the <em>i</em>-th sample in the mini-batch. As a direct transpose of BN, the LN layer is a <strong>row-wise normalization</strong> procedure to normalize $\left[ \textbf{z}_{1}, \textbf{z}_{2}, \cdots, \textbf{z}_{m}\right]$ to have mean zero and standard deviation of one. Same as BN, each neuron is given its own adaptive bias and scale parameters.</p>
+
+<p>$$ Z^{l} =
+\begin{bmatrix}
+z_{11} &amp; \cdots &amp; z_{1n_{out}} \\
+\vdots &amp; \ddots &amp; \vdots \\
+z_{m1} &amp; \cdots &amp; z_{mn_{out}}
+\end{bmatrix} =
+\begin{bmatrix}
+- &amp; \textbf{z}_{1} &amp; - \\
+- &amp; \textbf{z}_{2} &amp; - \\
+\cdots &amp; \cdots &amp; \cdots \\
+- &amp; \textbf{z}_{m} &amp; - \\
+\end{bmatrix}
+$$</p>
+
+<p>$$\textbf{BN}_{\gamma, \beta}(Z^{l}) =
+\begin{bmatrix}
+- &amp; \hat{\textbf{z}}_{1} &amp; - \\
+- &amp; \hat{\textbf{z}}_{2} &amp; - \\
+\cdots &amp; \cdots &amp; \cdots \\
+- &amp; \hat{\textbf{z}}_{m} &amp; - \\
+\end{bmatrix}
+\circ
+\begin{bmatrix}
+| &amp; | &amp; \cdots &amp;| \\
+\gamma_1 &amp; \gamma_2 &amp; \cdots &amp; \gamma_{n_{out}} \\
+| &amp; | &amp; \cdots&amp; | \\
+\end{bmatrix}
++
+\begin{bmatrix}
+| &amp; | &amp; \cdots &amp;| \\
+\beta_1 &amp; \beta_2 &amp; \cdots &amp; \beta_{n_{out}} \\
+| &amp; | &amp; \cdots&amp; | \\
+\end{bmatrix}
+$$</p>
+
+<h4>Layer Normalization on RNN</h4>
+
+<p>In RNN, the summed input are computed from the current input $\textbf{x}^t$ and previous hidden state $\textbf{h}^{t-1}$ as
+$$\textbf{a}^{(t)} = W_{hh}\textbf{h}^{(t-1)} + W_{xh}\textbf{x}^{(t)}$$.</p>
+
+<p>LN computes the layer-wise mean and standard deviation, then then re-centers and re-scales the activations
+$$\boldsymbol{\mu}^{(t)} =\frac{1}{H} \sum_{i=1}^H \textbf{a}^{(t)} \ \ \ \ \
+\boldsymbol{\sigma}^{(t)} = \sqrt{\frac{1}{H} \sum_{i=1}^H (\textbf{a}^{(t)} - \boldsymbol{\mu}^{(t)})^2 } \ \ \ \ \
+\textbf{h}^{(t)} = f \left( \frac{\boldsymbol{\gamma}}{\boldsymbol{\sigma}^{(t)}} \circ \left( \textbf{a}^{(t)} - \boldsymbol{\mu}^{(t)}\right) + \boldsymbol{\beta} \right)
+$$</p>
+
+<p>LN provides the following benefits when applied to RNN:</p>
+
+<ul>
+<li>No need to compute and store separate running averages for each time step in a sequence because the normalization terms depend on only the current time-step.</li>
+<li>With LN, the normalization makes it invariant to re-scaling all of the summed inputs to a layer, which helps preventing exploding or vanishing gradients and results in much more stable hidden-to-hidden dynamics.</li>
+</ul>
+
+
+<h4>Invariance Properties of Normalizations</h4>
+
+<p>The below table shows the invariant properties of three different normalization procedures. <strong>These invariance properties make the training of the network more robust</strong>. Invariance to the scaling and shifting of weights means that proper weight initialization is not as important. Invariance to the scaling and shifting of data means that one bad (too big, too small, etc.) batch of input from the previous layer don&rsquo;t ruin the training of next layer.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/invariance.png" height="400" width="800" alt="covariate_shift" /></p>
+
+<h2>4. Not ICS, But A Smoother Optimization Landscape?</h2>
+
+<p>Despite its pervasiveness, the effectiveness of BN still lacks theoretical proof. <a href="https://arxiv.org/pdf/1805.11604.pdf">Santurkar and Tsipras et al.</a> recently proposed that <strong>ICS has little to do with the success of BN</strong>. Instead, BN <strong>makes the optimization landscape much smoother</strong>, which induces a more predictive and stable behavior of the gradients.</p>
+
+<h4>The performance of BN Doesn&rsquo;t Stem From reducing ICS</h4>
+
+<p>Santurkar and Tsipras et al. designed a clever experiment, where a network was trained with <em>random</em> noise (non-zero mean and non-unit variance distribution, changes at every time step) injected after BN layers, creating an artificial ICS. The performance of the network with &ldquo;noisy&rdquo; BN was compared with networks trained with and without BN. “Noisy” BN network has less stable distributions than the standard, no BN network due to the artificial ICS, yet it still performs better.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/noisy_bn_ics.png" height="400" width="800" alt="BN_ICS" /></p>
+
+<h4>BN doesn&rsquo;t even reduce ICS</h4>
+
+<p>Previously, ICS is a conception that has no measurement. Santurkar and Tsipras et al. defined a metric for ICS, which is difference ($||G_{t,i} - G_{t,i}\prime||_2$) between the gradient $G_{t,i}$ of the layer parameters and the same gradient $G_{t,i}\prime$ <strong>after</strong> all the previous layers have been updated. Experiments showed that models with BN have similar, or even worse, ICS, despite performing better.</p>
+
+<h4>The Fundamental Phenomenon at Play: the Smoothing Effect</h4>
+
+<p>Santurkar and Tsipras et al. argued that the key impact of BN is that it reparametrizes the underlying optimization problem to <strong>make its landscape significantly more smooth</strong>. With BN,</p>
+
+<ul>
+<li>The loss landscape is smoother and has less discontinuity (i.e. kinks, sharp minima). The loss changes at a smaller rate and the magnitudes of the gradient is smaller too. In other words, the Lipschitzness of the loss function is improved. (a function f is <em>L</em>-Lipschitz, $|f(x_1) - f(x_2)| \leq L||x_1 - x_2||$)</li>
+<li>Improved Lipschitzness of the gradients gives us confidence that
+when we take a larger step in a direction of a computed gradient, this gradient direction remains a fairly accurate estimate of the actual gradient direction after taking that step.</li>
+<li>The gradients are more stable and changes more reliably and predictively. In other words, the loss exhibits a significantly better “effective” $\beta$-smoothness. (a function f is $\beta$-smooth if its gradients are $\beta$-Lipschitz, i.e. $||\nabla f(x_1) - \nabla f(x_2)| \leq \beta||x_1 - x_2||$)</li>
+<li>Improved Lipschitzness of the gradients gives us confidence that
+when we take a larger step in a direction of a computed gradient, this gradient direction remains a fairly accurate estimate of the actual gradient direction after taking that step.</li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/bn_smooth.png" height="400" width="800" alt="BN_ICS" /></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Reading | On Factorization Models]]></title>
@@ -779,176 +977,6 @@ $$T(\boldsymbol{x}) = \sigma(\boldsymbol{W}_T^T + \boldsymbol{b}_T)$$</p></li>
 <li>build a disproportionally high reward for the channel. The reward should phased out as the product becomes established in the mainstream.</li>
 </ul>
 </li>
-</ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Reading | The Effective Engineer]]></title>
-    <link href="http://sijunhe.github.io/blog/2017/10/12/reading-the-effective-engineer/"/>
-    <updated>2017-10-12T22:46:13-07:00</updated>
-    <id>http://sijunhe.github.io/blog/2017/10/12/reading-the-effective-engineer</id>
-    <content type="html"><![CDATA[<p>I am always skeptical about productivity books since they can easily come off as very theoretical and of little use for my work. After recommendations from several friends, I decided to read <a href="https://www.amazon.com/Effective-Engineer-Engineering-Disproportionate-Meaningful/dp/0996128107">The Effective Engineer</a> and found it to be a <strong>highly leveraged</strong> use of my time! As a relatively new engineer, I can already resonate deeply with what Lau wrote. I also started to adopt some of the techniques Lau recommended and have seen good results. Here is my reading notes for <a href="https://www.amazon.com/Effective-Engineer-Engineering-Disproportionate-Meaningful/dp/0996128107">The Effective Engineer</a>.</p>
-
-<!--more-->
-
-
-<h1>1 Adopt the Right Mindsets</h1>
-
-<h2>1.1 Focus on High-Leverage Activities</h2>
-
-<ul>
-<li>Leverage is defined as
-$$\text{Leverage} = \frac{\text{Impact Produced}}{\text{Time Invested}}$$</li>
-<li>Example of high leverage activities <strong>mentoring new engineers</strong>. A new hire may spend 1% of the total time being mentored, but it can have an outsized infludnece on the productivity and effectiveness of the other 99% of work hours.</li>
-<li>As engineers, we can always ask ourselves about any activity we are working on:
-
-<ul>
-<li>How can I complete this activity in a shorter amount of time?</li>
-<li>How can I increase the value produced by this activity?</li>
-<li>Is there something else that I could spend my time on that would produce more value?</li>
-</ul>
-</li>
-<li>Many high-leverage activities require consistent applications of effort over long time periods to achieve impacts. An example is how Facebook built and maintain a strong hiring culture to attrack strong people.</li>
-</ul>
-
-
-<h2>1.2 Optimize for Learning</h2>
-
-<ul>
-<li><strong>Adopt a growth mindset</strong>. Believe that I can cultivate and grow their intelligence and skills through effort. View challenges and failures as opportunities to learn.</li>
-<li><strong>Invest in your learning rate</strong>. Learning compunds like interest. The earlier the compounding starts, the sooner you hit the region of rapid grwoth and reap its benefits. Optimize for learning over profitability, particularly early in your career.</li>
-<li><strong>Find work environments that can sustain your growth</strong>. Find out what opportunites a company provide for onboarding and mentoring, how transparent they are internally, how fast they move, what your prospective co-wrokers are like, and how much autonomy you&rsquo;ll have.</li>
-<li><strong>Learn at work</strong>. Work with and learn from your best co-workers. Dive into internal learning resource. Look into classes or books that your workplace might be willing to subsidize.</li>
-<li><strong>Learn outside of work</strong>. Challenge yourself to become better by just 1% a day, and not limited to engineering skills
-
-<ul>
-<li>Read books</li>
-<li>Attend talks and meetups</li>
-<li>Build and maintain network of relationships</li>
-<li>Read and follow blogs</li>
-<li>Write blogs</li>
-<li>Tinker on side projects</li>
-</ul>
-</li>
-</ul>
-
-
-<h2>1.3 Prioritize Regularly</h2>
-
-<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post12/importance_urgency_quadrant.gif" alt="Importance_Urgency_Matrix" /></p>
-
-<ul>
-<li><strong>Write down and track To-Dos</strong>. Human brain is optimized for processing and not for storage, so treat your brain as a processor instad of a memory bank. Spend your mental energy on prioritizing and processing the tasks instead of remembering them. (<em>I have successfully persuaded myself and my team to adopt <a href="https://app.asana.com/">Asana</a></em>)</li>
-<li><strong>Work on both what directly leads to value and the Important &amp; Non-Urgent</strong>. Along with prioritizing the activities that directly produce value, we also need to prioritize the investments that increase our ability to deliver more value in the future.</li>
-<li><strong>Protect your Maker&rsquo;s schedule</strong>. Preserve larger blocks of focused time in the schedule to maintain the <em>flow</em>. Learn to say no to unimportant activities.</li>
-<li><strong>Reduce context switching</strong>. Limit the number of ongoing projects so that you don&rsquo;t spend your cognitive energy actively juggling tasks.</li>
-<li><strong>Make a routine of prioritization</strong>. Make prioritization part of your daily routine and it will help you to focus on and complete your highest-leverage activities.</li>
-</ul>
-
-
-<h1>2 Execute, Execute, Execute</h1>
-
-<h2>2.1 Invest in Iteration Speed</h2>
-
-<ul>
-<li><strong>Move fast to learn fast</strong>. The faster you can iterate, the more you can learn. Conversely, when you move too slowly trying to avoid mistakes, you lose opportunities.</li>
-<li><strong>Invest in time-saving tools</strong>. Time-saving tools pays-off large dividends. Faster compile times, faster deployment cyrcles and faster turnaround times for development all provide time-saving benefits that compound the more you use them.</li>
-<li><strong>Shorten debugging and validation loops</strong>. Create tight testing loops so we can debug faster and iterate quicker.</li>
-<li><strong>Master fundamentals of your craft</strong>. Get very comfortable with your dev environment (IDE) by learning and defining shortcuts. Use more keyboard than mouse. Learn UNIX shell commands and how to effectively pipe them together.</li>
-<li><strong>Think about your non-engineering bottlenecks</strong>. Find out where the biggest bottlenecks in your iteration cycle are, whether in engineering, cross-team dependencies, approvals from decision-makers, or organizational processes. Then, work to optimize them.</li>
-</ul>
-
-
-<h2>2.2 Measure What You Want to Improve</h2>
-
-<ul>
-<li><strong>Measure your progress</strong>. If you can&rsquo;t measure it, you can&rsquo;t improve it. Good metrics accomplish a number of goals, ranging from driveing forward progress to measuring effectiveness over time.</li>
-<li><strong>Pick the right metric</strong>. Different metrics incentivize different behaviors. Example here includes Google using &ldquo;long click-through rate&rdquo; to track search quality, companies use 95th/99th percentile of response times instead of average response time to hunt down the worest-case behavior in the system.</li>
-<li><strong>Instrument your system</strong>. Measure and instrument as much as possible to ensure you are not flying blind.</li>
-<li><strong>Internalize useful numbers</strong>. Memorize numbers that can benchmark your progress or help wit back-of-the-envelope calculations. Like the <a href="https://gist.github.com/jboner/2841832">table of common latency numbers</a></li>
-<li><strong>Prioritize data integrity</strong>. Having bad data is wrose than having no data because you will make the wrong decisions thinking that you are right. Here are some strategies you can use to increase confidence in your data integrity:
-
-<ul>
-<li>Log data liberally, in case it turns out to be useful later on.</li>
-<li>Build tools to iterate on data accuracy sooner</li>
-<li>Write end-too-end integration tests to validate your entire analytics pipeline</li>
-<li>Examine collected data sooner.</li>
-<li>Cross-validate data accuracy by computing the same metric in mulitple ways.</li>
-<li>When a number does look off, dig in to it early.</li>
-</ul>
-</li>
-</ul>
-
-
-<h2>2.3 Validate Your Ideas Early and Often</h2>
-
-<ul>
-<li><strong>Find low-effort ways to validate your work</strong>. Invest a little effort (i.e. minimum viable product) to figure out if the rest of your plan is worth doing.</li>
-<li><strong>Continously validate your product hypotheses</strong>. Use A/B testing to incremtnally develop a product and identify what works and doesn&rsquo;t work. This way, you increase the probability that your efforts are aligned with what users actually want.</li>
-<li><strong>Find way of soliciting feedback when working on solo projects</strong>. Being the one-man team runs the huge risk of overlooking something that , if spotted early, could save you lots of wasted effort. Some strategies are:
-
-<ul>
-<li>Ask to bounce ideas off your teammates.</li>
-<li>Send out a design document before devoting your energy to your code.</li>
-<li>Structure ongoing projects so that there is some shared context with your teammates.</li>
-<li>Solicit buy-in before investing too much time.</li>
-</ul>
-</li>
-</ul>
-
-
-<h2>2.4 Improve Your Project Estimation Skills</h2>
-
-<ul>
-<li><strong>Incorporate estimates into project planning</strong>. Use the estimates to inform project planning, not the other way around. Some concrete strategies that provide more accurate estimates are:
-
-<ul>
-<li>Decompose the project into granular tasks</li>
-<li>Think of estimates as probability distributions, not best-case scenarios</li>
-<li>Let the person doing the actual task make the estimate</li>
-<li>Beware of anchoring bias. Avoid committing to an initial number before actually outlining the tasks involved.</li>
-<li>Use timeboxing to constrain tasks that can grow in scope</li>
-</ul>
-</li>
-<li><strong>Budget for the unknown</strong>. Take into account competing work obligations, holidays, illnesses, etc. The longer a project, the higher the probability that some of these will occur.</li>
-<li><strong>Define measureable milestones</strong>. Define specific goals to reduce risk and efficiently allocate time, and outline milestones to track progress. This allows us to build alignment around what can tasks can be deferred and decreases the chance that a project inadvertently grows in scope.</li>
-<li><strong>Do the riskiest task first</strong>. Instead of giving yourself the illusion of progress by focusing first on what is easy to do, tackle the rickiest task first to reduce variance in your estimates and explore the unknown early on.</li>
-<li><strong>Don&rsquo;t sprint in the middle of a marathon</strong>. Don&rsquo;t sprint just because you are hebind. Work overtime only if you are confident that it will enable you to finish on time.</li>
-</ul>
-
-
-<h1>3 Build Long-Term Value</h1>
-
-<h2>3.1 Balance Quality with Pragmatism</h2>
-
-<ul>
-<li><strong>Establish a culture of reviewing code</strong>. Code reviews facilitate positive modeling of good coding practices. Find the right balance between code quality and development speed.</li>
-<li><strong>Manage complexity through abstraction</strong>. MapReduce illustrates how the right abstraction can dramatically amplify an engineer&rsquo;s output. Make sure you have complete information about use cases before building abstractions, or you will ned up with something clunky and unusable.</li>
-<li><strong>Scale code quality with automated testing</strong>. Automated testing provide a scalable way of managing a growing codebase with a large team without constantly breaking the build or the product.</li>
-<li><strong>Manage your technical debt</strong>. Incur technical debt when it&rsquo;s necessary to get things done for a deadline, but to pay off that debt periodically. Only repay the debt with the highest leverage.</li>
-</ul>
-
-
-<h2>3.2 Minimize Operational Burden</h2>
-
-<ul>
-<li><strong>Embrace operational simplicity</strong>. Simple solutions impose a lower operational burden because they are easier to understand, maintain, and modify. Always ask &ldquo;what is the simplest solution that can get the job done while also reducing our future operational burden&rdquo;?</li>
-<li><strong>Build systems to fail fast</strong>. Slow failing systems muddy the sources of code errors, making it difficult to debug. Building systems to fail fast helps reduce the time you spend maintaining and debugging software by surfacing problematic issues sooner and more directly.</li>
-<li><strong>Automate Mechanical Tasks</strong>. Every time you do something that a machine can do, ask yourself whether it&rsquo;s worthwhile to automate it.</li>
-<li><strong>Aim for idempotence</strong>. An <em>idempotent</em> process produces the same results regardless of whether it&rsquo;s run once or multiple times. Idempotence make it easier for you to retry actions in the face of failure.</li>
-<li><strong>Plan and practice failure modes</strong>. Building confidence in your ability to recover lets you proceed more boldly.</li>
-</ul>
-
-
-<h2>3.3 Invest in Your Team&rsquo;s Growth</h2>
-
-<ul>
-<li><strong>Help the peopel around you be successful</strong>. The higher you climb up the engineering ladder, the more your effectiveness will be measured not by your individual constributions, but by you rimpact on the people around you. &ldquo;If you are a staff engineer, you make a whole team better. You are a principal engineer if you are making the whole company better. And you are distinguished if you are improving the industry&rdquo;.</li>
-<li><strong>Make hiring a priority</strong>. Keep a high hiring bar and play an active role in growing your team.</li>
-<li><strong>Build shared ownership of code</strong>. Increase your bus factor to be greater than one so that you are not a bottleneck for development. This gives you the flexibility to focus on other high-leverage activities.</li>
-<li><strong>Document collective wisdom</strong>. Reflect on projects with team member, learn what worked and what didn&rsquo;t work, and document and share the lessions so that valuable wisdom doesn&rsquo;t get lost.</li>
 </ul>
 
 ]]></content>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: python | Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2018-05-08T22:37:18-07:00</updated>
+  <updated>2018-06-15T00:56:39-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -132,10 +132,16 @@ text = re.sub('8=+D', 'dick', text)
 <td style="text-align:center;"> -0.0011 </td>
 </tr>
 <tr>
-<td> RNN + Attention    </td>
+<td> GRU + Attention    </td>
 <td style="text-align:center;"> 0.9856 </td>
 <td style="text-align:center;"> 0.9864 </td>
 <td style="text-align:center;"> -0.0008 </td>
+</tr>
+<tr>
+<td> GRU + Capsule Net  </td>
+<td style="text-align:center;"> 0.9857 </td>
+<td style="text-align:center;"> 0.9863 </td>
+<td style="text-align:center;"> -0.0006 </td>
 </tr>
 <tr>
 <td> Lasso Stacking     </td>
