@@ -4,7 +4,7 @@
   <title><![CDATA[Category: deep-learning | Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/blog/categories/deep-learning/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2018-06-15T00:56:39-07:00</updated>
+  <updated>2018-09-08T18:37:31-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -12,6 +12,71 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Kaggle | Predicting Classified Ads Demand]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/09/05/kaggle-predict-demand-for-classified-ads/"/>
+    <updated>2018-09-05T10:32:18-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/09/05/kaggle-predict-demand-for-classified-ads</id>
+    <content type="html"><![CDATA[<p>After three competitions, I felt I was ready to push for my first Gold Medal. Along with my four teammates, we took on the challenge of predicting demand for classified ads. We fought tooth and nail till the last moment and were in the Gold zone on the public leaderboard. While we ended up losing the Gold Metal narrowly by 1 spot, it was overall a great learning experience. I look forward to making progress toward a real gold medal in the future.</p>
+
+<p><strong>TL;DR A failed attempt to push for my first Gold Metal on Kaggle. My team ranked top 1% but missed the Gold Metal narrowly by 1 spot!</strong></p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/avito_rank.png" alt="avito" /></p>
+
+<!--more-->
+
+
+<h2>1. The Competition</h2>
+
+<p>The <a href="https://www.kaggle.com/c/avito-demand-prediction">Avito Demand Prediction Challenge</a> is sponsored by <a href="https://www.avito.ru/rossiya">Avito</a>, Russia’s largest classified advertisements website. The task is to predict demand for an online advertisement based on its full description (title, description, images, etc.), its context (geographically where it was posted, similar ads already posted) and historical demand for similar ads in similar contexts.</p>
+
+<h2>2. Our Solution</h2>
+
+<p>My teammates and I have put together a <a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/60059#350998">write-up</a> on the Kaggle discussion forum.</p>
+
+<p>An interesting characteristics of this competition is the Cross-Validation (CV) performance is very consistent with Leaderboard (LB) Performance. Therefore, all top teams ended up doing crazy stacking &ldquo;towers&rdquo; (from 3-level to even 6-level towers!). All of my time in the later stage of the competition is spent on the stacking tower below.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post17/stacking_tower.png" alt="stacking" /></p>
+
+<h2>3. Learning From Top Solutions</h2>
+
+<h3><a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59880">1st place solution</a></h3>
+
+<p>Below is the architecture of Neural Network from the 1st place winner. The architecture is quite similar to <a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59917">what we end up using</a>.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post17/1st_solution.jpg" alt="1st-place" /></p>
+
+<p><strong>What separates them from the rest of the crowd is that they found a &ldquo;magic&rdquo; feature from the unlabeled part of the dataset</strong> (something I have been trying so hard throughout the competition but couldn&rsquo;t accomplish).</p>
+
+<blockquote><p>I’ve designed 3 nn models trained on active data to predict log1p(price), renewed and log1p(total_duration). These models had 2 rnn branches for title and description and also used category embeddings. The difference between actual log1p(price) and predicted one was an extremely important feature.                                   &ndash; <a href="https://www.kaggle.com/gdanschin">Georgiy Danshchin</a></p></blockquote>
+
+<p>A well-deserved win!</p>
+
+<h3><a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59871">2nd place solution</a></h3>
+
+<p>Their best single model was a Neural Network at 0.2163 on public leaderboard (a big better than ours was at 0.2181). Some characteristics as follows:</p>
+
+<ul>
+<li>target encoded features for categorical features and their second and third order interactions</li>
+<li>cyclic LR, Nadam optimizer</li>
+<li>plenty of BNs, big dropouts</li>
+</ul>
+
+
+<p>A whopping 6-level stack! And 10-fold Cross-Validation! They must have a lot of compute resource.</p>
+
+<h3><a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59885">3rd place solution</a></h3>
+
+<p>The 3rd place winner is lead by the famous <a href="https://www.kaggle.com/kazanova">KazAnova</a>. They have a very interesting time-series ensemble in addition to normal ensembles:</p>
+
+<blockquote><p>The second ensemble used a time-series schema. The test data begins a number of days past the final day included in the training data. We tried to replicate this in our internal validation. To do so, we trained on the first six days of training and used days ten through thirteen as validation. This meant days six through nine were excluded, mimicking the gap between train and test.Then, to generate predictions for the test data, we trained on the entire training set.</p>
+
+<p>In order to generate likelihoods of categorical features for this approach, we always applied a gap of 4 days. For example to estimate likelihoods for day four of the training data, we use the average of target for day zero. To estimate likelihoods for day five, we used likelihoods of (day0+day1)/2. We decided on a gap of four days for stability, as it gave similar CV and LB performance.</p></blockquote>
+
+<p>I remember trying something like this for the <a href="https://www.kaggle.com/c/talkingdata-adtracking-fraud-detection">TalkingData AdTracking Fraud Detection Challenge</a> but it wasn&rsquo;t particularly strong. I am happy that somebody can pull this off.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Reading | On Normalization Layers]]></title>
@@ -220,7 +285,7 @@ when we take a larger step in a direction of a computed gradient, this gradient 
 
 <p>To get a different experience, I decided to team up instead of going solo. It turned out great, as I learned a ton from my teammates <a href="https://www.kaggle.com/learnmower">Thomas</a>, <a href="https://www.kaggle.com/konradb">Konrad</a> and <a href="https://www.kaggle.com/newtohere">Song</a>, who have been doing this much longer than I have. Unknownly, I put myself in the best situation for learning - being the least experienced team member.</p>
 
-<p><strong>TL;DR The Jigsaw Toxic Comment Classification Challenge is the most nail-biting that I have participated in. I am estatic that my team ranked 31th out of 4,551 teams (top 1%!)</strong></p>
+<p><strong>TL;DR The Jigsaw Toxic Comment Classification Challenge is the most nail-biting that I have participated in. I am estatic that my team ranked top 1% out of 4,500+ teams</strong></p>
 
 <p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/toxic_comment_rank.png" alt="toxic" /></p>
 
@@ -639,104 +704,6 @@ $$T(\boldsymbol{x}) = \sigma(\boldsymbol{W}_T^T + \boldsymbol{b}_T)$$</p></li>
 <ul>
 <li><p><strong>Performance</strong>: The performance of highway networks is similar to <a href="https://arxiv.org/abs/1412.6550">Fitnets</a> on CIFAR-10 and MNIST datasets. But highway network is much easier to train since no two-stage training procedure is needed.</p></li>
 <li><p><strong>Analysis</strong>: By analzing the biases of the transform gates and the outputs of the block, it was found that the strong negative biases at low depths are not used to shut down the gates, but to make them more selective.</p></li>
-</ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Reading | Fast (Feedforward) Style Transfer]]></title>
-    <link href="http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer/"/>
-    <updated>2017-04-21T15:15:34-07:00</updated>
-    <id>http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer</id>
-    <content type="html"><![CDATA[<p><a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16.pdf">Perceptual Losses for Real-Time Style Transfer and Super-Resolution</a> is the second paper in my reading series for Neural Style Transfer, where Johnson et al. built on the work of Gatys et al. and used feedforward networks to stylize image order of magnitudes faster than the previous optimization approach.</p>
-
-<!--more-->
-
-
-<h3>Intro</h3>
-
-<p>Two common approach for image transformation, where an input image is transformed into an output image:</p>
-
-<ul>
-<li>feed-forward CNN using <strong>per-pixel loss</strong> between the output and ground-truth image</li>
-<li>generate image by defining and optimizing <strong>perceptual loss</strong> based on high-level features extracted from pretrained networks</li>
-</ul>
-
-
-<p>The paper combined the benefits of both approaches and proposed a system that</p>
-
-<ul>
-<li>train feed-forward network using use perceptual loss functions that depend on high-level features from a pretrained loss network</li>
-<li>allow the feed-forward network to learn a artistic style during training and can stylize images in <strong>real-time</strong> at test time</li>
-</ul>
-
-
-<h3>Method</h3>
-
-<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/fast_neural_style_system.png" alt="fast_neural_style_system" />
-The system consists of two components:</p>
-
-<ul>
-<li><strong>image transformation network $f_W$</strong>: a deep residual CNN parameterized by $W$ and transforms input images $x$ into output images $\hat{y} = f_W(x)$</li>
-<li><strong>loss network $\phi$</strong>: used to define several loss functions $l_1, \cdots, l_k$. Each loss function computes a scalar loss value $l_i(\hat{y}, y_i)$ that measures the difference between the output image $\hat{y}$ and a target image $y_i$.</li>
-</ul>
-
-
-<p>The network is trained using SGD to minimize a loss functions of
-$$W^{\ast}  = \text{argmin}_W \ \textbf{E}_{x, \{y_i\} } \left[ \sum_{i} \lambda_i l_i (f_W(x), y_i)\right]$$</p>
-
-<ul>
-<li>Inspired from the optimziation approach from Gatys et al. and others, the author use a pretrained network $\phi$ as a fixed loss network to define the loss functions.</li>
-<li>The loss network $\phi$ is used to define a <strong>feature reconstruction loss $l_{feat}^{\phi}$</strong> and <strong>style reconstruction loss $l_{style}^{\phi}$</strong> that measure differences in <strong>content</strong> and <strong>style</strong> between images.</li>
-<li>For each input image $x$, there is a <strong>content target $y_c$</strong> and a <strong>style target $y_s$</strong></li>
-<li>For <strong>style transfer</strong>, the content target $y_c$ is the input image $x$ and the style target $y_s$ is the designated style image. One network is trained for each style target.</li>
-</ul>
-
-
-<h3>Image Transformation Network</h3>
-
-<p>The image transformation network is a Deep Residual Network. More detail can be found in the <a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16Supplementary.pdf">supplementary notes</a> of the paper.</p>
-
-<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/deep_residual_network_architecture.png" alt="deep_residual_network_architecture" /></p>
-
-<h3>Loss Network</h3>
-
-<p>Johnson et al. defined the feature reconstruction loss and the style reconstruction loss in the same way as Gatys et al., though with a different notation. Let $\phi_{j}(x)$ be the $j$-th layer activations of the loss network for image $x$ with a shape $C_j \times H_j \times W_j$.</p>
-
-<h4>Feature Reconstruction Loss</h4>
-
-<ul>
-<li>Euclidean distance between feautre representations
-$$l_{feat}^{\phi, j}(\hat{y},y) = \frac{1}{C_j H_j W_j} ||\phi_j(\hat{y}) - \phi_j(y)||^2_2$$</li>
-<li><strong>Minimizing  $l_{feat}^{\phi}$ would reserve the image content and overall spatial structure, but not the color, texture or exacte shape</strong></li>
-</ul>
-
-
-<h4>Style Reconstruction Loss</h4>
-
-<ul>
-<li>Squared Frobenius norm of the distance between the <strong>Gram matrices</strong> between the output and target image</li>
-<li>Gram matrix $G_j^\phi(x)$ is a $C_j \times C_j$ whose elements are the inner product between the two channels $c$ and $c'$ of activations
-$$G_j^\phi(x)_{c,c'} = \frac{1}{C_j H_j W_j} \sum_{h=1}^{H_j} \sum_{w=1}^{W_j} \phi_j(x)_{h,w,c} \phi_j(x)_{h,w,c'}$$
-$$l_{style}^{\phi, j}(\hat{y},y) = ||G^\phi_j(\hat{y}) - G^\phi_j(y)||^2_F$$</li>
-<li><strong>Minimizing  $l_{style}^{\phi}$ would reserve the stylistic features, but not its spatial structure</strong></li>
-</ul>
-
-
-<h4>Total Variation Regularization</h4>
-
-<p>Other than the $l_{feat}^{\phi}$ and $l_{style}^{\phi}$, Johnson et al. also defined a loss function $l_{TV}(\hat{y})$ to encourage spatial smoothness in the output image $\hat{y}$.</p>
-
-<h3>Experiments and Training Details</h3>
-
-<ul>
-<li>The goal of style transfer is to generate an image $\hat{y}$ that combines the content of the content target $y_c$ with the style of the style target $y_s$.</li>
-<li>Gatsy et al. formulate the problem as a optimization problem. An image $\hat{y}$ is generated by solving the problem
-$$\hat{y} = \text{argmin}_y \ \lambda_c l_{feat}^{\phi, j}(y, y_c) + \lambda_s l_{style}^{\phi, j}(y, y_s) + \lambda_{TV} l_{TV}(y)$$</li>
-<li>However, the method is slow since satifactory results takes about 500 iterations and each iterations requires a forward and a backward pass</li>
-<li>The result from the style transfer network is <strong>qualitatively similar to Gatsy et al&rsquo;s method</strong>, but can be run in real time during test time</li>
-<li>Even though the style transfer network is trained on $256 \times 256$ images, they also <strong>perform satisfactorily in higher resolution</strong> of $512 \times 512$ and $1024 \times 1024$, achieving a performance comparable to 50-100 iterations of Gatsy et al&rsquo;s method</li>
 </ul>
 
 ]]></content>
