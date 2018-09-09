@@ -4,7 +4,7 @@ title: "Kaggle | Classifying Toxic Comment"
 subtitle: "Learning and Reflection from the Jigsaw Toxic Comment Classification Challenge"
 date: 2018-05-01 17:51:44 -0700
 comments: true
-categories: kaggle nlp python deep-learning
+categories: kaggle nlp deep-learning
 ---
 
 I had lots of fun at my last Kaggle competition [Mercari Price Suggestion Challenge](https://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/). Without a second thought, I dived right in the [Toxic Comment Classification Challenge](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge) to further practice my NLP skills. 

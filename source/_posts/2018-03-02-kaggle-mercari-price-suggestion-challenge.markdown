@@ -4,7 +4,7 @@ title: "Kaggle | Mercari Price Suggestion"
 subtitle: "Learning and Reflection from the Mercari Price Suggestion Challenge"
 date: 2018-03-02 21:46:50 -0800
 comments: true
-categories: kaggle nlp python deep-learning
+categories: kaggle nlp deep-learning
 ---
 
 One of my first data science experience was with Kaggle more than two years ago when I played around with the [Titanic competition](https://sijunhe.github.io/blog/2015/10/31/kaggle-titanic-part-i/). While the competition itself was minimal, the experience was magical, intuitive and one of the reasons I got into data science. 

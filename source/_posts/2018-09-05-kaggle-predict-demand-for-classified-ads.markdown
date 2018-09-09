@@ -3,7 +3,7 @@ layout: post
 title: "Kaggle | Predicting Classified Ads Demand"
 date: 2018-09-05 10:32:18 -0700
 comments: true
-categories: kaggle nlp python deep-learning
+categories: kaggle nlp deep-learning
 ---
 
 After three competitions, I felt I was ready to push for my first Gold Medal. Along with my four teammates, we took on the challenge of predicting demand for classified ads. We fought tooth and nail till the last moment and were in the Gold zone on the public leaderboard. While we ended up losing the Gold Metal narrowly by 1 spot, it was overall a great learning experience. I look forward to making progress toward a real gold medal in the future.
