@@ -11,7 +11,7 @@ I had lots of fun at my last Kaggle competition [Mercari Price Suggestion Challe
 
 To get a different experience, I decided to team up instead of going solo. It turned out great, as I learned a ton from my teammates [Thomas](https://www.kaggle.com/learnmower), [Konrad](https://www.kaggle.com/konradb) and [Song](https://www.kaggle.com/newtohere), who have been doing this much longer than I have. Unknownly, I put myself in the best situation for learning - being the least experienced team member. 
 
-**TL;DR The Jigsaw Toxic Comment Classification Challenge is the most nail-biting that I have participated in. I am estatic that my team ranked 31th out of 4,551 teams (top 1%!)**
+**TL;DR The Jigsaw Toxic Comment Classification Challenge is the most nail-biting that I have participated in. I am estatic that my team ranked top 1% out of 4,500+ teams**
 
 
 ![toxic](https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/toxic_comment_rank.png)
