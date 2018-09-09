@@ -4,7 +4,7 @@
   <title><![CDATA[Category: python | Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2018-09-08T18:37:31-07:00</updated>
+  <updated>2018-09-08T18:40:57-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -12,439 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[Kaggle | Predicting Classified Ads Demand]]></title>
-    <link href="http://sijunhe.github.io/blog/2018/09/05/kaggle-predict-demand-for-classified-ads/"/>
-    <updated>2018-09-05T10:32:18-07:00</updated>
-    <id>http://sijunhe.github.io/blog/2018/09/05/kaggle-predict-demand-for-classified-ads</id>
-    <content type="html"><![CDATA[<p>After three competitions, I felt I was ready to push for my first Gold Medal. Along with my four teammates, we took on the challenge of predicting demand for classified ads. We fought tooth and nail till the last moment and were in the Gold zone on the public leaderboard. While we ended up losing the Gold Metal narrowly by 1 spot, it was overall a great learning experience. I look forward to making progress toward a real gold medal in the future.</p>
-
-<p><strong>TL;DR A failed attempt to push for my first Gold Metal on Kaggle. My team ranked top 1% but missed the Gold Metal narrowly by 1 spot!</strong></p>
-
-<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/avito_rank.png" alt="avito" /></p>
-
-<!--more-->
-
-
-<h2>1. The Competition</h2>
-
-<p>The <a href="https://www.kaggle.com/c/avito-demand-prediction">Avito Demand Prediction Challenge</a> is sponsored by <a href="https://www.avito.ru/rossiya">Avito</a>, Russia’s largest classified advertisements website. The task is to predict demand for an online advertisement based on its full description (title, description, images, etc.), its context (geographically where it was posted, similar ads already posted) and historical demand for similar ads in similar contexts.</p>
-
-<h2>2. Our Solution</h2>
-
-<p>My teammates and I have put together a <a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/60059#350998">write-up</a> on the Kaggle discussion forum.</p>
-
-<p>An interesting characteristics of this competition is the Cross-Validation (CV) performance is very consistent with Leaderboard (LB) Performance. Therefore, all top teams ended up doing crazy stacking &ldquo;towers&rdquo; (from 3-level to even 6-level towers!). All of my time in the later stage of the competition is spent on the stacking tower below.</p>
-
-<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post17/stacking_tower.png" alt="stacking" /></p>
-
-<h2>3. Learning From Top Solutions</h2>
-
-<h3><a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59880">1st place solution</a></h3>
-
-<p>Below is the architecture of Neural Network from the 1st place winner. The architecture is quite similar to <a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59917">what we end up using</a>.</p>
-
-<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post17/1st_solution.jpg" alt="1st-place" /></p>
-
-<p><strong>What separates them from the rest of the crowd is that they found a &ldquo;magic&rdquo; feature from the unlabeled part of the dataset</strong> (something I have been trying so hard throughout the competition but couldn&rsquo;t accomplish).</p>
-
-<blockquote><p>I’ve designed 3 nn models trained on active data to predict log1p(price), renewed and log1p(total_duration). These models had 2 rnn branches for title and description and also used category embeddings. The difference between actual log1p(price) and predicted one was an extremely important feature.                                   &ndash; <a href="https://www.kaggle.com/gdanschin">Georgiy Danshchin</a></p></blockquote>
-
-<p>A well-deserved win!</p>
-
-<h3><a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59871">2nd place solution</a></h3>
-
-<p>Their best single model was a Neural Network at 0.2163 on public leaderboard (a big better than ours was at 0.2181). Some characteristics as follows:</p>
-
-<ul>
-<li>target encoded features for categorical features and their second and third order interactions</li>
-<li>cyclic LR, Nadam optimizer</li>
-<li>plenty of BNs, big dropouts</li>
-</ul>
-
-
-<p>A whopping 6-level stack! And 10-fold Cross-Validation! They must have a lot of compute resource.</p>
-
-<h3><a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59885">3rd place solution</a></h3>
-
-<p>The 3rd place winner is lead by the famous <a href="https://www.kaggle.com/kazanova">KazAnova</a>. They have a very interesting time-series ensemble in addition to normal ensembles:</p>
-
-<blockquote><p>The second ensemble used a time-series schema. The test data begins a number of days past the final day included in the training data. We tried to replicate this in our internal validation. To do so, we trained on the first six days of training and used days ten through thirteen as validation. This meant days six through nine were excluded, mimicking the gap between train and test.Then, to generate predictions for the test data, we trained on the entire training set.</p>
-
-<p>In order to generate likelihoods of categorical features for this approach, we always applied a gap of 4 days. For example to estimate likelihoods for day four of the training data, we use the average of target for day zero. To estimate likelihoods for day five, we used likelihoods of (day0+day1)/2. We decided on a gap of four days for stability, as it gave similar CV and LB performance.</p></blockquote>
-
-<p>I remember trying something like this for the <a href="https://www.kaggle.com/c/talkingdata-adtracking-fraud-detection">TalkingData AdTracking Fraud Detection Challenge</a> but it wasn&rsquo;t particularly strong. I am happy that somebody can pull this off.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Kaggle | Classifying Toxic Comment]]></title>
-    <link href="http://sijunhe.github.io/blog/2018/05/01/kaggle-toxic-comment/"/>
-    <updated>2018-05-01T17:51:44-07:00</updated>
-    <id>http://sijunhe.github.io/blog/2018/05/01/kaggle-toxic-comment</id>
-    <content type="html"><![CDATA[<p>I had lots of fun at my last Kaggle competition <a href="https://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/">Mercari Price Suggestion Challenge</a>. Without a second thought, I dived right in the <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge">Toxic Comment Classification Challenge</a> to further practice my NLP skills.</p>
-
-<p>To get a different experience, I decided to team up instead of going solo. It turned out great, as I learned a ton from my teammates <a href="https://www.kaggle.com/learnmower">Thomas</a>, <a href="https://www.kaggle.com/konradb">Konrad</a> and <a href="https://www.kaggle.com/newtohere">Song</a>, who have been doing this much longer than I have. Unknownly, I put myself in the best situation for learning - being the least experienced team member.</p>
-
-<p><strong>TL;DR The Jigsaw Toxic Comment Classification Challenge is the most nail-biting that I have participated in. I am estatic that my team ranked top 1% out of 4,500+ teams</strong></p>
-
-<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/toxic_comment_rank.png" alt="toxic" /></p>
-
-<!--more-->
-
-
-<h2>1. The Competition</h2>
-
-<p>The <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge">Jigsaw Toxic Comment Classification Challenge</a> is sponsored by Google and Jigsaw, with a purpose to improve online conversation. The task is to build a multi-headed model that’s capable of detecting different types of of toxicity like threats, obscenity, insults, and identity-based hate. The dataset consists of comments from Wikipedia’s talk page edits.</p>
-
-<p>The competition isn&rsquo;t smooth sailing by any means. It had several major changes through its course:</p>
-
-<ul>
-<li><strong>Dataset Change</strong>: since a portion of the data was previously released (a.k.a data leak), Jigsaw had to collect and label more data for a new test set, which turned out to be on a slightly different distribution from the training set. Therefore one of the biggest challenge of the competition is to find a reliable cross-validation strategy. The competition was also extended for 1 month to accommodate the new dataset.</li>
-<li><strong>Metric Change</strong>: the competition started with <a href="http://scikit-learn.org/stable/modules/generated/sklearn.metrics.log_loss.html">log loss</a> (also known as cross entropy) as the evaluation metric. However, log loss is not <a href="https://en.wikipedia.org/wiki/Scale_invariance">scale-invariant</a> so teams were focusing on silly post-processing that improves the score. The host made a good call to switch to <a href="https://en.wikipedia.org/wiki/Receiver_operating_characteristic">ROC AUC</a>, which is scale-invariant and makes more business sense.</li>
-</ul>
-
-
-<p>Since the corpus is relatively small and there is a difference in distribution between training and test set, the key to success is to <strong>build a robust model that can generalize to the different distribution of the test set.</strong> In retrospect, we found that all successful techniques in this competition specifically addressed the point above.</p>
-
-<h2>2. Our Experience</h2>
-
-<h3>2.1 Pre-Processing</h3>
-
-<p>Since the corpus consists of online comments that are likely toxic, there is an abundance of intentional misspells (to avoid bad words filtering), typos, emojis and derogatory ascii art. Thomas and I wrote quite an exhaustive script trying to clean and normalize the corpus. Here are some examples:</p>
-
-<pre><code class="python">## cleaning smile emoji
-text = re.sub("\(:", " smile ", text) 
-## cleaning the penis asci art...
-text = re.sub('8=+D', 'dick', text)
-</code></pre>
-
-<p>It turns out that the pre-processing was not impactful at all. All of the top teams have had the same experience as well. Our effort of a 400+ line pre-processing script went nowhere, but I am actually happy since I hate pre-processing/feature engineering and I don&rsquo;t believe they are part of the path to generalizable machine learning /AI.</p>
-
-<h3>2.2 Embeddings</h3>
-
-<p>Word embedding is a technique of representing the meaning of words by mapping them to a continuous high dimensional vector space. The most well-known embedding is <a href="https://www.tensorflow.org/tutorials/word2vec">word2vec</a> by <a href="https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf">Mikolov et al</a>. The embedding we used in the competition were <a href="https://nlp.stanford.edu/projects/glove/">GloVe</a> (common crawl &amp; twitter), <a href="https://github.com/facebookresearch/fastText">fastText</a> and <a href="http://anthology.aclweb.org/P16-2068">LexVec</a>, though we were only able to re-train a small portion of models with different embeddings due to time constraint.</p>
-
-<p><strong>Using a variety of embeddings turned out to be crucial in this competition</strong>. In the context of <a href="https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff">bias-variance decomposition</a>, there is an irreducible bias term due to the different distribution of training and test set. Hence, the best way to improve the model performance is to decrease the variance. Ensembling a wide range of diverse models is a great way to decrease the variance of the Ensemble. Alas, it was towards the end of the competition that Thomas found out training the same model with different embedding was a very effective way to produce performant yet diverse base models.</p>
-
-<p>Out of all embeddings, <a href="https://github.com/facebookresearch/fastText">fastText</a> gave the best performance overall. The capability of <a href="https://arxiv.org/abs/1607.04606">generating word vectors for out-of-vocabulary words using subword information</a> was tremendously helpful for correcting misspells and typos.</p>
-
-<h3>2.3 Base Models</h3>
-
-<h4>2.3.1 NB-SVM</h4>
-
-<p><a href="https://sijunhe.github.io/blog/2018/04/03/nb-svm/">NB-SVM</a> is a widely-used baseline for text classification. It is based on bag-of-words approach and has a robust performance across tasks and datasets (important for this competition). NB-SVM was popular in this competition as a base model, thanks to this wonderful baseline <a href="https://www.kaggle.com/jhoward/nb-svm-strong-linear-baseline">kernel</a> by <a href="https://www.kaggle.com/jhoward">Jeremy Howard</a> with a public leaderboard score of <code>0.9770</code>.</p>
-
-<p>After some additional pre-processing and hyperparameter tuning, we were able to improve the model to <code>0.9813</code> on public leaderboard. The surprise came after the competition, when we found that our NB-SVM scored <code>0.9821</code> on the private leaderboard. This is impressive since</p>
-
-<ul>
-<li><strong>Generalization</strong>: all other models of ours <em>overfitted</em> to the public leaderboard (higher public score than private score) and NB-SVM was the only exception.</li>
-<li><strong>Performance</strong>: the performance of <code>0.9821</code> was very good for such a minimal linear model. In comparison, our best single model scored <code>0.9857</code> (+0.36) and the best single model of the competition was around <code>0.9869</code> (+0.48). NB-SVM is also much faster to train and a breeze to deploy compared with the other two so one could argue that the NB-SVM is a more viable solution.</li>
-</ul>
-
-
-<h4>2.3.2 RNN</h4>
-
-<p>As expected in the NLP domain, Recurrent Neural Network (RNN) dominates this competition. Our strongest single model was a single layer RNN-Capsule Network with GRU cell at <code>0.9857</code> on the private leaderboard. Following closely is a single layer RNN with linear attention and GRU cell at <code>0.9856</code>. From what I have read, the best single models of all released top solutions are RNN-based.</p>
-
-<p>Given that the challenge is on generalization, most RNN-based models I have seen lean on the simple side, with a single layer of RNN followed by some variant of an attention layer (i.e. global max pooling, global mean pooling, attention, etc) over the time axis. Also, we have observed that GRU outperforms LSTM in general, probably because GRU has less parameters and thus less prone to overfitting.</p>
-
-<h4>2.3.3 CNN</h4>
-
-<p>There is a lot of arguments about whether RNN or CNN is better at NLP task. A <a href="https://arxiv.org/abs/1702.01923">comparative study</a> suggested that CNN is good at extracting position-invariant features and RNN at modeling units in sequence. For me, CNN is a generalized n-gram feature extractor. I thought CNN would be strong at this competition since the task is more similar to key word detection than sentiment analysis. I was wrong.</p>
-
-<p>I didn&rsquo;t have much success on CNN and I didn&rsquo;t see any CNNs that could compete with RNNs on public kernel. My best CNN is a <a href="https://arxiv.org/abs/1408.5882">wide and shallow CNN</a> with a private leaderboard score of <code>0.9835</code>. The CNN got &ldquo;feature selected&rdquo; in our ensemble and contributed nothing. Though, the 2nd place team wrote that they had <a href="http://ai.tencent.com/ailab/media/publications/ACL3-Brady.pdf">DPCNN</a> as one of their base models. I too have experimented with DPCNN during the competition but didn&rsquo;t have any success.</p>
-
-<h4>2.3.4 Tree-Based Models</h4>
-
-<p>In theory, tree-based models aren&rsquo;t well-suited for NLP task, primarily due to high cardinality categorical features from huge word vocabulary space. Tree-based models sucked in practice as well. We experimented with Random Forest, Extra Tree, LightGBM and XGBoost and all of them severely underperformed other models. Our best attempt was a <a href="http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesClassifier.html">Extra Tree model</a> by Konrad with <code>0.9792</code> on private leaderboard. It is worth noting that despite their underwhelming performances, tree-based models still accounted for about 10% of the weight in our linear stacking ensemble.</p>
-
-<h3>2.4 Ensembling</h3>
-
-<p><a href="http://blog.kaggle.com/2016/12/27/a-kagglers-guide-to-model-stacking-in-practice/">Stacking</a> (also called meta ensembling) is a model ensembling technique used to combine information from multiple predictive models to generate a new model. This competition was the first time I used <a href="http://blog.kaggle.com/2017/06/15/stacking-made-easy-an-introduction-to-stacknet-by-competitions-grandmaster-marios-michailidis-kazanova/">stacking</a> and it was the most valuable learning experience of the competition.</p>
-
-<p>Since the data size is relatively small, the competition is the perfect candidate for stacking. We split the dataset into 10 folds, trained L1 models and produced out-of-fold predictions to the train L2 model. We had about 35 L1 models from a wide range of performances. The 2 L2 model we experimented with were XGBoost and LASSO. Their performance were comparable at <code>0.9871</code>. A simple average of the two stacking model gave us our best and final model at <code>0.9872</code>.</p>
-
-<h3>2.5 Selected Model Performance</h3>
-
-<table>
-<thead>
-<tr>
-<th> Model            </th>
-<th style="text-align:center;"> Private Leaderboard </th>
-<th style="text-align:center;"> Public Leaderboard </th>
-<th style="text-align:center;"> Overfitting Delta </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td> Extra Tree         </td>
-<td style="text-align:center;"> 0.9792 </td>
-<td style="text-align:center;"> 0.9805 </td>
-<td style="text-align:center;"> -0.0013 </td>
-</tr>
-<tr>
-<td> NB-SVM             </td>
-<td style="text-align:center;"> 0.9821 </td>
-<td style="text-align:center;"> 0.9813 </td>
-<td style="text-align:center;"> <strong>+0.0008</strong> </td>
-</tr>
-<tr>
-<td> Shallow &amp; Wide CNN </td>
-<td style="text-align:center;"> 0.9835 </td>
-<td style="text-align:center;"> 0.9846 </td>
-<td style="text-align:center;"> -0.0011 </td>
-</tr>
-<tr>
-<td> GRU + Attention    </td>
-<td style="text-align:center;"> 0.9856 </td>
-<td style="text-align:center;"> 0.9864 </td>
-<td style="text-align:center;"> -0.0008 </td>
-</tr>
-<tr>
-<td> GRU + Capsule Net  </td>
-<td style="text-align:center;"> 0.9857 </td>
-<td style="text-align:center;"> 0.9863 </td>
-<td style="text-align:center;"> -0.0006 </td>
-</tr>
-<tr>
-<td> Lasso Stacking     </td>
-<td style="text-align:center;"> 0.9870 </td>
-<td style="text-align:center;"> 0.9874 </td>
-<td style="text-align:center;"> -0.0004 </td>
-</tr>
-<tr>
-<td> XGBoost Stacking   </td>
-<td style="text-align:center;"> 0.9870 </td>
-<td style="text-align:center;"> 0.9873 </td>
-<td style="text-align:center;"> -0.0003 </td>
-</tr>
-<tr>
-<td> <strong>Average of Lasso &amp; XGBoost Stacking</strong>   </td>
-<td style="text-align:center;"> <strong>0.9872</strong> </td>
-<td style="text-align:center;"> <strong>0.9875</strong> </td>
-<td style="text-align:center;"> <strong>-0.0003</strong> </td>
-</tr>
-</tbody>
-</table>
-
-
-<h2>3. Reflections</h2>
-
-<h3>3.1 What We did well</h3>
-
-<ul>
-<li><strong>Stacking</strong>: Biggest learning of this competition. It also contributed a lot to our rank since our single model performance is lower than other teams around us.</li>
-<li><strong>Model Diversity</strong>: We experimented with a wide range of models and helped with stacking. It was also nice to revisit all the different models.</li>
-</ul>
-
-
-<h3>3.2 Areas of Improvements</h3>
-
-<ul>
-<li><strong>Single model performance</strong>: Our single model performance is lower than top teams around us since we missed a few key techniques that other top teams used.</li>
-<li><strong>Team collaboration</strong>: We literally had teammates all over the world (Netherlands, New York, Hawaii and California) and it was difficult to collaborate around the time difference. We never had a team call or a discussion when everybody were awake.</li>
-</ul>
-
-
-<h3>3.3. Learning From Top Solutions</h3>
-
-<h4>3.3.1 1st Place Solution</h4>
-
-<p>The 1st place team had a very systematic approach to the problem with an scientific rigor that I truly admire. They even did an ablation analysis! An elaborate solution overview can be found <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/discussion/52557">here</a>. Their approach can be summarized as the following:</p>
-
-<ul>
-<li><strong>Diverse Embedding</strong>: as described in the above embedding section</li>
-<li><strong>Train/Test Time Augmentation (TTA)</strong>: They did data augmentation at both training and test time leveraging <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/discussion/48038">translation</a>. Each input sentence was translated to French, German and Spanish and then back to English. At training time, the translations of a sentence stay in the same fold to avoid leakage. At test time, the prediction is made by averaging various translations. TTA had a big impact on the performance of their models, with the following ablation analysis</li>
-</ul>
-
-
-<table>
-<thead>
-<tr>
-<th> Model            </th>
-<th style="text-align:center;"> Leaderboard Score </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td> Baseline Bi-GRU  </td>
-<td style="text-align:center;"> 0.9862 </td>
-</tr>
-<tr>
-<td> + train-time augmentation      </td>
-<td style="text-align:center;"> 0.9867      </td>
-</tr>
-<tr>
-<td> + test-time augmentation       </td>
-<td style="text-align:center;"> 0.9865      </td>
-</tr>
-<tr>
-<td> + train/test-time augmentation </td>
-<td style="text-align:center;"> 0.9874      </td>
-</tr>
-</tbody>
-</table>
-
-
-<ul>
-<li><strong>Pseudo Labeling</strong>: Pseudo Labeling is a semi-supervised technique introduced in ICML 2013 by <a href="http://deeplearning.net/wp-content/uploads/2013/03/pseudo_label_final.pdf">Lee</a> that improves generalization performance (just what we need for this competition) using unlabeled data. The procedure is to train a model on the training set, predict the &ldquo;pseudo-labels&rdquo; on the test set and treat the pseudo-labeled test set as part of the new training set. The method is similar to <a href="https://pdfs.semanticscholar.org/1ee2/7c66fabde8ffe90bd2f4ccee5835f8dedbb9.pdf">Entropy Regularization</a>. By minimizing the cross entropy for unlabeled data, the overlap of class probability distribution can be reduced and the decision boundary of the model becomes more accurate. The team reported a increase in leaderboard score from <code>0.9880</code> to <code>0.9885</code> with the Pseudo Labeling technique.</li>
-</ul>
-
-
-<h4>3.3.2 3rd Place Solution</h4>
-
-<p>The 3rd place team has the <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/discussion/52644">strongest single model</a> I have read, with a private leaderboard score of <code>0.9869</code>. With the <a href="https://explosion.ai/blog/deep-learning-formula-nlp">embed-encode-attend-predict</a> framework, it can be break down as following:</p>
-
-<ul>
-<li><strong>embed</strong>: concatenated <a href="https://github.com/facebookresearch/fastText">fastText</a> and <a href="https://nlp.stanford.edu/projects/glove/">GloVe</a> twitter embeddings. The redundancy definitely helped</li>
-<li><strong>encode</strong>: 2-layer RNN setting, with Bi-LSTM following by Bi-GRU. I also experimented brief with deeper RNN models during the competition but it didn&rsquo;t go anywhere</li>
-<li><strong>attend</strong>: A concatenation of the last states, global maximum pool, global average pool and two features: &ldquo;Unique words rate&rdquo; and &ldquo;Rate of all-caps words&rdquo;. Again, the redundancy helped</li>
-<li><strong>predict</strong>: dense layer</li>
-</ul>
-
-
-<p>The other interesting thing is that Alex trained with a larger batch size (512) but for many epochs (15 epochs). I did the exact opposite and trained with small batch size (64 or 128) for a small number of epochs (usually 4 - 6 epochs). I am not sure if the training schedule had any impact.</p>
-
-<h3>4. Summary</h3>
-
-<p>Another great experience and my best finish on Kaggle so far! Teaming up gave a entirely different experience and I learned a lot working with my teammates. While it was a pity that we didn&rsquo;t get a gold metal (we were very close with a difference of <code>-0.0002</code>), we did miss a few key techniques used by the gold-winning teams so we didn&rsquo;t really deserve it. The push for a gold medal and the kaggle master tier continues.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Kaggle | Mercari Price Suggestion]]></title>
-    <link href="http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/"/>
-    <updated>2018-03-02T21:46:50-08:00</updated>
-    <id>http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge</id>
-    <content type="html"><![CDATA[<p>One of my first data science experience was with Kaggle more than two years ago when I played around with the <a href="https://sijunhe.github.io/blog/2015/10/31/kaggle-titanic-part-i/">Titanic competition</a>. While the competition itself was minimal, the experience was magical, intuitive and one of the reasons I got into data science.</p>
-
-<p>Two years later, I work full-time as a data scientist. One night, I decided to challenge myself on a whim and ended up spending all of my free time on this competition for two weeks.</p>
-
-<p><strong>TL;DR I had my first serious Kaggle competition and ranked 65th out of 2384 teams (top 3%)</strong></p>
-
-<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/mercari_rank.png" alt="mecari" /></p>
-
-<!--more-->
-
-
-<h2>1. The Competition</h2>
-
-<p>The <a href="https://www.kaggle.com/c/mercari-price-suggestion-challenge">Mercari Price Suggestion Challenge</a> was to build an algorithm that automatically suggests the right product prices with provided user-inputted text descriptions of their products, including details like product category name, brand name, and item condition.</p>
-
-<p>The most challenging part was that this was a <strong>kernel-only</strong> competition, which meant the training and inference of the model would be in a container environment provided by Kaggle. The script had to finish within 60 minutes and consumed no more than 16 GB of RAM. The test dataset was also quite large so that it couldn&rsquo;t be loaded into memory at once for inference, and batch inference was required. Overall, the idea of submitting a script to train a model and do inference on an unknown dataset was very unsettling, compared with a normal Kaggle competition where models are trained locally.</p>
-
-<h2>2. My Experience</h2>
-
-<h3>2.1 Entering Late</h3>
-
-<p>I decided to seriously compete in this competition about a month before the deadline. One of the benefits of entering the competition late was that I could directly start from some strong public kernels and use them as my baselines. Due to my lack of creativity and my inexperience in Kaggle competitions, all of the models that I used in the final submissions originated from public kernels, including</p>
-
-<ul>
-<li><a href="https://www.kaggle.com/knowledgegrappler/a-simple-nn-solution-with-keras-0-48611-pl">RNN Baseline Model</a> for a RNN model that got me started</li>
-<li><a href="https://www.kaggle.com/valkling/mercari-rnn-2ridge-models-with-notes-0-42755">Ensemble of RNN and Ridge</a> for a ridge baseline model and ensembling methods in a kernel environment</li>
-<li><a href="https://www.kaggle.com/anttip/wordbatch-ftrl-fm-lgb-lbl-0-42555">Wordbatch FTRL and FM_FTRL</a> for teaching me <a href="https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41159.pdf">FTRL-Proximal</a>, a very popular online algorithm</li>
-</ul>
-
-
-<p>In addition to using public kernels as baseline models, I also benefited tremendously from</p>
-
-<ul>
-<li><a href="https://www.kaggle.com/thykhuely/mercari-interactive-eda-topic-modelling">EDA and Topic Modeling for Mercari</a></li>
-<li><a href="https://www.kaggle.com/lopuhin/eli5-for-mercari">ELI5 for Mercari</a> that introduced the <a href="https://pypi.python.org/pypi/eli5">eli5</a>, which is a fantastic library that helps explain and inspect black-box models</li>
-</ul>
-
-
-<h3>2.2 Base Models</h3>
-
-<h4>2.2.1 Ridge Regression</h4>
-
-<p>Linear model with L2 regularization on TF-IDF features. The main advantage of Ridge Regression is its speed (~ 10 minutes). One notable observation is that Ridge was a lot faster than LASSO since L2 loss is much easier to optimize compared with L1 loss.</p>
-
-<h4>2.2.2 RNN</h4>
-
-<p>Recurrent Neural Network (RNN) is one of the strongest models in this competition. A lot of teams in the competition included a RNN model in their final Ensemble. The tricky part of RNN is that we need to consider <strong>speed</strong> when designing its architecture and tuning the hyper-parameter (especially batch size, and number of epochs). RNNs are the bread and butter for most Ensembles in this competition and usually takes 25 - 45 minutes. RNN was my main model but I failed to make a significant improvement over the RNNs from public kernels. To my surprise, none of the top teams used RNN in their final ensemble, probably due to slow training time.</p>
-
-<h4>2.2.3 FTRL &amp; FM_FTRL</h4>
-
-<p>Models using <a href="https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41159.pdf">Follow-the-Regularized-Leader(FTRL)</a> online learning algorithm became very popular for this competition, thanks to the wonderful <a href="https://www.kaggle.com/anttip/wordbatch-ftrl-fm-lgb-lbl-0-42555">kernel</a> by <strong>attip</strong>, who is also the author of the package <a href="https://github.com/anttttti/Wordbatch">Wordbatch</a>. I have never heard or used FTRL before and was amazed by its speed and performance. Ridge Regression and the Linear model Proximal-FTRL is essentially the same model but optimized by different algorithms. It was fascinating how much of a difference the optimization algorithm made.</p>
-
-<p>The FM_FTRL implementation in Wordbatch of Factorization Machines estimates linear effects with FTRL and factor effects with adaptive SGD. FM_FTRL is a very strong model for this competition since it turned out that capturing the interaction effect between some of the variables (item category, item condition) was key. FM_FTRL was also very fast (~ 10 minutes) which made it a very good base model to ensemble.</p>
-
-<h4>2.2.4 MLP on Sparse Feature</h4>
-
-<p>MLP is definitely the largest winner of the competition, as most of the top teams chose it as their core base model. It not only ran blazingly fast, but also outperforms every other single model on this dataset. I think the main reason that MLP is so strong is it can capture complex feature interaction. This is something I should have realized when I saw the strong performance of FM_FTRL, which only captures pairwise interaction.</p>
-
-<h4>2.2.5 LightGBM</h4>
-
-<p>Some <a href="https://www.kaggle.com/anttip/wordbatch-ftrl-fm-lgb-lbl-0-42555">popular pubic kernels</a> used LightGBM on TF-IDF features as the main base model, which I didn&rsquo;t really understand. Despite I have never used LightGBM before at that time, my reasoning was that TF-IDF features are too high-dimensional and sparse for tree-based models, which lead to slows training and weak performance. Looking back at the published solutions, LightGBM is clearly not a mainstream model . I am glad to see a few teams achieved good results with LightGBM and I am more than happy to learn the their secret sauce from the <a href="https://www.kaggle.com/peterhurford/lgb-and-fm-18th-place-0-40604/data">kernels</a>.</p>
-
-<h3>2.3 Ensembling</h3>
-
-<p>I have always heard that Kaggle competitions are essentially ensembling competitions. While that might be true for almost all Kaggle competitions, it&rsquo;s less so for the Mercari Price Suggestion Challenge. The time limit of 60 minutes and the memory limit of 16GB adds constraints to ensembling and competitors need to produce an ensemble that is not only accurate, but also fast and memory efficient. <strong>The limits of kernels add a &ldquo;production&rdquo; flavor and transform the ensembling process from &ldquo;shove as many things in it as we can&rdquo; to &ldquo;choose a small subset of models that blend well while complying with the constraints&rdquo;.</strong> Due to the time constraints, most teams did not do stacking. Some attempts were made by keeping a small validation set and use it to find the optimal blending weights.</p>
-
-<p>Ensembling was definitely the biggest learning of the competition for me. It was my first time to seriously blend models together and I was amazed by the amount of performance gains from even a simple weighted average of diverse models. For this competition, I employed a rarely-used trick of ensembling using different checkpoints of a single RNN over time, inspired my <a href="http://cs231n.github.io/neural-networks-3/#ensemble">lecture notes</a> from CS231 at Stanford. The time cost of this trick is only a few minutes but the performance gain was considerable (from <code>~0.429</code> to <code>~0.423</code>).</p>
-
-<h3>2.4 My final submissions</h3>
-
-<p>My <a href="https://www.kaggle.com/sijunhe9248/rnn-ensemble-fm-ready-multithread?scriptVersionId=2482847">conservative solution</a> consists of a RNN trained for 3 epochs and a FM_FTRL, ran multi-threaded in Keras and scikit-learn. The public score is <code>0.41574</code> and private score is <code>0.41678</code>.</p>
-
-<p>My <a href="https://www.kaggle.com/sijunhe9248/corrected-final-rnn-ridge">aggressive solution</a> was a last minute Hail Mary, consists of the same RNN as the conservative solution and a Ridge Regression from a <a href="https://www.kaggle.com/rumbok/ridge-lb-0-41944">kernel</a> that was made public a day before the deadline. The kernel caused major disruption to the leaderboard as many people were trying to incorporate it last minute. I was among them and a trivial bug in my hasty last-minute effort lead to a no score. Without the bug, the public score is <code>0.41170</code> and private score would be <code>0.41111</code>. <strong>I would have ranked around 35th instead of 65th, though I still wouldn&rsquo;t get a Gold medal.</strong></p>
-
-<h2>3. Reflections</h2>
-
-<h3>3.1 What I did well</h3>
-
-<ul>
-<li>Ensembling using different checkpoints of a single RNN over time</li>
-<li>Focus on learning from and improving upon public kernels</li>
-</ul>
-
-
-<h3>3.2 Areas of Improvements</h3>
-
-<ul>
-<li>I didn&rsquo;t try MLP. I should have gotten the hint from the strong performance of FM that feature interaction is key in this competition.</li>
-<li>The inability to improve my RNN meaningfully over the public kernel</li>
-<li>I need more discipline in hyper-parameter search (i.e. random grid search, <a href="https://github.com/fmfn/BayesianOptimization">Bayesian Optimization</a>) since I don&rsquo;t have enough experience for a good intuition for hhyper-parameter tuning yet</li>
-</ul>
-
-
-<h3>3.3. Learning From Other Solutions</h3>
-
-<h4>3.3.1 1st Place Solution - MLP</h4>
-
-<p>Pawel and Konstantin won this competition by a huge margin. Their <a href="https://www.kaggle.com/lopuhin/mercari-golf-0-3875-cv-in-75-loc-1900-s">solution</a> is as graceful as one can be - a standard MLP neural network of 83 lines of code that ran in 1900 seconds (In comparison, my spaghetti-like Ensemble is more than 500 lines of code, took almost an entire hour and performed much worse ). Some of their key ideas are:</p>
-
-<ul>
-<li><p><strong>MLP</strong>: Their model was a standard MLP ran on sparse feature (TF-IDF). Usually MLP overfits like crazy and I am very surprised it worked so well on this dataset. As Konstantin wrote</p>
-
-<blockquote><p>It has huge variance and each single model is tuned to overfit to a different local minima, but when averaged, they give a really good result. It seems to capture feature interactions which look really important here, and it&rsquo;s fast to train.</p></blockquote></li>
-<li><p><strong>Parallelization</strong>: Their kernel train 4 MLP models in parallel (one model per core) and average them to get the final results. The parallelization squeezed all the juice out of the 4-core Kaggle kernel. I think I need to learn how to wrote multiprocessing code in Python next.</p></li>
-<li><p><strong>Text Concatenation</strong>: The only text preprocessing they did in the kernel was concatenate all text fields (name, item_description, category, brand) together to reduce the dimensionality of the text fields. This didn&rsquo;t make much sense to me theoretically, so I feel this is purely empirical and a testament to the amount of effort they put in this.</p></li>
-<li><p><strong>Doubling the batch size</strong>: Since the training time is a key constraint in this competition, many of the top teams utilized the technique of increasing batch size instead of decaying the learning rate. As described in this <a href="https://arxiv.org/abs/1711.00489">paper</a> by Google, increasing the batch size as opposed to decaying the learning rate gives equivalent test accuracies, but with fewer parameter updates, leading to greater parallelism and shorter training times.</p></li>
-</ul>
-
-
-<h4>3.3.2 4th Place Solution - XNN</h4>
-
-<p><a href="https://www.kaggle.com/chenglongchen">Chenglong Chen</a> not only did extremely well in this competition, but also wrote a detailed <a href="https://github.com/ChenglongChen/tensorflow-XNN">documentation</a> about his models. I admire the his modular design of the code which followed a <a href="https://explosion.ai/blog/deep-learning-formula-nlp">post</a> by Matthew Honnibal to break all models into 4 components: <strong>embed, encode, attend and predict</strong>. Chen methodically experimented a wide range of options for each of the components:</p>
-
-<ul>
-<li><strong>Embed</strong>: FastText, TextCNN, TextRNN, TextBiRNN, TextRCNN</li>
-<li><strong>Attend</strong>: Average Pooling, Max Pooling, Context Attention, Self Attention</li>
-<li><strong>Predict</strong>: NN-based FM, ResNet, MLP</li>
-</ul>
-
-
-<p>Chen also ended up choosing MLP, like all other top teams. Another highlight was that he used a technique called <a href="https://openreview.net/pdf?id=BJYwwY9ll">Snapshot Ensemble</a>, which is similar to my idea of using different checkpoints of the same models but coupled with cyclic learning schedule.</p>
-
-<h2>4. Summary</h2>
-
-<p>I had a great experience in my first Kaggle competition and I am quite happy with the result I had. What mattered much more than the result was the learning - I am amazed by how much I learned during the competition, may it be new models, ensembles or best practices. I am humbled by how smart the Kaggle community is and I think I am addicted! Hopefully I will improve in my next competition.</p>
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[Quora Challenges - Upvotes]]></title>
@@ -941,6 +508,460 @@ submission.to_csv("CombineOutput.csv", index=False)
 - Do a few models and combine them using majority vote. Maybe SVM, or Gradient Boosting.
 - Better imputation on missing values
 - Make use of familiy lastnames as a predicator.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kaggle | Titanic Part I]]></title>
+    <link href="http://sijunhe.github.io/blog/2015/10/31/kaggle-titanic-part-i/"/>
+    <updated>2015-10-31T03:07:00-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2015/10/31/kaggle-titanic-part-i</id>
+    <content type="html"><![CDATA[<!--more-->
+
+
+<h2>Problem Statement</h2>
+
+<blockquote><p>The sinking of the RMS Titanic is one of the most infamous shipwrecks in history.  On April 15, 1912, during her maiden voyage, the Titanic sank after colliding with an iceberg, killing 1502 out of 2224 passengers and crew. This sensational tragedy shocked the international community and led to better safety regulations for ships.<br/>
+One of the reasons that the shipwreck led to such loss of life was that there were not enough lifeboats for the passengers and crew. Although there was some element of luck involved in surviving the sinking, some groups of people were more likely to survive than others, such as women, children, and the upper-class.<br/>
+In this challenge, we ask you to complete the analysis of what sorts of people were likely to survive. In particular, we ask you to apply the tools of machine learning to predict which passengers survived the tragedy.</p>
+
+<blockquote><p><a href="https://www.kaggle.com/c/titanic">Titanic: Machine Learning from Disaster</a></p></blockquote></blockquote>
+
+<pre><code class="python">import csv
+import numpy as np
+import pandas as pd
+import pylab as p
+%matplotlib inline  
+train = pd.read_csv('train.csv', header = 0)
+test = pd.read_csv('test.csv', header = 0)
+train.info()
+</code></pre>
+
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+Int64Index: 891 entries, 0 to 890
+Data columns (total 12 columns):
+PassengerId    891 non-null int64
+Survived       891 non-null int64
+Pclass         891 non-null int64
+Name           891 non-null object
+Sex            891 non-null object
+Age            714 non-null float64
+SibSp          891 non-null int64
+Parch          891 non-null int64
+Ticket         891 non-null object
+Fare           891 non-null float64
+Cabin          204 non-null object
+Embarked       889 non-null object
+dtypes: float64(2), int64(5), object(5)
+memory usage: 90.5+ KB
+</code></pre>
+
+<p>From the info output, we could see that there were null values in the Age, Cabin and Embarked features. The majority of the values in Cabin feature were null and I felt the values were hard to interpret anyways so I decided to not include it in the model. There were also a few missing values in the Age and Embarked features, which would be imputed later.</p>
+
+<pre><code class="python">train.head()
+</code></pre>
+
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Name</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Braund, Mr. Owen Harris</td>
+      <td>male</td>
+      <td>22</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A/5 21171</td>
+      <td>7.2500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
+      <td>female</td>
+      <td>38</td>
+      <td>1</td>
+      <td>0</td>
+      <td>PC 17599</td>
+      <td>71.2833</td>
+      <td>C85</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Heikkinen, Miss. Laina</td>
+      <td>female</td>
+      <td>26</td>
+      <td>0</td>
+      <td>0</td>
+      <td>STON/O2. 3101282</td>
+      <td>7.9250</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
+      <td>female</td>
+      <td>35</td>
+      <td>1</td>
+      <td>0</td>
+      <td>113803</td>
+      <td>53.1000</td>
+      <td>C123</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Allen, Mr. William Henry</td>
+      <td>male</td>
+      <td>35</td>
+      <td>0</td>
+      <td>0</td>
+      <td>373450</td>
+      <td>8.0500</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+<pre><code class="python">train[train['Age'].isnull()].head()
+</code></pre>
+
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Name</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>5</th>
+      <td>6</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Moran, Mr. James</td>
+      <td>male</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>0</td>
+      <td>330877</td>
+      <td>8.4583</td>
+      <td>NaN</td>
+      <td>Q</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>18</td>
+      <td>1</td>
+      <td>2</td>
+      <td>Williams, Mr. Charles Eugene</td>
+      <td>male</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>0</td>
+      <td>244373</td>
+      <td>13.0000</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>20</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Masselmani, Mrs. Fatima</td>
+      <td>female</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>0</td>
+      <td>2649</td>
+      <td>7.2250</td>
+      <td>NaN</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>27</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Emir, Mr. Farred Chehab</td>
+      <td>male</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>0</td>
+      <td>2631</td>
+      <td>7.2250</td>
+      <td>NaN</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>29</td>
+      <td>1</td>
+      <td>3</td>
+      <td>O'Dwyer, Miss. Ellen "Nellie"</td>
+      <td>female</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>0</td>
+      <td>330959</td>
+      <td>7.8792</td>
+      <td>NaN</td>
+      <td>Q</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+<pre><code class="python">train[train['Embarked'].isnull()]
+</code></pre>
+
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Name</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>61</th>
+      <td>62</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Icard, Miss. Amelie</td>
+      <td>female</td>
+      <td>38</td>
+      <td>0</td>
+      <td>0</td>
+      <td>113572</td>
+      <td>80</td>
+      <td>B28</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>829</th>
+      <td>830</td>
+      <td>1</td>
+      <td>1</td>
+      <td>Stone, Mrs. George Nelson (Martha Evelyn)</td>
+      <td>female</td>
+      <td>62</td>
+      <td>0</td>
+      <td>0</td>
+      <td>113572</td>
+      <td>80</td>
+      <td>B28</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+<p>So, let&rsquo;s dive deeper into the data and see if we could understand which features were more important for our model. The competition summary hinted that some groups of people were more likely to survive than others, such as women, children, and the upper-class. The obvious predicators in the data for women and children is sex and age. The Pclass predicator should be a direct representation of a passenger&rsquo;s socio-economic status. The Fare predicator might also indicates if a passenger was upper-class.</p>
+
+<pre><code class="python">fig, axes = p.subplots(nrows=2, ncols=2, figsize=(15,10))
+#compare male and female survival rate
+male_female1 = pd.DataFrame({'Male':train[train['Sex'] == 'male']['Survived'].value_counts(),
+                             'Female':train[train['Sex'] == 'female']['Survived'].value_counts()}, columns = ['Male','Female'])
+male_female1.plot(kind = 'bar', title='Male and Female Survival Comparison 1', alpha = 0.3, stacked = True, ax=axes[0,0])
+
+male_female2 = pd.DataFrame({'Survived':train[train['Survived'] == 1]['Sex'].value_counts(),
+                             'Died':train[train['Survived'] == 0]['Sex'].value_counts()}, columns = ['Survived','Died'])
+male_female2.plot(kind = 'bar', title='Male and Female Survival Comparison 2', alpha = 0.3, stacked = True, ax=axes[0,1])
+
+#compare male and female survival rate across different age groups
+male_survived_age = pd.DataFrame({'Survived':train[(train['Sex'] == 'male') &amp; (train['Survived'] == 1)]['Age'],
+                                  'Died':train[(train['Sex'] == 'male') &amp; (train['Survived'] == 0)]['Age']}, columns = ['Survived','Died'])
+male_survived_age.plot(kind = 'hist', title='Male Survival Age Histogram', alpha = 0.3, stacked = True, ax=axes[1,0])
+
+female_survived_age = pd.DataFrame({'Survived':train[(train['Sex'] == 'female') &amp; (train['Survived'] == 1)]['Age'],
+                                    'Died':train[(train['Sex'] == 'female') &amp; (train['Survived'] == 0)]['Age']}, columns = ['Survived','Died'])
+female_survived_age.plot(kind = 'hist', title='Female Survival Age Histogram', alpha = 0.3, stacked = True, ax=axes[1,1])
+</code></pre>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post1/plot1.png" alt="png" /></p>
+
+<p>The first two plots showed that females had a significantly higher chance of survival compared with males, thanks to the &ldquo;women and children first&rdquo; maxim. Kudos to the gallant gentlemen who sacrificed themselves for the lives of the women and children. As we could see from the male survival histogram, male had a uniformly low survival rate across all age groups. It was noteworthy that the age group with the highest male survival rate was 0 - 10 years old, aka children, and elderly females almost all survived.</p>
+
+<pre><code class="python">fig, axes = p.subplots(nrows=1, ncols=2, figsize=(15,5))
+#compare survival rate of different socio-economic class
+survival_pclass = pd.DataFrame({'Survived':train[train['Survived'] == 1]['Pclass'].value_counts(),
+                    'Died':train[train['Survived'] == 0]['Pclass'].value_counts()}, columns = ['Survived','Died'])
+survival_pclass.plot(kind = 'bar', title='Pclass Survival Comparison', alpha = 0.3, stacked = True, ax=axes[0])
+
+#compare survival rate of different socio-economic class and sex
+class_sex = pd.DataFrame({'High-Mid Class Male':train[(train['Sex'] == 'male') &amp; (train['Pclass'] != 1)]['Survived'].value_counts(),
+                          'High-Mid Class Female':train[(train['Sex'] == 'female') &amp; (train['Pclass'] != 3)]['Survived'].value_counts(),
+                          'Low Class Male':train[(train['Sex'] == 'male') &amp; (train['Pclass'] == 3)]['Survived'].value_counts(),
+                         'Low Class Female':train[(train['Sex'] == 'female') &amp; (train['Pclass'] == 3)]['Survived'].value_counts()},
+                         columns = ['High-Mid Class Male','High-Mid Class Female','Low Class Male','Low Class Female'])
+class_sex.plot(kind = 'bar', title='Pclass Sex Survival Histogram', alpha = 0.3, ax=axes[1])
+</code></pre>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post1/plot2.png" alt="png" /></p>
+
+<p>Here I generated two plots to show that if the survival rate of passengers are related to their socio-economic class. From the plot on the left, it was evident that passengers with a Pclass of 3, which means lower-class, had a much lower survival rate compared with passengers with a Pclass of 1 or 2. The plot on the right shows how the a combination of Pclass and Sex variables could influence the survival rate of a passenger. It is notable that the different socio-economic status only seemed to significantly affect the survival rate of females, not males. The odds of a upper-class lady surviving the Titanic shipwreck is surprising high.</p>
+
+<pre><code class="python">fig, axes = p.subplots(nrows=1, ncols=2, figsize=(15,5))
+embarked_survival1 = pd.DataFrame(train[train['Survived'] == 1]['Embarked'].value_counts()/train['Embarked'].value_counts())
+embarked_survival1.plot(linestyle='-', marker='o', ax=axes[0])
+embarked_survival2 = pd.DataFrame({'Survived':train[train['Survived'] == 1]['Embarked'].value_counts(),
+                                  'Died':train[train['Survived'] == 0]['Embarked'].value_counts()}, columns = ['Survived','Died'])
+embarked_survival2[['Survived','Died']].plot(kind = 'bar', title='Male and Female Survival Comparison 1', alpha = 0.3, stacked = True, ax=axes[1])
+</code></pre>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post1/plot3.png" alt="png" /></p>
+
+<p>I also generated two plots to check if different Port of Embarkation would make a difference in survival rate. It is surprising that it actually did have an impact. As passengers embarked from Cherbourg have a significant higher survival chance compared with passengers embarked from Queenstown or Southampton.</p>
+
+<h2>Basic Models</h2>
+
+<p>With the exploratory visualization from the last point, we have some idea what out data looks like. We know that the survival rate is in some way related to Pclass, Sex, Age, Fare and Embarked, but we haven&rsquo;t got any chance to explore the rest of the predicators. So, let&rsquo;s start building models and making predictions.</p>
+
+<h3>Purely Gender-Based Model</h3>
+
+<p>From last post, we know that the most influential predicator in the data set is Sex, as survival rate differs dramatically between male and female passengers. Given the low survival rate of male and high survival rate of female, the easiest possible model is to simply predict 0 for male and 1 for female.</p>
+
+<pre><code class="python">#simply creating a Survival variable, mappped from the Sex variable
+test['Survived'] = test['Sex'].map( {'female': 1, 'male': 0} ).astype(int)
+</code></pre>
+
+<p>The output of the head() function tells us our change to the data frame is effective and we have already made our first prediction! Next, we just need to export the data to a csv file and submit to Kaggle.</p>
+
+<pre><code class="python">prediction_file = open("Gender_Model.csv", "wb")
+out = csv.writer(prediction_file)
+out.writerow(["PassengerId", "Survived"])
+for i in range(0, len(test.PassengerId)):
+    out.writerow([test.PassengerId[i], test.Survived[i]])
+prediction_file.close()
+</code></pre>
+
+<p>The results of the gender-based prediction was <strong>0.76555</strong>, which is surprisingly good for a single line of prediction code! Of course we are not going to call it a day. Let&rsquo;s see if we could incorporate Pclass or Age in the model.</p>
+
+<h3>Gender-Class Model</h3>
+
+<p>While we could do a pivot table, predicting the majority of each gender in different Pclass, I&rsquo;d say it is time to bring in some models. Let&rsquo;s try our hands at <a href="https://en.wikipedia.org/wiki/Logistic_regression">Logistic Regression</a> first, since it is one of the most interpretable classification model in my opinion. We&rsquo;ll start with an extremely simple case of just 2 predicators: Pclass and Sex</p>
+
+<pre><code class="python">from patsy import dmatrices
+from sklearn.linear_model import LogisticRegression
+#setting formula to predict Survived with Pclass and Sex
+formula1 = 'Survived ~ C(Pclass) + C(Sex)'
+train_response,train_data = dmatrices(formula1, data=train, return_type="dataframe")
+test_response,test_data = dmatrices(formula1, data=test, return_type="dataframe")
+LRmodel = LogisticRegression()
+LRmodel.fit(train_data.values, train_response.values.ravel())
+output = LRmodel.predict(test_data).astype(int)
+</code></pre>
+
+<p>It seems like we got the exact same result <strong>0.76555</strong> again. Why is that? Shouldn&rsquo;t an adding an predicator change some of our predictions? Here is why.</p>
+
+<pre><code class="python">for i in range(0,2):
+    for j in range(0,2):
+        for k in range(0,2):
+            if i == 1:
+                Pclass = 2
+            elif j == 1:
+                Pclass = 3
+            else: 
+                Pclass = 1
+            if i == j ==1:
+                break    
+            if k ==1:
+                sex = "male"
+            else:
+                sex = "female"
+            print "Given Pclass = %d and Sex = %s, predict %d for survival. " % (Pclass,sex, LRmodel.predict([[1,i,j,k]])) 
+</code></pre>
+
+<pre><code>Given Pclass = 1 and Sex = female, predict 1 for survival. 
+Given Pclass = 1 and Sex = male, predict 0 for survival. 
+Given Pclass = 3 and Sex = female, predict 1 for survival. 
+Given Pclass = 3 and Sex = male, predict 0 for survival. 
+Given Pclass = 2 and Sex = female, predict 1 for survival. 
+Given Pclass = 2 and Sex = male, predict 0 for survival. 
+</code></pre>
+
+<pre><code class="python">print train.pivot_table('Survived', index=['Pclass','Sex'], aggfunc='mean')
+</code></pre>
+
+<pre><code>Pclass  Sex   
+1       female    0.968085
+        male      0.368852
+2       female    0.921053
+        male      0.157407
+3       female    0.500000
+        male      0.135447
+Name: Survived, dtype: float64
+</code></pre>
+
+<p>Turns out that the predications stays the same, with or without the Pclass prediactor. Logistic Regression computes the probabilities for each response and predicts the response with largest likelihood. In this case, as we can see from the above pivot table, the most probable survival response for female is 1 and 0 for male, despite the change in survival rate due to Pclass, which is why the predictions stay the same.</p>
+
+<p>Even though we didn&rsquo;t improve the model with the addition of the Pclass predicators, our effort was not totally worthless. Now we can add more variables to the Logistic Regression, hoping it would produce a more accurate prediction with the extra data. In the next post, we will explore some more complicated models.</p>
 ]]></content>
   </entry>
   
