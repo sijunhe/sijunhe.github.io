@@ -4,7 +4,7 @@
   <title><![CDATA[Category: nlp | Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/blog/categories/nlp/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2018-09-08T18:40:57-07:00</updated>
+  <updated>2018-09-13T23:57:02-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -14,10 +14,166 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Reading | Word Embeddings]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/09/12/word-embeddings/"/>
+    <updated>2018-09-12T22:23:31-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/09/12/word-embeddings</id>
+    <content type="html"><![CDATA[<p>Reading summaries about widely-used embeddings:</p>
+
+<ul>
+<li><strong>word2vec</strong>: <a href="https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf">Distributed Representations of Words and Phrases and their Compositionality</a></li>
+<li><strong>word2vec</strong>: <a href="https://arxiv.org/pdf/1301.3781.pdf">Efficient Estimation of Word Representations in Vector Space</a></li>
+<li><strong>GloVe</strong>: <a href="https://nlp.stanford.edu/pubs/glove.pdf">Global Vectors for Word Representation</a></li>
+<li><strong>fastText</strong>: <a href="https://arxiv.org/pdf/1607.04606.pdf">Enriching Word Vectors with Subword Information</a></li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post18/embedding_illustration.png" alt="illustration" /></p>
+
+<!--more-->
+
+
+<h2>1. Why Embedding?</h2>
+
+<p>Many classic NLP systems and techniques (i.e. popular N-gram model) treat words as atomic units. There is no notion of similarity between words, as they are represented as indices in a vocabulary. This approach works when trained on huge amounts of data, but are limited in many tasks when data is limited (i.e. speech recognition data, parallel corpus for machine translation). Learning representation of words establishes similarity between words and allows data to be used much more efficiently.</p>
+
+<h2>2. word2vec</h2>
+
+<p>The high-level assumption of word2vec is that words close to each other have more similar meaning than words far apart. Under this assumption, two model architectures were proposed by the researchers at Google.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post18/cbow_skip_gram.png" alt="cbow_skipgram" /></p>
+
+<h3>2.1 Skip-gram Model</h3>
+
+<p>The objective of the Skip-gram model is to find word representations that are useful for predicting the surrounding words in a sentence or a document. The objective of the model is to maximize the average log probability</p>
+
+<p>$$\frac{1}{T} \sum_{t=1}^{T} \sum_{-c \leq j \leq c, j \neq 0} \text{log} \ p(w_{t+j}|w_{t})\tag{1}$$</p>
+
+<p>The probability $p(w_{t+j}|w_{t})$ is defined using the softmax function:</p>
+
+<p>$$p(w_{O}|w_{I}) = \frac{\text{exp} ( u_{w_{O}}^T v_{w_{I}})}{\sum_{w=1}^W \text{exp} ( u_{w}^T v_{w_{I}})}\tag{2}$$</p>
+
+<p>where $v$ and $u$ are input and output representation of the word. This is impractical since computing the gradient w.r.t the entire vocabulary is $\mathcal{O}(W)$, the size of the vocabulary.</p>
+
+<h4>Hierarchical Softmax</h4>
+
+<p>A computationally efficient approximation of the full softmax is hierarchical softmax, which uses a binary tree representation of the output layer with $W$ words as its leaves. With the words as leaf nodes, then we only need to follow the path to the leaf node of that word, without having to consider any of the other nodes. $p(w|w_I)$ simply the product of the probabilities of taking right and left turns respectively that lead to its leaf node. This is much faster since computing the gradient is $\mathcal{O}( \text{log} \ W)$.</p>
+
+<h4>Negative Sampling</h4>
+
+<p>We can also subsample the entire vocabulary to compute the softmax. The idea of Noise Contrastive Estimation (NCE) is to train binary logistic regressions for a true pair (center word and word in its context window) vs a couple of noise pairs (the center word paired with a random word). The objective with NCE is</p>
+
+<p>$$\text{log} \ \sigma( u_{w_{O}}^T v_{w_{I}}) + \sum_{j \sim P(w)} \text{log} \ \sigma( - u_{w_{j}}^T v_{w_{I}})\tag{3}$$</p>
+
+<p>The intuition of the above loss is to maximize the probability that real context word appears through the first term and minimize probability that random words appear around center word through the second term.</p>
+
+<p>The noise distribution $P(w) = U(w)^{&frac34;}/Z$, where $U(w)$ is the unigram distribution.</p>
+
+<h4>Subsampling Frequent Words</h4>
+
+<p>To counter the imbalance between the rare and frequent words, each word $w_i$ in the training set is discarded with probability of $P(w_i) = 1 - \sqrt{\frac{t}{f(w_i)}}$, where $f(w_i)$ is the frequency of the word and $t$ is a chosen threshold with typical value of $10^{-5}$. For words whose frequency is greater than t, it is subsampled aggressively.</p>
+
+<h3>2.2 Continuous Bag-of-Words (CBOW)</h3>
+
+<p>CBOW is a similar idea to Skip-gram, but instead of predicting the context words based on current word, it predicts the current word based on the context. The model is named bag-of-words since the order of words in the context does not influence the model, where an average of the context word vectors are used to predict the current word. Same as Skip-gram, we seek to maximize the average log probability</p>
+
+<p>$$\frac{1}{T} \sum_{t=1}^{T} \text{log} \ p(w_{t}|\bar{w_{t}})\tag{4}$$
+where the input vector is the average of all context word vectors $\bar{w_{t}} = \frac{1}{2c}\sum_{-c \leq j \leq c, j \neq 0} w_{t+j}$. Different from the Skip-gram model, the weight matrix of input and output word vectors is shared. The authors found that CBOW</p>
+
+<ul>
+<li>Slightly outperforms on the <strong>Syntactic Accuracy tests</strong> (&ldquo;apparent&rdquo; -> &ldquo;apparently&rdquo; = &ldquo;rapid&rdquo; -> &ldquo;rapidly&rdquo;)</li>
+<li>Underperforms significantly on <strong>Semantic Accuracy tests</strong> (&ldquo;Athens&rdquo; -> &ldquo;Greece&rdquo; = &ldquo;Oslo&rdquo; -> &ldquo;Norway&rdquo;)</li>
+</ul>
+
+
+<h2>3. GloVe</h2>
+
+<p>About a year after word2vec was published, Pennington et al. from Stanford came up with a new global model that combines the advantages of global matrix factorization methods (i.e. LSA) and local context window methods (i.e. word2vec).</p>
+
+<h4>Matrix Factorization vs Local Context Windows</h4>
+
+<p>Matrix factorization methods for generating low-dimensional word representations utilize low-rank approximations to decompose large matrices that capture statistical information about a corpus. In LSA, the matrix is term-document matrix filled with counts of words in each documents. In Hyperspace Analogue to Language (HAL), the matrix is a term-term matrix filled with counts of words co-occurring in the same context.</p>
+
+<p>The main problem with Matrix Factorization Methods is that the most frequent words contribute a disproportionate amount to the similarity measurement, despite conveying relatively little semantic relatedness. The local context window models, on the other hand, suffer from the disadvantage that they do not operate directly on the co-occurrence statistics of the corpus.</p>
+
+<h4>Deriving the GloVe Model</h4>
+
+<p>Let $X$ be the word-word co-occurrence count matrix, where $X_{ij}$ denote the number of times word $j$ occurs in the context of word $i$. $X_i = \sum{k} X_{ik}$ is the number of times any word appears in the context of word $i$. Let $P_{ij} = P(j|i) = X_{ij} / X_i$ be the probability that word $j$ appear in the context of word $i$.</p>
+
+<p>GloVe originates from the idea that meaning can be extracted directly from co-occurrence probabilities. Consider two words <em>i = ice</em> and <em>j = steam</em>; we see that $P_{ik}/P_{jk}$ is large when $k$ is related to $i$, but not $j$ and vice versa. When $k$ is either related to both or unrelated to both, $P_{ik}/P_{jk}$ is close to 1.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post18/ice_steam.png" alt="ice_steam" /></p>
+
+<p>The above argument suggest that the word vector should be learned with ratios of co-occurrence probabilities. The most general model can be in the form of</p>
+
+<p>$$F\left( w_i, w_j, \tilde{w}_k \right) = \frac{P_{ik}}{P_{jk}}\tag{5}$$</p>
+
+<p>We can restrict $F$ in the following way</p>
+
+<ul>
+<li>$F$ should be only dependent on the difference of the two target words $w_i - w_j$</li>
+<li>To keep the linear nature of the vector space, restrict $F$ to take the dot product of the arguments $(w_i - w_j)^T \tilde{w}_k$</li>
+<li>By requiring the role of target words and context words can be exchanged, we have $F\left((w_i - w_j)^T \tilde{w}_k \right) = F(w_{i}^T\tilde{w}_{k}) / F(w_{j}^T\tilde{w}_{k})$</li>
+</ul>
+
+
+<p>This gives us the solution of $F = \text{exp}$ and $w_{i}^T\tilde{w}_{k} = \text{log} (P_{ik}) = \text{log} (X_{ik}) - \text{log} (X_{i})$. To restore the symmetry between target word and context words, we can set $b_i=\text{log} (X_{i})$ and add an bias term $\tilde{b}_k$,</p>
+
+<p>$$w_{i}^T\tilde{w}_{k} + b_i + \tilde{b}_k = \text{log} (X_{ik})\tag{6}$$</p>
+
+<p>A main drawback of this model is that it weighs all co-occurrence equally. To fix this problem, we add weights to the model. The weighted least squares regression model has the following cost function:</p>
+
+<p>$$J = \sum_{i,j=1}^{V} f(X_{ij}) \left( w_{i}^T\tilde{w}_{k} + b_i + \tilde{b}_j - \text{log} (X_{ij}) \right)^2 \tag{7}$$</p>
+
+<p>where $f(x)$ is defined very similar to $P(w)$ from word2vec.</p>
+
+<p>$$f(x) =
+\begin{cases}
+(x/x_{max})^{&frac34;},  &amp; x &lt; x_{max} \\
+1, &amp; \text{otherwise}
+\end{cases}$$</p>
+
+<h4>Context Window</h4>
+
+<p>GloVe shares the same assumption that very distant word pairs are expected to contain less relevant information about the words’ relationship to one another. Skip-gram defined &ldquo;context&rdquo; as a moving window. GloVe specifies that word pairs that are $d$ words apart contribute $1/d$ to the total count. Hence Global vectors to account for context.</p>
+
+<h4>Relationship to Skip-gram</h4>
+
+<p>Let $Q_{ij}$ be the softmax and $X_{ij}$ be the context co-occurrence, the objective of the skip-gram function is</p>
+
+<p>$$J = - \sum_{i}\sum_{j \in context(i)} \text{log} (Q_{ij}) = - \sum_{i}\sum_{j} X_{ij} \ \text{log} (Q_{ij})$$</p>
+
+<p>With the notation of $X_i = \sum{k} X_{ik}$ and $P_{ij} = P(j|i) = X_{ij} / X_i$, the cost function can be re-written as</p>
+
+<p>$$
+\begin{align}
+J &amp;= - \sum_{i}\sum_{j} X_{i}P_{ij} \ \text{log} (Q_{ij}) \\
+&amp;= - \sum_{i} X_{i} \sum_{j}P_{ij} \ \text{log} (Q_{ij}) \\
+&amp;= \sum_{i} X_{i} H(P_{i}, Q_{i})
+\end{align}
+$$</p>
+
+<p>where $H(P_{i}, Q_{i})$ is the cross entropy between the distribution $P_{i}$ and $Q_{i}$. The loss is a weighted sum of the cross entropy error and it&rsquo;s very similar to the weighted least squares objective of GloVe.</p>
+
+<h2>4. fastText</h2>
+
+<p>There is a limitation in skip-gram and GloVe that word representations ignore the morphology of words and assign a distinct vector to each word. Bojanowski et al. from Facebook Research proposed a new extension to skip-gram to learn representations for character <em>n</em>-grams and to represent words as the sum of the <em>n</em>-gram vectors.</p>
+
+<p>Each word is represented as a bag of character <em>n</em>-grams. A special boundary symbols <em>&lt;></em> are added at the start and end of a word. The word <em>w</em>itself is also in the set of its <em>n</em>-grams to learn a representation for each word. For example, for the word <em>where</em> and $n=3$, we have the character <em>n</em>-grams <em>&lt;wh, whe, her, ere, re>, where</em>. In practice, all <em>n</em>-grams for $3 \leq n \leq 6$ are used.</p>
+
+<p>Given a word <em>w</em> and a set of <em>n</em>-grams $\mathcal{G}_w$ of size $G$, a vector representation $z_g$ is assigned to each <em>n</em>-grams $g$. In skip-gram, the scoring function between a context word and a center word is defined as $s(w, c) = u_g^Tv_c$. Since a word is reprenseted as the sum of the vector representations of its <em>n</em>-grams,  we have $s(w, c) = \sum_{g \in \mathcal{G}_w} z_g^Tv_c$. With this change, Eq. 2 becomes</p>
+
+<p>$$p(w_{O}|w_{I}) = \frac{\text{exp} ( \sum_{g \in \mathcal{G}_{w_{O}}} z_g^Tv_{w_{I}} )}{\sum_{w=1}^W \text{exp} ( \sum_{g \in \mathcal{G}_w} z_g^T v_{w_{I}})}\tag{8}$$</p>
+
+<p>This simple model allows sharing the representations across words, thus allowing to learn reliable representation for rare words. Also, the model can infer word vectors for words that do not appear in the training set (Out-of-Vocabulary) simply by averaging the vector representation of its n-grams. In fact, Bojanowski et al found that imputing vectors for unseen words is always at least as good as not doing so, and in some cases give a large performance boost.</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Kaggle | Predicting Classified Ads Demand]]></title>
-    <link href="http://sijunhe.github.io/blog/2018/09/05/kaggle-predict-demand-for-classified-ads/"/>
-    <updated>2018-09-05T10:32:18-07:00</updated>
-    <id>http://sijunhe.github.io/blog/2018/09/05/kaggle-predict-demand-for-classified-ads</id>
+    <link href="http://sijunhe.github.io/blog/2018/09/04/kaggle-predict-demand-for-classified-ads/"/>
+    <updated>2018-09-04T10:32:18-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/09/04/kaggle-predict-demand-for-classified-ads</id>
     <content type="html"><![CDATA[<p>After three competitions, I felt I was ready to push for my first Gold Medal. Along with my four teammates, we took on the challenge of predicting demand for classified ads. We fought tooth and nail till the last moment and were in the Gold zone on the public leaderboard. While we ended up losing the Gold Metal narrowly by 1 spot, it was overall a great learning experience. I look forward to making progress toward a real gold medal in the future.</p>
 
 <p><strong>TL;DR A failed attempt to push for my first Gold Metal on Kaggle. My team ranked top 1% but missed the Gold Metal narrowly by 1 spot!</strong></p>
@@ -621,139 +777,6 @@ $$</p></li>
 <h2>4. Implementation</h2>
 
 <p>A well-written implementation with scikit-learn scikit-learn estimator api and the interpolation parameter $\beta$ can be found <a href="https://github.com/scotthlee/document_classification/blob/master/nbsvm.py">here</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Kaggle | Mercari Price Suggestion]]></title>
-    <link href="http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/"/>
-    <updated>2018-03-02T21:46:50-08:00</updated>
-    <id>http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge</id>
-    <content type="html"><![CDATA[<p>One of my first data science experience was with Kaggle more than two years ago when I played around with the <a href="https://sijunhe.github.io/blog/2015/10/31/kaggle-titanic-part-i/">Titanic competition</a>. While the competition itself was minimal, the experience was magical, intuitive and one of the reasons I got into data science.</p>
-
-<p>Two years later, I work full-time as a data scientist. One night, I decided to challenge myself on a whim and ended up spending all of my free time on this competition for two weeks.</p>
-
-<p><strong>TL;DR I had my first serious Kaggle competition and ranked 65th out of 2384 teams (top 3%)</strong></p>
-
-<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/mercari_rank.png" alt="mecari" /></p>
-
-<!--more-->
-
-
-<h2>1. The Competition</h2>
-
-<p>The <a href="https://www.kaggle.com/c/mercari-price-suggestion-challenge">Mercari Price Suggestion Challenge</a> was to build an algorithm that automatically suggests the right product prices with provided user-inputted text descriptions of their products, including details like product category name, brand name, and item condition.</p>
-
-<p>The most challenging part was that this was a <strong>kernel-only</strong> competition, which meant the training and inference of the model would be in a container environment provided by Kaggle. The script had to finish within 60 minutes and consumed no more than 16 GB of RAM. The test dataset was also quite large so that it couldn&rsquo;t be loaded into memory at once for inference, and batch inference was required. Overall, the idea of submitting a script to train a model and do inference on an unknown dataset was very unsettling, compared with a normal Kaggle competition where models are trained locally.</p>
-
-<h2>2. My Experience</h2>
-
-<h3>2.1 Entering Late</h3>
-
-<p>I decided to seriously compete in this competition about a month before the deadline. One of the benefits of entering the competition late was that I could directly start from some strong public kernels and use them as my baselines. Due to my lack of creativity and my inexperience in Kaggle competitions, all of the models that I used in the final submissions originated from public kernels, including</p>
-
-<ul>
-<li><a href="https://www.kaggle.com/knowledgegrappler/a-simple-nn-solution-with-keras-0-48611-pl">RNN Baseline Model</a> for a RNN model that got me started</li>
-<li><a href="https://www.kaggle.com/valkling/mercari-rnn-2ridge-models-with-notes-0-42755">Ensemble of RNN and Ridge</a> for a ridge baseline model and ensembling methods in a kernel environment</li>
-<li><a href="https://www.kaggle.com/anttip/wordbatch-ftrl-fm-lgb-lbl-0-42555">Wordbatch FTRL and FM_FTRL</a> for teaching me <a href="https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41159.pdf">FTRL-Proximal</a>, a very popular online algorithm</li>
-</ul>
-
-
-<p>In addition to using public kernels as baseline models, I also benefited tremendously from</p>
-
-<ul>
-<li><a href="https://www.kaggle.com/thykhuely/mercari-interactive-eda-topic-modelling">EDA and Topic Modeling for Mercari</a></li>
-<li><a href="https://www.kaggle.com/lopuhin/eli5-for-mercari">ELI5 for Mercari</a> that introduced the <a href="https://pypi.python.org/pypi/eli5">eli5</a>, which is a fantastic library that helps explain and inspect black-box models</li>
-</ul>
-
-
-<h3>2.2 Base Models</h3>
-
-<h4>2.2.1 Ridge Regression</h4>
-
-<p>Linear model with L2 regularization on TF-IDF features. The main advantage of Ridge Regression is its speed (~ 10 minutes). One notable observation is that Ridge was a lot faster than LASSO since L2 loss is much easier to optimize compared with L1 loss.</p>
-
-<h4>2.2.2 RNN</h4>
-
-<p>Recurrent Neural Network (RNN) is one of the strongest models in this competition. A lot of teams in the competition included a RNN model in their final Ensemble. The tricky part of RNN is that we need to consider <strong>speed</strong> when designing its architecture and tuning the hyper-parameter (especially batch size, and number of epochs). RNNs are the bread and butter for most Ensembles in this competition and usually takes 25 - 45 minutes. RNN was my main model but I failed to make a significant improvement over the RNNs from public kernels. To my surprise, none of the top teams used RNN in their final ensemble, probably due to slow training time.</p>
-
-<h4>2.2.3 FTRL &amp; FM_FTRL</h4>
-
-<p>Models using <a href="https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41159.pdf">Follow-the-Regularized-Leader(FTRL)</a> online learning algorithm became very popular for this competition, thanks to the wonderful <a href="https://www.kaggle.com/anttip/wordbatch-ftrl-fm-lgb-lbl-0-42555">kernel</a> by <strong>attip</strong>, who is also the author of the package <a href="https://github.com/anttttti/Wordbatch">Wordbatch</a>. I have never heard or used FTRL before and was amazed by its speed and performance. Ridge Regression and the Linear model Proximal-FTRL is essentially the same model but optimized by different algorithms. It was fascinating how much of a difference the optimization algorithm made.</p>
-
-<p>The FM_FTRL implementation in Wordbatch of Factorization Machines estimates linear effects with FTRL and factor effects with adaptive SGD. FM_FTRL is a very strong model for this competition since it turned out that capturing the interaction effect between some of the variables (item category, item condition) was key. FM_FTRL was also very fast (~ 10 minutes) which made it a very good base model to ensemble.</p>
-
-<h4>2.2.4 MLP on Sparse Feature</h4>
-
-<p>MLP is definitely the largest winner of the competition, as most of the top teams chose it as their core base model. It not only ran blazingly fast, but also outperforms every other single model on this dataset. I think the main reason that MLP is so strong is it can capture complex feature interaction. This is something I should have realized when I saw the strong performance of FM_FTRL, which only captures pairwise interaction.</p>
-
-<h4>2.2.5 LightGBM</h4>
-
-<p>Some <a href="https://www.kaggle.com/anttip/wordbatch-ftrl-fm-lgb-lbl-0-42555">popular pubic kernels</a> used LightGBM on TF-IDF features as the main base model, which I didn&rsquo;t really understand. Despite I have never used LightGBM before at that time, my reasoning was that TF-IDF features are too high-dimensional and sparse for tree-based models, which lead to slows training and weak performance. Looking back at the published solutions, LightGBM is clearly not a mainstream model . I am glad to see a few teams achieved good results with LightGBM and I am more than happy to learn the their secret sauce from the <a href="https://www.kaggle.com/peterhurford/lgb-and-fm-18th-place-0-40604/data">kernels</a>.</p>
-
-<h3>2.3 Ensembling</h3>
-
-<p>I have always heard that Kaggle competitions are essentially ensembling competitions. While that might be true for almost all Kaggle competitions, it&rsquo;s less so for the Mercari Price Suggestion Challenge. The time limit of 60 minutes and the memory limit of 16GB adds constraints to ensembling and competitors need to produce an ensemble that is not only accurate, but also fast and memory efficient. <strong>The limits of kernels add a &ldquo;production&rdquo; flavor and transform the ensembling process from &ldquo;shove as many things in it as we can&rdquo; to &ldquo;choose a small subset of models that blend well while complying with the constraints&rdquo;.</strong> Due to the time constraints, most teams did not do stacking. Some attempts were made by keeping a small validation set and use it to find the optimal blending weights.</p>
-
-<p>Ensembling was definitely the biggest learning of the competition for me. It was my first time to seriously blend models together and I was amazed by the amount of performance gains from even a simple weighted average of diverse models. For this competition, I employed a rarely-used trick of ensembling using different checkpoints of a single RNN over time, inspired my <a href="http://cs231n.github.io/neural-networks-3/#ensemble">lecture notes</a> from CS231 at Stanford. The time cost of this trick is only a few minutes but the performance gain was considerable (from <code>~0.429</code> to <code>~0.423</code>).</p>
-
-<h3>2.4 My final submissions</h3>
-
-<p>My <a href="https://www.kaggle.com/sijunhe9248/rnn-ensemble-fm-ready-multithread?scriptVersionId=2482847">conservative solution</a> consists of a RNN trained for 3 epochs and a FM_FTRL, ran multi-threaded in Keras and scikit-learn. The public score is <code>0.41574</code> and private score is <code>0.41678</code>.</p>
-
-<p>My <a href="https://www.kaggle.com/sijunhe9248/corrected-final-rnn-ridge">aggressive solution</a> was a last minute Hail Mary, consists of the same RNN as the conservative solution and a Ridge Regression from a <a href="https://www.kaggle.com/rumbok/ridge-lb-0-41944">kernel</a> that was made public a day before the deadline. The kernel caused major disruption to the leaderboard as many people were trying to incorporate it last minute. I was among them and a trivial bug in my hasty last-minute effort lead to a no score. Without the bug, the public score is <code>0.41170</code> and private score would be <code>0.41111</code>. <strong>I would have ranked around 35th instead of 65th, though I still wouldn&rsquo;t get a Gold medal.</strong></p>
-
-<h2>3. Reflections</h2>
-
-<h3>3.1 What I did well</h3>
-
-<ul>
-<li>Ensembling using different checkpoints of a single RNN over time</li>
-<li>Focus on learning from and improving upon public kernels</li>
-</ul>
-
-
-<h3>3.2 Areas of Improvements</h3>
-
-<ul>
-<li>I didn&rsquo;t try MLP. I should have gotten the hint from the strong performance of FM that feature interaction is key in this competition.</li>
-<li>The inability to improve my RNN meaningfully over the public kernel</li>
-<li>I need more discipline in hyper-parameter search (i.e. random grid search, <a href="https://github.com/fmfn/BayesianOptimization">Bayesian Optimization</a>) since I don&rsquo;t have enough experience for a good intuition for hhyper-parameter tuning yet</li>
-</ul>
-
-
-<h3>3.3. Learning From Other Solutions</h3>
-
-<h4>3.3.1 1st Place Solution - MLP</h4>
-
-<p>Pawel and Konstantin won this competition by a huge margin. Their <a href="https://www.kaggle.com/lopuhin/mercari-golf-0-3875-cv-in-75-loc-1900-s">solution</a> is as graceful as one can be - a standard MLP neural network of 83 lines of code that ran in 1900 seconds (In comparison, my spaghetti-like Ensemble is more than 500 lines of code, took almost an entire hour and performed much worse ). Some of their key ideas are:</p>
-
-<ul>
-<li><p><strong>MLP</strong>: Their model was a standard MLP ran on sparse feature (TF-IDF). Usually MLP overfits like crazy and I am very surprised it worked so well on this dataset. As Konstantin wrote</p>
-
-<blockquote><p>It has huge variance and each single model is tuned to overfit to a different local minima, but when averaged, they give a really good result. It seems to capture feature interactions which look really important here, and it&rsquo;s fast to train.</p></blockquote></li>
-<li><p><strong>Parallelization</strong>: Their kernel train 4 MLP models in parallel (one model per core) and average them to get the final results. The parallelization squeezed all the juice out of the 4-core Kaggle kernel. I think I need to learn how to wrote multiprocessing code in Python next.</p></li>
-<li><p><strong>Text Concatenation</strong>: The only text preprocessing they did in the kernel was concatenate all text fields (name, item_description, category, brand) together to reduce the dimensionality of the text fields. This didn&rsquo;t make much sense to me theoretically, so I feel this is purely empirical and a testament to the amount of effort they put in this.</p></li>
-<li><p><strong>Doubling the batch size</strong>: Since the training time is a key constraint in this competition, many of the top teams utilized the technique of increasing batch size instead of decaying the learning rate. As described in this <a href="https://arxiv.org/abs/1711.00489">paper</a> by Google, increasing the batch size as opposed to decaying the learning rate gives equivalent test accuracies, but with fewer parameter updates, leading to greater parallelism and shorter training times.</p></li>
-</ul>
-
-
-<h4>3.3.2 4th Place Solution - XNN</h4>
-
-<p><a href="https://www.kaggle.com/chenglongchen">Chenglong Chen</a> not only did extremely well in this competition, but also wrote a detailed <a href="https://github.com/ChenglongChen/tensorflow-XNN">documentation</a> about his models. I admire the his modular design of the code which followed a <a href="https://explosion.ai/blog/deep-learning-formula-nlp">post</a> by Matthew Honnibal to break all models into 4 components: <strong>embed, encode, attend and predict</strong>. Chen methodically experimented a wide range of options for each of the components:</p>
-
-<ul>
-<li><strong>Embed</strong>: FastText, TextCNN, TextRNN, TextBiRNN, TextRCNN</li>
-<li><strong>Attend</strong>: Average Pooling, Max Pooling, Context Attention, Self Attention</li>
-<li><strong>Predict</strong>: NN-based FM, ResNet, MLP</li>
-</ul>
-
-
-<p>Chen also ended up choosing MLP, like all other top teams. Another highlight was that he used a technique called <a href="https://openreview.net/pdf?id=BJYwwY9ll">Snapshot Ensemble</a>, which is similar to my idea of using different checkpoints of the same models but coupled with cyclic learning schedule.</p>
-
-<h2>4. Summary</h2>
-
-<p>I had a great experience in my first Kaggle competition and I am quite happy with the result I had. What mattered much more than the result was the learning - I am amazed by how much I learned during the competition, may it be new models, ensembles or best practices. I am humbled by how smart the Kaggle community is and I think I am addicted! Hopefully I will improve in my next competition.</p>
 ]]></content>
   </entry>
   

@@ -1,0 +1,331 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Reading | Word Embeddings - Blog | Sijun He</title>
+	<meta name="author" content="Sijun He">
+
+	
+	<meta name="description" content="Reading | Word Embeddings Reading summaries about widely-used embeddings: word2vec: Distributed Representations of Words and Phrases and their &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Blog | Sijun He" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://sijunhe.github.io/blog/2018/09/12/word-embeddings/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='https://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!--- MathJax Configuration -->
+	<script type="text/x-mathjax-config">
+  		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML">
+	</script>
+	<!-- <script type="text/javascript" async
+	  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+	</script> -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-69112205-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><img src= 'https://s3-us-west-1.amazonaws.com/sijunhe-blog/images/name_white.png' height: 150px width: 150px >
+<nav id="main-nav">
+<section class="aboutme">
+  <h3>
+    Sijun's Data Science Odyssey
+  </h3>
+</section>
+
+<ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/blog/categories">Categories</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+</ul></nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:sijun.he@hotmail.com" title="Email">Email</a>
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/sijunhe" title="GitHub">GitHub</a>
+		
+		
+		
+		
+			<a class="linkedin" href="http://www.linkedin.com/in/sijunhe48" title="LinkedIn">LinkedIn</a>
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Reading | Word Embeddings</h1>
+	<div class="entry-content" itemprop="articleBody"><p>Reading summaries about widely-used embeddings:</p>
+
+<ul>
+<li><strong>word2vec</strong>: <a href="https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf">Distributed Representations of Words and Phrases and their Compositionality</a></li>
+<li><strong>word2vec</strong>: <a href="https://arxiv.org/pdf/1301.3781.pdf">Efficient Estimation of Word Representations in Vector Space</a></li>
+<li><strong>GloVe</strong>: <a href="https://nlp.stanford.edu/pubs/glove.pdf">Global Vectors for Word Representation</a></li>
+<li><strong>fastText</strong>: <a href="https://arxiv.org/pdf/1607.04606.pdf">Enriching Word Vectors with Subword Information</a></li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post18/embedding_illustration.png" alt="illustration" /></p>
+
+<!--more-->
+
+
+<h2>1. Why Embedding?</h2>
+
+<p>Many classic NLP systems and techniques (i.e. popular N-gram model) treat words as atomic units. There is no notion of similarity between words, as they are represented as indices in a vocabulary. This approach works when trained on huge amounts of data, but are limited in many tasks when data is limited (i.e. speech recognition data, parallel corpus for machine translation). Learning representation of words establishes similarity between words and allows data to be used much more efficiently.</p>
+
+<h2>2. word2vec</h2>
+
+<p>The high-level assumption of word2vec is that words close to each other have more similar meaning than words far apart. Under this assumption, two model architectures were proposed by the researchers at Google.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post18/cbow_skip_gram.png" alt="cbow_skipgram" /></p>
+
+<h3>2.1 Skip-gram Model</h3>
+
+<p>The objective of the Skip-gram model is to find word representations that are useful for predicting the surrounding words in a sentence or a document. The objective of the model is to maximize the average log probability</p>
+
+<p>$$\frac{1}{T} \sum_{t=1}^{T} \sum_{-c \leq j \leq c, j \neq 0} \text{log} \ p(w_{t+j}|w_{t})\tag{1}$$</p>
+
+<p>The probability $p(w_{t+j}|w_{t})$ is defined using the softmax function:</p>
+
+<p>$$p(w_{O}|w_{I}) = \frac{\text{exp} ( u_{w_{O}}^T v_{w_{I}})}{\sum_{w=1}^W \text{exp} ( u_{w}^T v_{w_{I}})}\tag{2}$$</p>
+
+<p>where $v$ and $u$ are input and output representation of the word. This is impractical since computing the gradient w.r.t the entire vocabulary is $\mathcal{O}(W)$, the size of the vocabulary.</p>
+
+<h4>Hierarchical Softmax</h4>
+
+<p>A computationally efficient approximation of the full softmax is hierarchical softmax, which uses a binary tree representation of the output layer with $W$ words as its leaves. With the words as leaf nodes, then we only need to follow the path to the leaf node of that word, without having to consider any of the other nodes. $p(w|w_I)$ simply the product of the probabilities of taking right and left turns respectively that lead to its leaf node. This is much faster since computing the gradient is $\mathcal{O}( \text{log} \ W)$.</p>
+
+<h4>Negative Sampling</h4>
+
+<p>We can also subsample the entire vocabulary to compute the softmax. The idea of Noise Contrastive Estimation (NCE) is to train binary logistic regressions for a true pair (center word and word in its context window) vs a couple of noise pairs (the center word paired with a random word). The objective with NCE is</p>
+
+<p>$$\text{log} \ \sigma( u_{w_{O}}^T v_{w_{I}}) + \sum_{j \sim P(w)} \text{log} \ \sigma( - u_{w_{j}}^T v_{w_{I}})\tag{3}$$</p>
+
+<p>The intuition of the above loss is to maximize the probability that real context word appears through the first term and minimize probability that random words appear around center word through the second term.</p>
+
+<p>The noise distribution $P(w) = U(w)^{&frac34;}/Z$, where $U(w)$ is the unigram distribution.</p>
+
+<h4>Subsampling Frequent Words</h4>
+
+<p>To counter the imbalance between the rare and frequent words, each word $w_i$ in the training set is discarded with probability of $P(w_i) = 1 - \sqrt{\frac{t}{f(w_i)}}$, where $f(w_i)$ is the frequency of the word and $t$ is a chosen threshold with typical value of $10^{-5}$. For words whose frequency is greater than t, it is subsampled aggressively.</p>
+
+<h3>2.2 Continuous Bag-of-Words (CBOW)</h3>
+
+<p>CBOW is a similar idea to Skip-gram, but instead of predicting the context words based on current word, it predicts the current word based on the context. The model is named bag-of-words since the order of words in the context does not influence the model, where an average of the context word vectors are used to predict the current word. Same as Skip-gram, we seek to maximize the average log probability</p>
+
+<p>$$\frac{1}{T} \sum_{t=1}^{T} \text{log} \ p(w_{t}|\bar{w_{t}})\tag{4}$$
+where the input vector is the average of all context word vectors $\bar{w_{t}} = \frac{1}{2c}\sum_{-c \leq j \leq c, j \neq 0} w_{t+j}$. Different from the Skip-gram model, the weight matrix of input and output word vectors is shared. The authors found that CBOW</p>
+
+<ul>
+<li>Slightly outperforms on the <strong>Syntactic Accuracy tests</strong> (&ldquo;apparent&rdquo; -> &ldquo;apparently&rdquo; = &ldquo;rapid&rdquo; -> &ldquo;rapidly&rdquo;)</li>
+<li>Underperforms significantly on <strong>Semantic Accuracy tests</strong> (&ldquo;Athens&rdquo; -> &ldquo;Greece&rdquo; = &ldquo;Oslo&rdquo; -> &ldquo;Norway&rdquo;)</li>
+</ul>
+
+
+<h2>3. GloVe</h2>
+
+<p>About a year after word2vec was published, Pennington et al. from Stanford came up with a new global model that combines the advantages of global matrix factorization methods (i.e. LSA) and local context window methods (i.e. word2vec).</p>
+
+<h4>Matrix Factorization vs Local Context Windows</h4>
+
+<p>Matrix factorization methods for generating low-dimensional word representations utilize low-rank approximations to decompose large matrices that capture statistical information about a corpus. In LSA, the matrix is term-document matrix filled with counts of words in each documents. In Hyperspace Analogue to Language (HAL), the matrix is a term-term matrix filled with counts of words co-occurring in the same context.</p>
+
+<p>The main problem with Matrix Factorization Methods is that the most frequent words contribute a disproportionate amount to the similarity measurement, despite conveying relatively little semantic relatedness. The local context window models, on the other hand, suffer from the disadvantage that they do not operate directly on the co-occurrence statistics of the corpus.</p>
+
+<h4>Deriving the GloVe Model</h4>
+
+<p>Let $X$ be the word-word co-occurrence count matrix, where $X_{ij}$ denote the number of times word $j$ occurs in the context of word $i$. $X_i = \sum{k} X_{ik}$ is the number of times any word appears in the context of word $i$. Let $P_{ij} = P(j|i) = X_{ij} / X_i$ be the probability that word $j$ appear in the context of word $i$.</p>
+
+<p>GloVe originates from the idea that meaning can be extracted directly from co-occurrence probabilities. Consider two words <em>i = ice</em> and <em>j = steam</em>; we see that $P_{ik}/P_{jk}$ is large when $k$ is related to $i$, but not $j$ and vice versa. When $k$ is either related to both or unrelated to both, $P_{ik}/P_{jk}$ is close to 1.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post18/ice_steam.png" alt="ice_steam" /></p>
+
+<p>The above argument suggest that the word vector should be learned with ratios of co-occurrence probabilities. The most general model can be in the form of</p>
+
+<p>$$F\left( w_i, w_j, \tilde{w}_k \right) = \frac{P_{ik}}{P_{jk}}\tag{5}$$</p>
+
+<p>We can restrict $F$ in the following way</p>
+
+<ul>
+<li>$F$ should be only dependent on the difference of the two target words $w_i - w_j$</li>
+<li>To keep the linear nature of the vector space, restrict $F$ to take the dot product of the arguments $(w_i - w_j)^T \tilde{w}_k$</li>
+<li>By requiring the role of target words and context words can be exchanged, we have $F\left((w_i - w_j)^T \tilde{w}_k \right) = F(w_{i}^T\tilde{w}_{k}) / F(w_{j}^T\tilde{w}_{k})$</li>
+</ul>
+
+
+<p>This gives us the solution of $F = \text{exp}$ and $w_{i}^T\tilde{w}_{k} = \text{log} (P_{ik}) = \text{log} (X_{ik}) - \text{log} (X_{i})$. To restore the symmetry between target word and context words, we can set $b_i=\text{log} (X_{i})$ and add an bias term $\tilde{b}_k$,</p>
+
+<p>$$w_{i}^T\tilde{w}_{k} + b_i + \tilde{b}_k = \text{log} (X_{ik})\tag{6}$$</p>
+
+<p>A main drawback of this model is that it weighs all co-occurrence equally. To fix this problem, we add weights to the model. The weighted least squares regression model has the following cost function:</p>
+
+<p>$$J = \sum_{i,j=1}^{V} f(X_{ij}) \left( w_{i}^T\tilde{w}_{k} + b_i + \tilde{b}_j - \text{log} (X_{ij}) \right)^2 \tag{7}$$</p>
+
+<p>where $f(x)$ is defined very similar to $P(w)$ from word2vec.</p>
+
+<p>$$f(x) =
+\begin{cases}
+(x/x_{max})^{&frac34;},  &amp; x &lt; x_{max} \\
+1, &amp; \text{otherwise}
+\end{cases}$$</p>
+
+<h4>Context Window</h4>
+
+<p>GloVe shares the same assumption that very distant word pairs are expected to contain less relevant information about the words’ relationship to one another. Skip-gram defined &ldquo;context&rdquo; as a moving window. GloVe specifies that word pairs that are $d$ words apart contribute $1/d$ to the total count. Hence Global vectors to account for context.</p>
+
+<h4>Relationship to Skip-gram</h4>
+
+<p>Let $Q_{ij}$ be the softmax and $X_{ij}$ be the context co-occurrence, the objective of the skip-gram function is</p>
+
+<p>$$J = - \sum_{i}\sum_{j \in context(i)} \text{log} (Q_{ij}) = - \sum_{i}\sum_{j} X_{ij} \ \text{log} (Q_{ij})$$</p>
+
+<p>With the notation of $X_i = \sum{k} X_{ik}$ and $P_{ij} = P(j|i) = X_{ij} / X_i$, the cost function can be re-written as</p>
+
+<p>$$
+\begin{align}
+J &amp;= - \sum_{i}\sum_{j} X_{i}P_{ij} \ \text{log} (Q_{ij}) \\
+&amp;= - \sum_{i} X_{i} \sum_{j}P_{ij} \ \text{log} (Q_{ij}) \\
+&amp;= \sum_{i} X_{i} H(P_{i}, Q_{i})
+\end{align}
+$$</p>
+
+<p>where $H(P_{i}, Q_{i})$ is the cross entropy between the distribution $P_{i}$ and $Q_{i}$. The loss is a weighted sum of the cross entropy error and it&rsquo;s very similar to the weighted least squares objective of GloVe.</p>
+
+<h2>4. fastText</h2>
+
+<p>There is a limitation in skip-gram and GloVe that word representations ignore the morphology of words and assign a distinct vector to each word. Bojanowski et al. from Facebook Research proposed a new extension to skip-gram to learn representations for character <em>n</em>-grams and to represent words as the sum of the <em>n</em>-gram vectors.</p>
+
+<p>Each word is represented as a bag of character <em>n</em>-grams. A special boundary symbols <em>&lt;></em> are added at the start and end of a word. The word <em>w</em>itself is also in the set of its <em>n</em>-grams to learn a representation for each word. For example, for the word <em>where</em> and $n=3$, we have the character <em>n</em>-grams <em>&lt;wh, whe, her, ere, re>, where</em>. In practice, all <em>n</em>-grams for $3 \leq n \leq 6$ are used.</p>
+
+<p>Given a word <em>w</em> and a set of <em>n</em>-grams $\mathcal{G}_w$ of size $G$, a vector representation $z_g$ is assigned to each <em>n</em>-grams $g$. In skip-gram, the scoring function between a context word and a center word is defined as $s(w, c) = u_g^Tv_c$. Since a word is reprenseted as the sum of the vector representations of its <em>n</em>-grams,  we have $s(w, c) = \sum_{g \in \mathcal{G}_w} z_g^Tv_c$. With this change, Eq. 2 becomes</p>
+
+<p>$$p(w_{O}|w_{I}) = \frac{\text{exp} ( \sum_{g \in \mathcal{G}_{w_{O}}} z_g^Tv_{w_{I}} )}{\sum_{w=1}^W \text{exp} ( \sum_{g \in \mathcal{G}_w} z_g^T v_{w_{I}})}\tag{8}$$</p>
+
+<p>This simple model allows sharing the representations across words, thus allowing to learn reliable representation for rare words. Also, the model can infer word vectors for words that do not appear in the training set (Out-of-Vocabulary) simply by averaging the vector representation of its n-grams. In fact, Bojanowski et al found that imputing vectors for unseen words is always at least as good as not doing so, and in some cases give a large performance boost.</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    Sijun He
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'sijunhe';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sijunhe.github.io/blog/2018/09/12/word-embeddings/';
+        var disqus_url = 'http://sijunhe.github.io/blog/2018/09/12/word-embeddings/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+</body>
+</html>

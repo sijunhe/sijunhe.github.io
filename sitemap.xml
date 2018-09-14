@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-<loc>http://sijunhe.github.io/blog/2018/09/05/kaggle-predict-demand-for-classified-ads/</loc>
-<lastmod>2018-09-05T10:32:18-07:00</lastmod>
+<loc>http://sijunhe.github.io/blog/2018/09/12/word-embeddings/</loc>
+<lastmod>2018-09-12T22:23:31-07:00</lastmod>
+</url>
+<url>
+<loc>http://sijunhe.github.io/blog/2018/09/04/kaggle-predict-demand-for-classified-ads/</loc>
+<lastmod>2018-09-04T10:32:18-07:00</lastmod>
 </url>
 <url>
 <loc>http://sijunhe.github.io/blog/2018/06/11/on-normalization-layers/</loc>
@@ -179,5 +183,11 @@
 </url>
 <url>
 <loc>http://sijunhe.github.io/blog/categories/ctr/</loc>
+</url>
+<url>
+<loc>http://sijunhe.github.io/posts/2/</loc>
+</url>
+<url>
+<loc>http://sijunhe.github.io/posts/3/</loc>
 </url>
 </urlset>

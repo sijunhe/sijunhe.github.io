@@ -4,7 +4,7 @@
   <title><![CDATA[Category: kaggle | Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/blog/categories/kaggle/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2018-09-08T18:40:57-07:00</updated>
+  <updated>2018-09-13T23:57:02-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Kaggle | Predicting Classified Ads Demand]]></title>
-    <link href="http://sijunhe.github.io/blog/2018/09/05/kaggle-predict-demand-for-classified-ads/"/>
-    <updated>2018-09-05T10:32:18-07:00</updated>
-    <id>http://sijunhe.github.io/blog/2018/09/05/kaggle-predict-demand-for-classified-ads</id>
+    <link href="http://sijunhe.github.io/blog/2018/09/04/kaggle-predict-demand-for-classified-ads/"/>
+    <updated>2018-09-04T10:32:18-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/09/04/kaggle-predict-demand-for-classified-ads</id>
     <content type="html"><![CDATA[<p>After three competitions, I felt I was ready to push for my first Gold Medal. Along with my four teammates, we took on the challenge of predicting demand for classified ads. We fought tooth and nail till the last moment and were in the Gold zone on the public leaderboard. While we ended up losing the Gold Metal narrowly by 1 spot, it was overall a great learning experience. I look forward to making progress toward a real gold medal in the future.</p>
 
 <p><strong>TL;DR A failed attempt to push for my first Gold Metal on Kaggle. My team ranked top 1% but missed the Gold Metal narrowly by 1 spot!</strong></p>
