@@ -1,7 +1,8 @@
 ---
 layout: post
 title: "Kaggle | Predicting Classified Ads Demand"
-date: 2018-09-05 10:32:18 -0700
+subtitle: "Learning and Reflection from the Avito Demand Prediction Challenge"
+date: 2018-09-04 10:32:18 -0700
 comments: true
 categories: kaggle nlp deep-learning
 ---
