@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Reading | On Factorization Models"
+title: "On Factorization Models"
 subtitle: "Factorization Machines (FM) and Field-aware Factorization Machines (FFM)"
 date: 2018-04-19 16:37:42 -0700
 comments: true

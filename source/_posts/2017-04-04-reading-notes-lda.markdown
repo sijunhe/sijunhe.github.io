@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Reading | LDA, the Most Commonly-Used Topic Model"
+title: "LDA, the Most Commonly-Used Topic Model"
 subtitle: "Latent Dirichlet Allocation"
 date: 2017-04-04 21:54:13 -0700
 comments: true

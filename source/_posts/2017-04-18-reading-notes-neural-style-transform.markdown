@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Reading | Neural Style Transform"
+title: "Neural Style Transform"
 subtitle: "A Neural Algorithm of Artistic Style"
 date: 2017-04-18 13:59:48 -0700
 comments: true

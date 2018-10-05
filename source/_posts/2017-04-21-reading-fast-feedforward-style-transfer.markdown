@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Reading | Fast (Feedforward) Style Transfer"
+title: "Fast (Feedforward) Style Transfer"
 subtitle: "Perceptual Losses for Real-Time Style Transfer and Super-Resolution"
 date: 2017-04-21 15:15:34 -0700
 comments: true

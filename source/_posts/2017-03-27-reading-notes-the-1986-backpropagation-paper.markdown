@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Reading | The 1986 Backpropagation Paper"
+title: "The 1986 Backpropagation Paper"
 subtitle: "Learning Representations by Back-propagating Errors"
 date: 2017-03-27 15:18:09 -0700
 comments: true

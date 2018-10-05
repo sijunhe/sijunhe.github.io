@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Reading | Crossing the Chasm"
+title: "Crossing the Chasm"
 subtitle: "Marketing and Selling Disruptive Products to Mainstream Customers"
 date: 2017-11-22 19:49:19 -0700
 comments: true

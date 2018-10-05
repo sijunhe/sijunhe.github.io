@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Kaggle | Classifying Toxic Comment"
+title: "Classifying Toxic Comment"
 subtitle: "Learning and Reflection from the Jigsaw Toxic Comment Classification Challenge"
 date: 2018-05-01 17:51:44 -0700
 comments: true

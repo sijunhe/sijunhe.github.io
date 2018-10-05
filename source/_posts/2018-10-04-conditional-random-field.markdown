@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Reading | Conditional Random Field"
+title: "Conditional Random Field"
 subtitle: "Probabilistic Models for Segmenting and Labeling Sequence Data"
 date: 2018-10-04 23:26:45 -0700
 comments: true

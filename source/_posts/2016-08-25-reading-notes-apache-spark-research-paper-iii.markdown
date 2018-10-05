@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Reading | Apache Spark Research Paper III"
+title: "Apache Spark Research Paper III"
 subtitle: "Spark SQL: Relational Data Processing in Spark"
 date: 2016-08-25 16:49:35 -0800
 comments: true

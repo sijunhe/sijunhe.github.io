@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Kaggle| Titanic Part II"
+title: "Titanic Part II"
 subtitle: "Machine Learning From Disaster"
 date: 2015-11-06 15:28:26 -0800
 comments: true

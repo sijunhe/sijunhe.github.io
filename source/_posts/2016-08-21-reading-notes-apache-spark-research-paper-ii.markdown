@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Reading | Apache Spark Research Paper II"
+title: "Apache Spark Research Paper II"
 subtitle: "Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing"
 date: 2016-08-21 16:49:26 -0800
 comments: true

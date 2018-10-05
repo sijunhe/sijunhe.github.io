@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Reading | Apache Spark Research Paper I"
+title: "Apache Spark Research Paper I"
 subtitle: "Spark: Cluster Computing with Working Sets"
 date: 2016-08-16 16:49:21 -0800
 comments: true

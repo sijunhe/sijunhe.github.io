@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Reading | Highway Networks"
+title: "Highway Networks"
 date: 2018-01-21 18:18:41 -0800
 comments: true
 categories: reading-notes deep-learning

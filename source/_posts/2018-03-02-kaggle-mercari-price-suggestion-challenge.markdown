@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Kaggle | Mercari Price Suggestion"
+title: "Mercari Price Suggestion"
 subtitle: "Learning and Reflection from the Mercari Price Suggestion Challenge"
 date: 2018-03-02 21:46:50 -0800
 comments: true

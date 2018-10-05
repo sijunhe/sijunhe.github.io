@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Reading | Word Embeddings"
+title: "Word Embeddings"
 subtitle: "From word2vec and GloVe to fastText"
 date: 2018-09-12 22:23:31 -0700
 comments: true

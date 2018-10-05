@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Reading | On Normalization Layers"
+title: "On Normalization Layers"
 subtitle: "Batch Normalization, Layer Normalization and Why They Work"
 date: 2018-06-11 14:34:57 -0700
 comments: true

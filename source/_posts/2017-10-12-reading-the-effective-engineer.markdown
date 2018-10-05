@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Reading | The Effective Engineer"
+title: "The Effective Engineer"
 subtitle: "How to Leverage Your Efforts In Software Engineering to Make a Disproportionate and Meaningful Impact"
 date: 2017-10-12 22:46:13 -0700
 comments: true
