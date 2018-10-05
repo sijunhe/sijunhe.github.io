@@ -4,7 +4,7 @@
   <title><![CDATA[Category: computer-vision | Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/blog/categories/computer-vision/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2018-10-05T01:30:01-07:00</updated>
+  <updated>2018-10-05T01:34:35-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Reading | On Normalization Layers]]></title>
+    <title type="html"><![CDATA[On Normalization Layers]]></title>
     <link href="http://sijunhe.github.io/blog/2018/06/11/on-normalization-layers/"/>
     <updated>2018-06-11T14:34:57-07:00</updated>
     <id>http://sijunhe.github.io/blog/2018/06/11/on-normalization-layers</id>
@@ -212,7 +212,7 @@ when we take a larger step in a direction of a computed gradient, this gradient 
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Reading | Fast (Feedforward) Style Transfer]]></title>
+    <title type="html"><![CDATA[Fast (Feedforward) Style Transfer]]></title>
     <link href="http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer/"/>
     <updated>2017-04-21T15:15:34-07:00</updated>
     <id>http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer</id>
@@ -310,7 +310,7 @@ $$\hat{y} = \text{argmin}_y \ \lambda_c l_{feat}^{\phi, j}(y, y_c) + \lambda_s l
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Reading | Neural Style Transform]]></title>
+    <title type="html"><![CDATA[Neural Style Transform]]></title>
     <link href="http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform/"/>
     <updated>2017-04-18T13:59:48-07:00</updated>
     <id>http://sijunhe.github.io/blog/2017/04/18/reading-notes-neural-style-transform</id>

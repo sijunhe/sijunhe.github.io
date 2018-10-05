@@ -4,7 +4,7 @@
   <title><![CDATA[Category: kaggle | Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/blog/categories/kaggle/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2018-10-05T01:30:01-07:00</updated>
+  <updated>2018-10-05T01:34:35-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Kaggle | Predicting Classified Ads Demand]]></title>
+    <title type="html"><![CDATA[Predicting Classified Ads Demand]]></title>
     <link href="http://sijunhe.github.io/blog/2018/09/04/kaggle-predict-demand-for-classified-ads/"/>
     <updated>2018-09-04T10:32:18-07:00</updated>
     <id>http://sijunhe.github.io/blog/2018/09/04/kaggle-predict-demand-for-classified-ads</id>
@@ -79,7 +79,7 @@
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Kaggle | Classifying Toxic Comment]]></title>
+    <title type="html"><![CDATA[Classifying Toxic Comment]]></title>
     <link href="http://sijunhe.github.io/blog/2018/05/01/kaggle-toxic-comment/"/>
     <updated>2018-05-01T17:51:44-07:00</updated>
     <id>http://sijunhe.github.io/blog/2018/05/01/kaggle-toxic-comment</id>
@@ -314,7 +314,7 @@ text = re.sub('8=+D', 'dick', text)
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Kaggle | Mercari Price Suggestion]]></title>
+    <title type="html"><![CDATA[Mercari Price Suggestion]]></title>
     <link href="http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/"/>
     <updated>2018-03-02T21:46:50-08:00</updated>
     <id>http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge</id>
@@ -549,7 +549,7 @@ top5 &lt;- data[data$Category %in% counts$Category[1:5],]
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Kaggle| Titanic Part II]]></title>
+    <title type="html"><![CDATA[Titanic Part II]]></title>
     <link href="http://sijunhe.github.io/blog/2015/11/06/kaggle-titanic-part-ii/"/>
     <updated>2015-11-06T15:28:26-08:00</updated>
     <id>http://sijunhe.github.io/blog/2015/11/06/kaggle-titanic-part-ii</id>
