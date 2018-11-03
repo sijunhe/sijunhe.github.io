@@ -4,7 +4,7 @@
   <title><![CDATA[Category: miscellaneous | Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/blog/categories/miscellaneous/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2018-10-05T01:34:35-07:00</updated>
+  <updated>2018-11-03T16:39:28-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -12,6 +12,21 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Hello, Twitter! ]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/11/03/hello-twitter/"/>
+    <updated>2018-11-03T16:00:20-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/11/03/hello-twitter</id>
+    <content type="html"><![CDATA[<p>This week I joined the flock as a Machine Learning Engineer at <a href="https://cortex.twitter.com/en.html">Twitter Cortex</a>, where I will be developing and deploying state-of-the-art Deep Learning and NLP models to automate content understanding. Super excited to see what the future holds!</p>
+
+<p align="center">
+  <img style="display:inline" src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post20/twitter-logo.png" width="150" />
+  <img style="display:inline" src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post20/cortex-logo.png" width="150" />
+</p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[The Stack and The Heap]]></title>

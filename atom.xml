@@ -4,7 +4,7 @@
   <title><![CDATA[Blog | Sijun He]]></title>
   <link href="http://sijunhe.github.io/atom.xml" rel="self"/>
   <link href="http://sijunhe.github.io/"/>
-  <updated>2018-10-05T01:34:35-07:00</updated>
+  <updated>2018-11-03T16:39:28-07:00</updated>
   <id>http://sijunhe.github.io/</id>
   <author>
     <name><![CDATA[Sijun He]]></name>
@@ -12,6 +12,21 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Hello, Twitter! ]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/11/03/hello-twitter/"/>
+    <updated>2018-11-03T16:00:20-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/11/03/hello-twitter</id>
+    <content type="html"><![CDATA[<p>This week I joined the flock as a Machine Learning Engineer at <a href="https://cortex.twitter.com/en.html">Twitter Cortex</a>, where I will be developing and deploying state-of-the-art Deep Learning and NLP models to automate content understanding. Super excited to see what the future holds!</p>
+
+<p align="center">
+  <img style="display:inline" src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post20/twitter-logo.png" width="150" />
+  <img style="display:inline" src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post20/cortex-logo.png" width="150" />
+</p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Conditional Random Field]]></title>
@@ -2916,141 +2931,6 @@ In our case, we can find the closest location vector to an observation and assig
 <li>Compare speed of two stage pipeline that selects a subset of text messages from a corpus and computes the most frequent words</li>
 <li>Separate SQL query followed by a Scala-based Spark job, similar to a Hive query followed by a Spark job, vs the DataFrame API</li>
 <li>DataFrame API pipelines improves performance 2x, since it avoids the cost of saving the whole result of the SQL query to an HDFS file as an intermediate dataset, because SparkSQL pipelines the <strong>map</strong> for the word count with the relational operators for the filtering</li>
-</ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Apache Spark Research Paper II]]></title>
-    <link href="http://sijunhe.github.io/blog/2016/08/21/reading-notes-apache-spark-research-paper-ii/"/>
-    <updated>2016-08-21T17:49:26-07:00</updated>
-    <id>http://sijunhe.github.io/blog/2016/08/21/reading-notes-apache-spark-research-paper-ii</id>
-    <content type="html"><![CDATA[<p>This follows up the last post and I will read the second Apache Spark paper <a href="http://people.csail.mit.edu/matei/papers/2012/nsdi_spark.pdf">Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing</a>, published by Matei Zaharia et al. in 2012.</p>
-
-<!--more-->
-
-
-<h2>Intro</h2>
-
-<ul>
-<li>Cluster computing frameworks like MapReduce and Dryad are widely adopted since they provide the high level abstraction of parallel programming without worrying about work distribution and fault tolerance</li>
-<li>Frameworks like MapReduce lacks abstractions for leveraging distributed memory and makes them inefficient for iterative algorithms</li>
-<li>Resilient Distributed Datasets (RDDs) are fault tolerant, parallel data structures that let users explicitly persists intermediate results in-memory, controlling their partitioning to optimize data placement</li>
-<li>Existing abstractions for in-memory storage offer an interface based on <strong>fine-grained</strong> updates to mutable state. This makes the only way to provide fault tolerance being replicating the data across machines, which is too data intensive</li>
-<li>RDDs provide an interface based on <strong>coarse-grained</strong> transformation (e.g., map, filter, join) that apply the same operation to many data items. this allows them to provide fault tolerance by logging the transformations used to build its <strong>lineage</strong> instead of replicating the actual data. If an RDD is lost, there&rsquo;s enough information about how it was derived from other RDDs so it can be recomputed</li>
-</ul>
-
-
-<h2>RDDs</h2>
-
-<h3>Abstraction</h3>
-
-<ul>
-<li>Read-only, partitioned collection</li>
-<li>Not materialized at all times</li>
-<li>Users can control <strong>persistence</strong> and <strong>partitioning</strong> of RDD</li>
-</ul>
-
-
-<h3>Programming Interface</h3>
-
-<ul>
-<li>Each dataset is represented as an object and interacted through an API</li>
-<li>Spark computes RDDs lazily the first time they are used in an action, so that it can pipeline transformations</li>
-</ul>
-
-
-<h3>Advantage of the RDD Model</h3>
-
-<ul>
-<li>Compare with distributed shared memory (DSM), where applications read and write to arbitrary locations (fine-grained transformation)in a global address space</li>
-<li>Main difference is that RDDs can only be created through coarse-grained transformation, which restricts RDDs to perform bulk writes, but allows for more efficient fault tolerance</li>
-<li>Immutable natures of RDDs let the system mitigate slow nodes by running backup copies of slow tasks just like MapReduce</li>
-<li>In bulk operations on RDDs, runtime can schedule task based on data locality, a.k.a &ldquo;move processing to data&rdquo;</li>
-<li>RDDs degrade gracefully when there&rsquo;s not enough memory: partitions that do not fit in RAM are spilled on disk</li>
-</ul>
-
-
-<h3>Applications not suitable for RDD</h3>
-
-<ul>
-<li>Not suitable for applications that make asynchronous fine-grained updates to shared state, such as a storage system for a web application or an incremental web crawler</li>
-<li>Spark aims to provide an efficient programming model for batch analytics and is not suitable asynchronous applications</li>
-</ul>
-
-
-<h2>Spark Programming Interface</h2>
-
-<ul>
-<li>Developers write a driver program that connects to a cluster of workers</li>
-<li>The workers are long-lived processes that can store RDD partitions in RAM across operations</li>
-<li>Driver also keep tracks the RDDs' lineage</li>
-<li>Scala represents closures as Java objects, serialized and loaded them on another node to pass the closure across the network</li>
-</ul>
-
-
-<h2>Representing RDDs</h2>
-
-<ul>
-<li>A simple graph-based representation for RDDs that facilitates the goal of tracking lineage across a wide range of transformation</li>
-<li>Represent each RDD through a five pieces of information
-
-<ul>
-<li>a set of <strong>partitions</strong>: atomic pieces of the dataset</li>
-<li>a set of <strong>dependencies</strong> on parent RDDs</li>
-<li>a <strong>function</strong> for computing the dataset based on its parents</li>
-<li><strong>metadata</strong> about its partitioning scheme and data placement</li>
-</ul>
-</li>
-<li>distinction between <em>narrow</em> dependencies, where each partition of the parent RDD is used by at most one partition of the child RDD (join) and <em>wide</em> dependencies, where multiple child partitions may depend on it (map)
-
-<ul>
-<li>narrow dependencies allows for pipelined execution on one node, while wide dependencies require shuffling of the partitions across the node</li>
-<li>recovery after a node failure is more efficient with a narrow dependency</li>
-</ul>
-</li>
-</ul>
-
-
-<h2>Implementation</h2>
-
-<h3>Job scheduling</h3>
-
-<ul>
-<li>Whenever a user runs an action on RDD, the scheduler examines that RDD&rsquo;s lineage to build a DAG of stages to execute, each stage consists of pipelined transformation with narrow dependencies. Boundaries of the stages are shuffling operations required for wide dependencies.</li>
-<li>Scheduler assigns tasks to machines based on data locality using <strong>delay scheduling</strong>: send task to node if a partition is available in memory on that node, otherwise, send to preferred locations</li>
-<li>Materialize intermediate records on the nodes holding parent partitions for wide dependencies</li>
-</ul>
-
-
-<h3>Memory management</h3>
-
-<ul>
-<li>three levels of persistence:
-
-<ul>
-<li>in memory storage as <strong>deserialized Java objects</strong>: fastest performance</li>
-<li>in memory storage as <strong>serialized Java objects</strong>: more memory-efficient representation at the cost of lower performance</li>
-<li>on-disk storage</li>
-<li>refer to <a href="http://sujee.net/2015/01/22/understanding-spark-caching/#.V76MRpMrJTY" title="Understanding Spark Caching">Understanding Spark Caching</a> for reference</li>
-</ul>
-</li>
-<li>For limited memory available, when a new RDD partition is computed but there&rsquo;s not enough space
-
-<ul>
-<li>evict a partition from the least recently accessed RDD, unless this is the same RDD as the one with the new partition</li>
-<li>If it&rsquo;s the same RDD, we keep the old partition in memory since it&rsquo;s likely that the partition already in memory will be needed soon</li>
-</ul>
-</li>
-</ul>
-
-
-<h3>Checkpointing</h3>
-
-<ul>
-<li>long linage with wide dependencies are costly to recover, thus checkpointing maybe worthwhile</li>
-<li>Spark provides an API for checkpointing, but leaves the decision of which data to checkpoint to the user</li>
 </ul>
 
 ]]></content>
