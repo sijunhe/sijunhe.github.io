@@ -1,0 +1,331 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Bitwise Operation in Java - Blog | Sijun He</title>
+	<meta name="author" content="Sijun He">
+
+	
+	<meta name="description" content="Bitwise Operation in Java Recently, I have been playing with LeetCode a bit in preparation for the upcoming job hunting season and I found a class &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Blog | Sijun He" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://sijunhe.github.io/blog/2016/08/16/bitwise-operation-in-java/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='https://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!--- MathJax Configuration -->
+	<script type="text/x-mathjax-config">
+  		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML">
+	</script>
+	<!-- <script type="text/javascript" async
+	  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+	</script> -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-69112205-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><img src= 'https://s3-us-west-1.amazonaws.com/sijunhe-blog/images/name_white.png' height: 150px width: 150px >
+<nav id="main-nav">
+<section class="aboutme">
+  <h3>
+    Sijun's Data Science Odyssey
+  </h3>
+</section>
+
+<ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/blog/categories">Categories</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+</ul></nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:sijun.he@hotmail.com" title="Email">Email</a>
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/sijunhe" title="GitHub">GitHub</a>
+		
+		
+		
+		
+			<a class="linkedin" href="http://www.linkedin.com/in/sijunhe48" title="LinkedIn">LinkedIn</a>
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Bitwise Operation in Java</h1>
+	<div class="entry-content" itemprop="articleBody"><p>Recently, I have been playing with <a href="https://leetcode.com/">LeetCode</a> a bit in preparation for the upcoming job hunting season and I found a class of problems related to <strong>bitwise operations</strong>. While I may never use low level bitwise operations as a data scientist, they are quite fun to work with. Plus it would be virtually impossible to solve bitwise operation problems without reading into it before hand. So here are my reading notes for bitwise operations in Java.</p>
+
+<!--more-->
+
+
+<h3>Bit Operator</h3>
+
+<ul>
+<li><h4>Bitwise AND ( &amp; )</h4>
+
+<p>The &amp; operator applies the logical AND bit by bit. If both bits are 1, it returns 1. Otherwise, return 0.</p></li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'> <span class="mo">0000</span> <span class="mi">1100</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>      <span class="o">&amp;</span>
+</span><span class='line'> <span class="mo">0000</span> <span class="mi">1010</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</span><span class='line'>      <span class="o">=</span>
+</span><span class='line'> <span class="mo">0000</span> <span class="mi">1000</span> <span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li><h4>Bitwise OR ( | )</h4>
+
+<p>The | operator applies the logical inclusive OR bit by bit. If both bits are 0, it returns 0. Otherwise, return 1.</p></li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'> <span class="mo">0000</span> <span class="mi">1100</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>      <span class="o">|</span>
+</span><span class='line'> <span class="mo">0000</span> <span class="mi">1010</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</span><span class='line'>      <span class="o">=</span>
+</span><span class='line'> <span class="mo">0000</span> <span class="mi">1110</span><span class="p">(</span><span class="mi">14</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li><h4>Bitwise XOR ( ^ )</h4>
+
+<p>The ^ operator applies the logical exclusive OR bit by bit. If returns 1 only if one of the bits is 1 and returns 0 otherwise.</p></li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'> <span class="mo">0000</span> <span class="mi">1100</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>      <span class="o">^</span>
+</span><span class='line'> <span class="mo">0000</span> <span class="mi">1010</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</span><span class='line'>      <span class="o">=</span>
+</span><span class='line'> <span class="mo">0000</span> <span class="mo">0110</span> <span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li><h4>Bitwise Complement ( ~ )</h4>
+
+<p>The ~ operator applies the logical NOT bit by bit. It &ldquo;flips&rdquo; each bit. The complement operator also follows the formula (\sim x = - x - 1 ), if the negatives are stored as <a href="https://en.wikipedia.org/wiki/Two%27s_complement">Two&rsquo;s Complement</a>.</p></li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'> <span class="o">~</span>  <span class="mo">0000</span> <span class="mi">1100</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>        <span class="o">=</span>
+</span><span class='line'>    <span class="mi">1111</span> <span class="mo">0011</span> <span class="o">=</span> <span class="mo">0000</span> <span class="mi">1100</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">13</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Bit Shift</h3>
+
+<ul>
+<li><h4>Left Shift ( &lt;&lt; )</h4>
+
+<p>The &lt;&lt; operator shifts the current bit pattern to the left and pads the empty bits on the right with 0. For each bit shifted to the left, it is equivalent to multiplying the original number by 2. To put into formula, ( x &lt;&lt; y = x * 2<sup>y</sup>)</p></li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'>  <span class="mo">0000</span> <span class="mi">1100</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>     <span class="o">&lt;&lt;</span> <span class="mi">1</span>
+</span><span class='line'>  <span class="mo">0001</span> <span class="mi">1000</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li><h4>Right Shift ( >> )</h4>
+
+<p>The >> operator shifts the current bit pattern to the right and pads the empty bits on the left with the most significant bit, which is the sign bit. This allows the operator to preserve the sign of the number. For each bit shifted to the right, it is equivalent to divide the original number by 2. To put into formula, ( x >> y = \frac{x}{2<sup>y</sup>})</p></li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'>  <span class="mo">0000</span> <span class="mi">1100</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>     <span class="o">&gt;&gt;</span> <span class="mi">1</span>
+</span><span class='line'>  <span class="mo">0000</span> <span class="mo">0110</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="mi">1111</span> <span class="mo">0100</span><span class="p">(</span><span class="o">-</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>     <span class="o">&gt;&gt;</span> <span class="mi">1</span>
+</span><span class='line'>  <span class="mi">1111</span> <span class="mi">1010</span><span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li><h4>Zero Fill Right Shift ( >>> )</h4>
+
+<p>The >>> operator behaves very similar to the >> operator. However, instead of padding with the most significant bit, it pads with 0. Hence, this operator is not sign-preserving. If the original number is positive, it is still equivalent to divide the original number by 2 for each bit shifted. But it doesn&rsquo;t work for negative numbers.</p></li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'>  <span class="mo">0000</span> <span class="mi">1100</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>     <span class="o">&gt;&gt;&gt;</span> <span class="mi">1</span>
+</span><span class='line'>  <span class="mo">0000</span> <span class="mo">0110</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="mi">1111</span> <span class="mo">0100</span><span class="p">(</span><span class="o">-</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>     <span class="o">&gt;&gt;&gt;</span> <span class="mi">1</span>
+</span><span class='line'>  <span class="mo">0111</span> <span class="mi">1010</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    Sijun He
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'sijunhe';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sijunhe.github.io/blog/2016/08/16/bitwise-operation-in-java/';
+        var disqus_url = 'http://sijunhe.github.io/blog/2016/08/16/bitwise-operation-in-java/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+</body>
+</html>

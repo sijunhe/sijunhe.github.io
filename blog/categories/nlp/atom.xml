@@ -1,0 +1,813 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: nlp | Blog | Sijun He]]></title>
+  <link href="http://sijunhe.github.io/blog/categories/nlp/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2018-11-03T16:42:42-07:00</updated>
+  <id>http://sijunhe.github.io/</id>
+  <author>
+    <name><![CDATA[Sijun He]]></name>
+    <email><![CDATA[sijun.he@hotmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Conditional Random Field]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/10/04/conditional-random-field/"/>
+    <updated>2018-10-04T23:26:45-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/10/04/conditional-random-field</id>
+    <content type="html"><![CDATA[<p>Conditional Random Field (CRF) is a <a href="https://en.wikipedia.org/wiki/Graphical_model">probabilistic graphical model</a> that excels at modeling and labeling sequence data with wide applications in NLP, Computer Vision or even biological sequence modeling. In ICML 2011, it received &ldquo;Test-of-Time&rdquo; award for best 10-year paper, as time and hindsight proved it to be a seminal machine learning model. It is a shame that I didn&rsquo;t know much about CRF till now but better late than never!</p>
+
+<p>Reading summaries of the following paper:</p>
+
+<ul>
+<li>Original paper: <a href="https://dl.acm.org/citation.cfm?id=655813">Conditional Random Fields: Probabilistic Models for Segmenting and Labeling Sequence Data</a></li>
+<li>Tutorial from original author of CRF: <a href="https://people.cs.umass.edu/~mccallum/papers/crf-tutorial.pdf">Intro to Conditional Random Fields</a></li>
+<li>Technique for confidence estimation for entities: <a href="https://dl.acm.org/citation.cfm?id=1614012">Confidence estimation for information extraction</a></li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post19/crf.png" alt="CRF" /></p>
+
+<!--more-->
+
+
+<h1>1. Hidden Markov Model (HMM)</h1>
+
+<p>Hidden Markov Model (HMM) models a sequence of observations $X = \{x_t \}_{t=1}^T$ by assuming that there is an underlying sequence of states (also called <strong>hidden</strong> states) $Y = \{y_t \}_{t=1}^T$ drawn from a finite state $S$. HMM is powerful because it models many variables that are interdependent sequentially. Some typical tasks for HMM is modeling time-series data where observations close in time are related, or modeling natural languages where words close together are interdependent.</p>
+
+<p>In order to model the joint distribution $p(Y, X)$ tractably, HMM makes two strong independence assumptions:</p>
+
+<ul>
+<li><strong>Markov property</strong>: each state $y_t$ depends only on its immediate predecessor $y_{t-1}$ and independent of all its ancestors $y_{t-2}, \cdots y_{1}$.</li>
+<li><strong>Output independence</strong>: each observation $x_t$ depends only on the current state $y_t$</li>
+</ul>
+
+
+<p>With these assumptions, wen can model the joint probability of a state sequence $Y$ and an observation sequence $X$ as</p>
+
+<p>$$p(Y, X) = \prod_{t=1}^T p(y_t|y_{t-1}) p(x_t|y_t)\tag{1}$$</p>
+
+<p>where the initial state distribution $p(y_1)$ is written as $p(y_1|y_0)$.</p>
+
+<h1>2. Generative vs Discriminative Models</h1>
+
+<p><strong>Generative models</strong> learn a model of the joint probability $p(y,x)$ of the inputs $x$ and labels $y$. HMM is an generative model. Modeling the joint distribution is often difficult since it requires modeling the distribution $p(x)$, which can include complex dependencies. A solution is to use <strong>discriminative models</strong> to directly model the conditional distribution $p(y|x)$. With this approach, dependencies among the input variables $x$ do not need to be explicitly represented, affording the use of rich, global features of the input.</p>
+
+<p>An interesting read about this topic is <a href="https://ai.stanford.edu/~ang/papers/nips01-discriminativegenerative.pdf">On Discriminative &amp; Generative Classifiers: A comparison of logistic regression and naive Bayes</a> from the famous Prof. Andrew Ng back when he was a graduate student. A generative model and a discriminative model can form a <strong>Generative-Discriminative pair</strong> if they are in the same hypothesis space. For example,</p>
+
+<ul>
+<li>if $p(x|y)$ is Gaussian and $p(y)$ is multinomial, then <a href="https://en.wikipedia.org/wiki/Linear_discriminant_analysis">Linear Discriminant Analysis</a> and Logistic Regression models the same hypothesis space</li>
+<li>if $p(x|y)$ is Gaussian and $p(y)$ is binary, then <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Gaussian_naive_Bayes">Gaussian Naive Bayes</a> has the same model form as Logistic Regression</li>
+<li>There is a discriminative analog to HMM, and it&rsquo;s the <strong>linear-chain Conditional Random Field (CRF)</strong>.</li>
+</ul>
+
+
+<h1>3. Linear-Chain Conditional Random Field</h1>
+
+<h2>From HMM to CRF</h2>
+
+<p>To motivate the comparison between HMM and CRF, we can re-write the Eq. (1) in a different form</p>
+
+<p>$$p(Y, X) = \frac{1}{Z} \prod_{t=1}^T \text{exp} \left\{ \sum_{k = 1}^K \lambda_k f_k\left( y_t, y_{t-1}, x_t\right) \right\}\tag{2}$$</p>
+
+<p>The $K$ feature function $f_k\left( y_t, y_{t-1}, x_t\right)$ are a general form that takes into account of all state transitions probabilities and state-observation probabilities. There is one feature function $f_{ij}( y, y', x) = \boldsymbol{1}_{y =i} \boldsymbol{1}_{y' =j}$ for each state transition pair $(i,j)$ and one feature function $f_{io}( y, y', x) = \boldsymbol{1}_{y=i} \boldsymbol{1}_{x=0}$ for each state-observation pair $(i,o)$. Z is a normalization constant for the probability to sum to 1.</p>
+
+<p>To turn the above into a linear-chain CRF, we need to write the conditional distribution</p>
+
+<p>$$
+\begin{align}
+p(Y|X) &amp;= \frac{p(Y, X)}{\sum_Y p(Y, X)} \\
+&amp;= \frac{\prod_{t=1}^T \text{exp} \left\{ \sum_{k = 1}^K \lambda_k f_k\left( y_t, y_{t-1}, x_t\right) \right\} }{\sum_{y'} \prod_{t=1}^T \text{exp} \left\{ \sum_{k = 1}^K \lambda_k f_k\left( y'_t, y'_{t-1}, x_t\right) \right\}} \\
+&amp;= \frac{1}{Z(X)} \prod_{t=1}^T \text{exp} \left\{ \sum_{k = 1}^K \lambda_k f_k\left( y_t, y_{t-1}, x_t\right) \right\}
+\end{align} \tag{3}
+$$</p>
+
+<h2>Parameter Estimation</h2>
+
+<p>Just like most other machine learning models, the parameter is estimated via Maximum Likelihood Estimation (MLE). The objective is to find the parameter that maximize the <strong>conditional log likelihood</strong> $l(\theta)$</p>
+
+<p>$$
+\begin{align}
+l(\theta) &amp;= \sum_{i=1}^N \ \text{log} p(y^{(i)} | x^{(i)}) \\
+&amp;= \sum_{i=1}^N \sum_{t=1}^T \sum_{k=1}^K \lambda_k f_k\left( y_t^{(i)}, y_{t-1}^{(i)}, x_t^{(i)}\right) - \sum_{i=1}^N  \text{log} Z(x^{(i)})
+\end{align} \tag{4}
+$$</p>
+
+<p>The objective function $(\theta)$ cannot be maximized in closed form, so numerical optimization is needed. The partial derivative of Eq. (4) is</p>
+
+<p>$$\frac{\partial l(\theta)}{\partial \lambda_k} = \sum_{i=1}^N \sum_{t=1}^T f_k\left( y_t^{(i)}, y_{t-1}^{(i)}, x_t^{(i)}\right) - \sum_{i=1}^N \sum_{t=1}^T \sum_{y'_{t-1}, y'_{t}} f_k\left( y'_{t}, y'_{t-1}, x_t^{(i)}\right) p(y'_{t}, y'_{t-1}| x_t^{(i)}) \tag{5}$$</p>
+
+<p>which has the form of (observed counts of $f_k$) - (expected counts of $f_k$). To compute the gradient, inference is required to compute all the marginal edge distributions $p(y'_{t}, y'_{t-1}| x_t^{(i)})$. Since the quantities depend on $x^{(i)}$, we need to run inference once for each training instance every time the likelihood is computed.</p>
+
+<h2>Inference</h2>
+
+<p>Before we go over the typical inference tasks for CRF, let&rsquo;s define a shorthand for the weight on the transition from state $i$ to state $j$ when the current observation is $x$.</p>
+
+<p>$$
+\begin{align}
+\Psi_t(j,i,x) &amp;= p(y_{t} = j | y_{t-1} = i) \cdot p(x_{t} = x |y_{t} = j) \\
+&amp;= \left[ \delta_{t}(i) \ \text{exp} \left( \sum_{k = 1}^K \lambda_k f_k\left( j, i, x_{t+1}\right) \right) \right]
+\end{align} \tag{6}
+$$</p>
+
+<h4>Most probable state sequences</h4>
+
+<p>The most needed inference task for CRF is to find the most likely series of states $Y^{*} = \text{argmax}_{Y} \ p(Y|X)$, given the observations. This can be computed by the <a href="https://en.wikipedia.org/wiki/Viterbi_algorithm">Viterbi recursion</a>. The Viterbi algorithm stores the probability of the most likely path at time $t$ that accounts for the first $t$ observations and ends in state $j$.</p>
+
+<p>$$\delta_{t}(j) = \text{max}_{i \in S} \ \delta_{t-1}(i) \cdot \Psi_t(j,i,x) \tag{7}$$</p>
+
+<p>The recursive formula terminates in $p^{*} = \text{argmax}_{i \in S} \ \delta_{T}(i)$. We can backtrack through the dynamic programming table to find the mostly probably state sequences.</p>
+
+<h4>Probability of an observed sequence</h4>
+
+<p>We can use Eq. (3) to compute the likelihood of an observed sequence $p(Y|X)$. While the numerator is easy to compute, the denominator $Z(X)$ is very difficult to compute since it contains an exponential number of terms. Luckily, there is another dynamic programming algorithms called <a href="https://en.wikipedia.org/wiki/Forward%E2%80%93backward_algorithm">forward-backward</a> to compute it efficiently.</p>
+
+<p>The idea behind forward-backward is to compute and store two sets of variables, each of which is a vector with size as the number of states. The forward variables $\alpha_t(j) = p(x_1, \cdots, x_t, y_t = j)$ stores the probability of all the paths through the first $t$ observations and ends in state $j$. The backward variables $\beta_t(i) = p(x_t, \cdots, x_T, y_t = i)$ is the exact reverse and stores the probability of all the paths through the last $T-t$ observations with the <em>t</em>-th state as $i$</p>
+
+<p>$$\alpha_t(j) = \sum_{i \in S} \Psi_{t}(j, i, x_t) \alpha_{t-1}(i)\tag{8}$$
+$$\beta_t(i) = \sum_{j \in S} \Psi_{t+1}(j, i, x_t) \beta_{t+1}(j)\tag{9}$$</p>
+
+<p>The initialization for the forward-backward is $\alpha_1{j} = \Psi_{t}(j, y_0, x_1)$ and $\beta_T(i) = 1$. After the dynamic programming table is filled, we can compute $Z(X)$ as</p>
+
+<p>$$Z(x) = \sum_{i \in S} \alpha_T(i)\tag{10}$$</p>
+
+<p>Forward-backward algorithm is also used to compute all the marginal edge distributions $p(y_{t}, y_{t-1}| x_t)$ in Eq. (5) that is needed for computing the gradient.</p>
+
+<p>$$p(y_{t}, y_{t-1}| x_t) = \alpha_{t-1}(y_{t-1}) \Psi_t(y_{t},y_{t-1},x_t) \beta_t(y_t)$$</p>
+
+<h4>Confidence in predicted labeling over a specific segment</h4>
+
+<p>Sometimes in task like Named Entity Recognition (NER), we are interested in the model&rsquo;s confidence in its predicted labeling over a segment of input to estimate the probability that a field is extracted correctly. This marginal probability $p(y_t, y_{t+1}, \cdots, y_{t+k}|X)$ can be computed using constrained forward-backward algorithm, introduced by <a href="https://dl.acm.org/citation.cfm?id=1614012">Culotta and McCallum</a>.</p>
+
+<p>The algorithm is an extension to the forward-backward we described above, but with added constraints such that each path must conforms to some sub-path of constraints $C = \{ y_t, y_{t+1}, \cdots\}$. $y_t$ can either be a <em>positive</em> constraint (sequence must pass through $y_t$) or a <em>negative</em> constraint (sequence must not pass through $y_t$). In the context of NER, the constraints $C$ corresponds to an extracted field. The positive constraints specify the tokens labeled inside the field, and the negative field specify the field boundary.</p>
+
+<p>The constraints is a simple trick to shut off the probability of all paths that don&rsquo;t conform to the constraints. The calculation of the forward variables in Eq. (8) can be modified slightly to factor in the constraints</p>
+
+<p>$$\alpha'_t(j) =
+\begin{cases}
+\sum_{i \in S} \Psi_{t}(j, i, x_t) \alpha_{t-1}(i),  &amp; \text{if} \ j \ \text{conforms to} \ y_{t} \\
+0, &amp; \text{otherwise}
+\end{cases}$$</p>
+
+<p>For time steps not constrained by $C$, Eq. (8) is used instead. Similar to Eq. (10), we calculate the probability of the set of all paths that conform to $C$ as $Z'(X) = \sum_{i \in S} \alpha'_T(i)$. The marginal probability can be computed by replacing $Z(X)$ with $Z'(X)$ in Eq. (3).</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Word Embeddings]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/09/12/word-embeddings/"/>
+    <updated>2018-09-12T22:23:31-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/09/12/word-embeddings</id>
+    <content type="html"><![CDATA[<p>Reading summaries about widely-used embeddings:</p>
+
+<ul>
+<li><strong>word2vec</strong>: <a href="https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf">Distributed Representations of Words and Phrases and their Compositionality</a></li>
+<li><strong>word2vec</strong>: <a href="https://arxiv.org/pdf/1301.3781.pdf">Efficient Estimation of Word Representations in Vector Space</a></li>
+<li><strong>GloVe</strong>: <a href="https://nlp.stanford.edu/pubs/glove.pdf">Global Vectors for Word Representation</a></li>
+<li><strong>fastText</strong>: <a href="https://arxiv.org/pdf/1607.04606.pdf">Enriching Word Vectors with Subword Information</a></li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post18/embedding_illustration.png" alt="illustration" /></p>
+
+<!--more-->
+
+
+<h2>1. Why Embedding?</h2>
+
+<p>Many classic NLP systems and techniques (i.e. popular N-gram model) treat words as atomic units. There is no notion of similarity between words, as they are represented as indices in a vocabulary. This approach works when trained on huge amounts of data, but are limited in many tasks when data is limited (i.e. speech recognition data, parallel corpus for machine translation). Learning representation of words establishes similarity between words and allows data to be used much more efficiently.</p>
+
+<h2>2. word2vec</h2>
+
+<p>The high-level assumption of word2vec is that words close to each other have more similar meaning than words far apart. Under this assumption, two model architectures were proposed by the researchers at Google.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post18/cbow_skip_gram.png" alt="cbow_skipgram" /></p>
+
+<h3>2.1 Skip-gram Model</h3>
+
+<p>The objective of the Skip-gram model is to find word representations that are useful for predicting the surrounding words in a sentence or a document. The objective of the model is to maximize the average log probability</p>
+
+<p>$$\frac{1}{T} \sum_{t=1}^{T} \sum_{-c \leq j \leq c, j \neq 0} \text{log} \ p(w_{t+j}|w_{t})\tag{1}$$</p>
+
+<p>The probability $p(w_{t+j}|w_{t})$ is defined using the softmax function:</p>
+
+<p>$$p(w_{O}|w_{I}) = \frac{\text{exp} ( u_{w_{O}}^T v_{w_{I}})}{\sum_{w=1}^W \text{exp} ( u_{w}^T v_{w_{I}})}\tag{2}$$</p>
+
+<p>where $v$ and $u$ are input and output representation of the word. This is impractical since computing the gradient w.r.t the entire vocabulary is $\mathcal{O}(W)$, the size of the vocabulary.</p>
+
+<h4>Hierarchical Softmax</h4>
+
+<p>A computationally efficient approximation of the full softmax is hierarchical softmax, which uses a binary tree representation of the output layer with $W$ words as its leaves. With the words as leaf nodes, then we only need to follow the path to the leaf node of that word, without having to consider any of the other nodes. $p(w|w_I)$ simply the product of the probabilities of taking right and left turns respectively that lead to its leaf node. This is much faster since computing the gradient is $\mathcal{O}( \text{log} \ W)$.</p>
+
+<h4>Negative Sampling</h4>
+
+<p>We can also subsample the entire vocabulary to compute the softmax. The idea of Noise Contrastive Estimation (NCE) is to train binary logistic regressions for a true pair (center word and word in its context window) vs a couple of noise pairs (the center word paired with a random word). The objective with NCE is</p>
+
+<p>$$\text{log} \ \sigma( u_{w_{O}}^T v_{w_{I}}) + \sum_{j \sim P(w)} \text{log} \ \sigma( - u_{w_{j}}^T v_{w_{I}})\tag{3}$$</p>
+
+<p>The intuition of the above loss is to maximize the probability that real context word appears through the first term and minimize probability that random words appear around center word through the second term.</p>
+
+<p>The noise distribution $P(w) = U(w)^{&frac34;}/Z$, where $U(w)$ is the unigram distribution.</p>
+
+<h4>Subsampling Frequent Words</h4>
+
+<p>To counter the imbalance between the rare and frequent words, each word $w_i$ in the training set is discarded with probability of $P(w_i) = 1 - \sqrt{\frac{t}{f(w_i)}}$, where $f(w_i)$ is the frequency of the word and $t$ is a chosen threshold with typical value of $10^{-5}$. For words whose frequency is greater than t, it is subsampled aggressively.</p>
+
+<h3>2.2 Continuous Bag-of-Words (CBOW)</h3>
+
+<p>CBOW is a similar idea to Skip-gram, but instead of predicting the context words based on current word, it predicts the current word based on the context. The model is named bag-of-words since the order of words in the context does not influence the model, where an average of the context word vectors are used to predict the current word. Same as Skip-gram, we seek to maximize the average log probability</p>
+
+<p>$$\frac{1}{T} \sum_{t=1}^{T} \text{log} \ p(w_{t}|\bar{w_{t}})\tag{4}$$
+where the input vector is the average of all context word vectors $\bar{w_{t}} = \frac{1}{2c}\sum_{-c \leq j \leq c, j \neq 0} w_{t+j}$. Different from the Skip-gram model, the weight matrix of input and output word vectors is shared. The authors found that CBOW</p>
+
+<ul>
+<li>Slightly outperforms on the <strong>Syntactic Accuracy tests</strong> (&ldquo;apparent&rdquo; -> &ldquo;apparently&rdquo; = &ldquo;rapid&rdquo; -> &ldquo;rapidly&rdquo;)</li>
+<li>Underperforms significantly on <strong>Semantic Accuracy tests</strong> (&ldquo;Athens&rdquo; -> &ldquo;Greece&rdquo; = &ldquo;Oslo&rdquo; -> &ldquo;Norway&rdquo;)</li>
+</ul>
+
+
+<h2>3. GloVe</h2>
+
+<p>About a year after word2vec was published, Pennington et al. from Stanford came up with a new global model that combines the advantages of global matrix factorization methods (i.e. LSA) and local context window methods (i.e. word2vec).</p>
+
+<h4>Matrix Factorization vs Local Context Windows</h4>
+
+<p>Matrix factorization methods for generating low-dimensional word representations utilize low-rank approximations to decompose large matrices that capture statistical information about a corpus. In LSA, the matrix is term-document matrix filled with counts of words in each documents. In Hyperspace Analogue to Language (HAL), the matrix is a term-term matrix filled with counts of words co-occurring in the same context.</p>
+
+<p>The main problem with Matrix Factorization Methods is that the most frequent words contribute a disproportionate amount to the similarity measurement, despite conveying relatively little semantic relatedness. The local context window models, on the other hand, suffer from the disadvantage that they do not operate directly on the co-occurrence statistics of the corpus.</p>
+
+<h4>Deriving the GloVe Model</h4>
+
+<p>Let $X$ be the word-word co-occurrence count matrix, where $X_{ij}$ denote the number of times word $j$ occurs in the context of word $i$. $X_i = \sum{k} X_{ik}$ is the number of times any word appears in the context of word $i$. Let $P_{ij} = P(j|i) = X_{ij} / X_i$ be the probability that word $j$ appear in the context of word $i$.</p>
+
+<p>GloVe originates from the idea that meaning can be extracted directly from co-occurrence probabilities. Consider two words <em>i = ice</em> and <em>j = steam</em>; we see that $P_{ik}/P_{jk}$ is large when $k$ is related to $i$, but not $j$ and vice versa. When $k$ is either related to both or unrelated to both, $P_{ik}/P_{jk}$ is close to 1.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post18/ice_steam.png" alt="ice_steam" /></p>
+
+<p>The above argument suggest that the word vector should be learned with ratios of co-occurrence probabilities. The most general model can be in the form of</p>
+
+<p>$$F\left( w_i, w_j, \tilde{w}_k \right) = \frac{P_{ik}}{P_{jk}}\tag{5}$$</p>
+
+<p>We can restrict $F$ in the following way</p>
+
+<ul>
+<li>$F$ should be only dependent on the difference of the two target words $w_i - w_j$</li>
+<li>To keep the linear nature of the vector space, restrict $F$ to take the dot product of the arguments $(w_i - w_j)^T \tilde{w}_k$</li>
+<li>By requiring the role of target words and context words can be exchanged, we have $F\left((w_i - w_j)^T \tilde{w}_k \right) = F(w_{i}^T\tilde{w}_{k}) / F(w_{j}^T\tilde{w}_{k})$</li>
+</ul>
+
+
+<p>This gives us the solution of $F = \text{exp}$ and $w_{i}^T\tilde{w}_{k} = \text{log} (P_{ik}) = \text{log} (X_{ik}) - \text{log} (X_{i})$. To restore the symmetry between target word and context words, we can set $b_i=\text{log} (X_{i})$ and add an bias term $\tilde{b}_k$,</p>
+
+<p>$$w_{i}^T\tilde{w}_{k} + b_i + \tilde{b}_k = \text{log} (X_{ik})\tag{6}$$</p>
+
+<p>A main drawback of this model is that it weighs all co-occurrence equally. To fix this problem, we add weights to the model. The weighted least squares regression model has the following cost function:</p>
+
+<p>$$J = \sum_{i,j=1}^{V} f(X_{ij}) \left( w_{i}^T\tilde{w}_{k} + b_i + \tilde{b}_j - \text{log} (X_{ij}) \right)^2 \tag{7}$$</p>
+
+<p>where $f(x)$ is defined very similar to $P(w)$ from word2vec.</p>
+
+<p>$$f(x) =
+\begin{cases}
+(x/x_{max})^{&frac34;},  &amp; x &lt; x_{max} \\
+1, &amp; \text{otherwise}
+\end{cases}$$</p>
+
+<h4>Context Window</h4>
+
+<p>GloVe shares the same assumption that very distant word pairs are expected to contain less relevant information about the words’ relationship to one another. Skip-gram defined &ldquo;context&rdquo; as a moving window. GloVe specifies that word pairs that are $d$ words apart contribute $1/d$ to the total count. Hence Global vectors to account for context.</p>
+
+<h4>Relationship to Skip-gram</h4>
+
+<p>Let $Q_{ij}$ be the softmax and $X_{ij}$ be the context co-occurrence, the objective of the skip-gram function is</p>
+
+<p>$$J = - \sum_{i}\sum_{j \in context(i)} \text{log} (Q_{ij}) = - \sum_{i}\sum_{j} X_{ij} \ \text{log} (Q_{ij})$$</p>
+
+<p>With the notation of $X_i = \sum{k} X_{ik}$ and $P_{ij} = P(j|i) = X_{ij} / X_i$, the cost function can be re-written as</p>
+
+<p>$$
+\begin{align}
+J &amp;= - \sum_{i}\sum_{j} X_{i}P_{ij} \ \text{log} (Q_{ij}) \\
+&amp;= - \sum_{i} X_{i} \sum_{j}P_{ij} \ \text{log} (Q_{ij}) \\
+&amp;= \sum_{i} X_{i} H(P_{i}, Q_{i})
+\end{align}
+$$</p>
+
+<p>where $H(P_{i}, Q_{i})$ is the cross entropy between the distribution $P_{i}$ and $Q_{i}$. The loss is a weighted sum of the cross entropy error and it&rsquo;s very similar to the weighted least squares objective of GloVe.</p>
+
+<h2>4. fastText</h2>
+
+<p>There is a limitation in skip-gram and GloVe that word representations ignore the morphology of words and assign a distinct vector to each word. Bojanowski et al. from Facebook Research proposed a new extension to skip-gram to learn representations for character <em>n</em>-grams and to represent words as the sum of the <em>n</em>-gram vectors.</p>
+
+<p>Each word is represented as a bag of character <em>n</em>-grams. A special boundary symbols <em>&lt;></em> are added at the start and end of a word. The word <em>w</em>itself is also in the set of its <em>n</em>-grams to learn a representation for each word. For example, for the word <em>where</em> and $n=3$, we have the character <em>n</em>-grams <em>&lt;wh, whe, her, ere, re>, where</em>. In practice, all <em>n</em>-grams for $3 \leq n \leq 6$ are used.</p>
+
+<p>Given a word <em>w</em> and a set of <em>n</em>-grams $\mathcal{G}_w$ of size $G$, a vector representation $z_g$ is assigned to each <em>n</em>-grams $g$. In skip-gram, the scoring function between a context word and a center word is defined as $s(w, c) = u_g^Tv_c$. Since a word is reprenseted as the sum of the vector representations of its <em>n</em>-grams,  we have $s(w, c) = \sum_{g \in \mathcal{G}_w} z_g^Tv_c$. With this change, Eq. 2 becomes</p>
+
+<p>$$p(w_{O}|w_{I}) = \frac{\text{exp} ( \sum_{g \in \mathcal{G}_{w_{O}}} z_g^Tv_{w_{I}} )}{\sum_{w=1}^W \text{exp} ( \sum_{g \in \mathcal{G}_w} z_g^T v_{w_{I}})}\tag{8}$$</p>
+
+<p>This simple model allows sharing the representations across words, thus allowing to learn reliable representation for rare words. Also, the model can infer word vectors for words that do not appear in the training set (Out-of-Vocabulary) simply by averaging the vector representation of its n-grams. In fact, Bojanowski et al found that imputing vectors for unseen words is always at least as good as not doing so, and in some cases give a large performance boost.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Predicting Classified Ads Demand]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/09/04/kaggle-predict-demand-for-classified-ads/"/>
+    <updated>2018-09-04T10:32:18-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/09/04/kaggle-predict-demand-for-classified-ads</id>
+    <content type="html"><![CDATA[<p>After three competitions, I felt I was ready to push for my first Gold Medal. Along with my four teammates, we took on the challenge of predicting demand for classified ads. We fought tooth and nail till the last moment and were in the Gold zone on the public leaderboard. While we ended up losing the Gold Metal narrowly by 1 spot, it was overall a great learning experience. I look forward to making progress toward a real gold medal in the future.</p>
+
+<p><strong>TL;DR A failed attempt to push for my first Gold Metal on Kaggle. My team ranked top 1% but missed the Gold Metal narrowly by 1 spot!</strong></p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/avito_rank.png" alt="avito" /></p>
+
+<!--more-->
+
+
+<h2>1. The Competition</h2>
+
+<p>The <a href="https://www.kaggle.com/c/avito-demand-prediction">Avito Demand Prediction Challenge</a> is sponsored by <a href="https://www.avito.ru/rossiya">Avito</a>, Russia’s largest classified advertisements website. The task is to predict demand for an online advertisement based on its full description (title, description, images, etc.), its context (geographically where it was posted, similar ads already posted) and historical demand for similar ads in similar contexts.</p>
+
+<h2>2. Our Solution</h2>
+
+<p>My teammates and I have put together a <a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/60059#350998">write-up</a> on the Kaggle discussion forum.</p>
+
+<p>An interesting characteristics of this competition is the Cross-Validation (CV) performance is very consistent with Leaderboard (LB) Performance. Therefore, all top teams ended up doing crazy stacking &ldquo;towers&rdquo; (from 3-level to even 6-level towers!). All of my time in the later stage of the competition is spent on the stacking tower below.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post17/stacking_tower.png" alt="stacking" /></p>
+
+<h2>3. Learning From Top Solutions</h2>
+
+<h3><a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59880">1st place solution</a></h3>
+
+<p>Below is the architecture of Neural Network from the 1st place winner. The architecture is quite similar to <a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59917">what we end up using</a>.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post17/1st_solution.jpg" alt="1st-place" /></p>
+
+<p><strong>What separates them from the rest of the crowd is that they found a &ldquo;magic&rdquo; feature from the unlabeled part of the dataset</strong> (something I have been trying so hard throughout the competition but couldn&rsquo;t accomplish).</p>
+
+<blockquote><p>I’ve designed 3 nn models trained on active data to predict log1p(price), renewed and log1p(total_duration). These models had 2 rnn branches for title and description and also used category embeddings. The difference between actual log1p(price) and predicted one was an extremely important feature.                                   &ndash; <a href="https://www.kaggle.com/gdanschin">Georgiy Danshchin</a></p></blockquote>
+
+<p>A well-deserved win!</p>
+
+<h3><a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59871">2nd place solution</a></h3>
+
+<p>Their best single model was a Neural Network at 0.2163 on public leaderboard (a big better than ours was at 0.2181). Some characteristics as follows:</p>
+
+<ul>
+<li>target encoded features for categorical features and their second and third order interactions</li>
+<li>cyclic LR, Nadam optimizer</li>
+<li>plenty of BNs, big dropouts</li>
+</ul>
+
+
+<p>A whopping 6-level stack! And 10-fold Cross-Validation! They must have a lot of compute resource.</p>
+
+<h3><a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59885">3rd place solution</a></h3>
+
+<p>The 3rd place winner is lead by the famous <a href="https://www.kaggle.com/kazanova">KazAnova</a>. They have a very interesting time-series ensemble in addition to normal ensembles:</p>
+
+<blockquote><p>The second ensemble used a time-series schema. The test data begins a number of days past the final day included in the training data. We tried to replicate this in our internal validation. To do so, we trained on the first six days of training and used days ten through thirteen as validation. This meant days six through nine were excluded, mimicking the gap between train and test.Then, to generate predictions for the test data, we trained on the entire training set.</p>
+
+<p>In order to generate likelihoods of categorical features for this approach, we always applied a gap of 4 days. For example to estimate likelihoods for day four of the training data, we use the average of target for day zero. To estimate likelihoods for day five, we used likelihoods of (day0+day1)/2. We decided on a gap of four days for stability, as it gave similar CV and LB performance.</p></blockquote>
+
+<p>I remember trying something like this for the <a href="https://www.kaggle.com/c/talkingdata-adtracking-fraud-detection">TalkingData AdTracking Fraud Detection Challenge</a> but it wasn&rsquo;t particularly strong. I am happy that somebody can pull this off.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[On Normalization Layers]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/06/11/on-normalization-layers/"/>
+    <updated>2018-06-11T14:34:57-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/06/11/on-normalization-layers</id>
+    <content type="html"><![CDATA[<p>Reading notes / survey of three papers related to Batch Normalization</p>
+
+<ul>
+<li><a href="https://arxiv.org/pdf/1502.03167.pdf">Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</a>, the paper that introduced Batch Normalization, one of the breakthroughs in Deep Learning</li>
+<li><a href="https://arxiv.org/pdf/1607.06450.pdf">Layer Normalization</a> that extended Batch Normalization to RNNs</li>
+<li><a href="https://arxiv.org/pdf/1805.11604.pdf">How Does Batch Normalization Help Optimization?(No, It Is Not About Internal Covariate Shift)</a>, a paper (barely one week old at the time of writing) that dived into the fundamental factors for Batch Normalization&rsquo;s success empirically and theoretically</li>
+</ul>
+
+
+<!--more-->
+
+
+<h2>1. Why Normalization?</h2>
+
+<h4>Covariate Shift</h4>
+
+<p>Covariate Shift refers to the change in the distribution of the input variables $X$ between a source domain $\mathcal{s}$ and a target domain $\mathcal{t}$. We assume $P_{\mathcal{s}}(Y|X) = P_{\mathcal{t}}(Y|X)$ but a different marginal distribution $P_{\mathcal{s}}(X) \neq P_{\mathcal{t}}(X)$.</p>
+
+<p>We are interested in modeling $P(Y|X)$. However, we can only observe $P_{\mathcal{s}}(Y|X)$. The optimal model for source domain $\mathcal{s}$ will be different from the optimal model for target domain $\mathcal{t}$. The intuition, as shown in the diagram below, is that the optimal model for $P_{\mathcal{s}}(X)$ will put more weights and perform better in dense area of $P_{\mathcal{s}}(X)$, which is different from the dense area of $P_{\mathcal{t}}(X)$.
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/covariate_shift.png" height="400" width="400" alt="covariate_shift" />
+<em>Covariate Shift Diagram <a href="http://iwann.ugr.es/2011/pdfInvitedTalk-FHerrera-IWANN11.pdf">Source</a></em></p>
+
+<h4>Internal Covariate Shift (ICS)</h4>
+
+<p>In Neural Networks (NN), we face a similar situation like Covariate Shift. A layer $l$ in a vanilla feedforward NN can be defined as</p>
+
+<p>$$X^{l} = f\left(X^{l-1}W^{l} + b^l \right) \ \ \ $$</p>
+
+<p>where $X^{l-1}$ is $m \times n_{in}$  and $W^{l}$ is $n_{in} \times n_{out}$. $m$ is the number of samples in the batch. $n_{in}$ and $n_{out}$ are the input and output feature dimension of the layer.</p>
+
+<p>The weights $W^{l}$ is learned to approximate $P_{\mathcal{s}}(X^{l}|X^{l-1})$. However, the input from last layer $X^{l-1}$ is constantly changing so $W^{l}$ needs to continuously adapt to the new distribution of $X^{l-1}$. <a href="https://arxiv.org/pdf/1502.03167.pdf">Ioffe et al.</a> defined such change in the distributions of internal nodes of a deep network during training as <strong>Internal Covariate Shift</strong>.</p>
+
+<h2>2. Batch Normalization (BN)</h2>
+
+<p>An obvious procedure to reduce ICS is to fix the input distribution to each layer. And that is exactly what Ioffe et al. proposed. Batch Normalization (BN) is a layer that normalizes each input feature to have mean of 0 and variance of 1. For a BN layer with $d$-dimensional input $X = (x^{1}, \cdots, x^{d})$, each feature is normalized as</p>
+
+<p>$$\hat{x}^{(k)} = \frac{x^{(k)} - \mu_{x^{(k)}}}{\sigma_{x^{(k)}}}$$</p>
+
+<h4>Mini Batch Statistics</h4>
+
+<p>Computing the mean and standard deviation of each feature requires iterating through the whole dataset, which is impractical. Thus, $\mu_{x^{(k)}}$ and $\sigma_{x^{(k)}}$ are estimated using the empirical samples from the current batch.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/bn.png" height="10" width="300" alt="bn" /></p>
+
+<h4>Scale and Shift Parameters</h4>
+
+<p>To compensate for the loss of expressiveness due to normalization, a pair of parameters $\gamma^{(k)}$ and $\beta^{(k)}$ are trained to scale and shift the normalized value.</p>
+
+<p>$$y^{(k)} = \gamma^{(k)} x^{(k)} + \beta^{(k)}$$</p>
+
+<p>The scale and shift parameters restore the representation power of the network. By setting $\beta^{(k)} = \mu_{x^{(k)}}$ and $\gamma^{(k)} = \sigma_{x^{(k)}}$, the original activations could be recovered, if that were the optimal thing to do.</p>
+
+<h4>Batch Normalization in Feed-forward NN</h4>
+
+<p>Consider the <em>l</em>-th hidden layer in a feed-forward NN. The summed inputs are computed through a linear projection with the weight matrix $W^l$ and the bottom-up inputs $X^l$. The summed inputs are passed through a BN layer and then an activation layer (<em>whether to apply BN before or after the activation layer is a topic of debate</em>), as following:</p>
+
+<p>$Z^{l}$ is a</p>
+
+<p>$$Z^{l} = X^{l-1}W^{l} + b^l \ \ \ \ \
+\hat{Z}^{l} = \textbf{BN}_{\gamma, \beta}(Z^{l}) \ \ \ \ \
+X^{l} = f(\hat{Z}^{l})$$</p>
+
+<p>$Z^{l}$ is a $m \times n_{out}$ matrix, whose element $z_{ij}$ is the summed input to the <em>j</em>-th neuron from the <em>i</em>-th sample in the mini-batch.</p>
+
+<p>$$ Z^{l} =
+\begin{bmatrix}
+z_{11} &amp; \cdots &amp; z_{1n_{out}} \\
+\vdots &amp; \ddots &amp; \vdots \\
+z_{m1} &amp; \cdots &amp; z_{mn_{out}}
+\end{bmatrix} =
+\begin{bmatrix}
+| &amp; | &amp; \cdots &amp;| \\
+\textbf{z}_{1} &amp; \textbf{z}_{2} &amp; \cdots &amp; \textbf{z}_{n_{out}} \\
+| &amp; | &amp; \cdots&amp; | \\
+\end{bmatrix}
+$$</p>
+
+<p>$$\textbf{BN}_{\gamma, \beta}(Z^{l}) =
+\begin{bmatrix}
+| &amp; | &amp; \cdots &amp;| \\
+\gamma_1 \hat{\textbf{z}}_{1} + \beta_1 &amp; \gamma_2 \hat{\textbf{z}}_{2} + \beta_2 &amp; \cdots &amp; \gamma_{n_{out}} \hat{\textbf{z}}_{n_{out}} + \beta_{n_{out}} \\
+| &amp; | &amp; \cdots&amp; | \\
+\end{bmatrix}
+$$</p>
+
+<p>Column <em>j</em> of $Z^{l}$ is the summed inputs to the <em>j</em>-th neuron from each <em>m</em> samples in the mini-batch. The BN layer is a <strong>whitening / column-wise normalization</strong> procedure to normalize $\left[ \textbf{z}_{1}, \textbf{z}_{2}, \cdots, \textbf{z}_{n_{out}}\right]$ to $\mathcal{N}(0,1)$. Each neuron/column has a pair of scale $\gamma$ and shift parameters $\beta$.</p>
+
+<h2>3. Layer Normalization (LN)</h2>
+
+<p>BN has had a lot of success in Deep Learning, especially in Computer Vision due to its effect on CNNs. However, it also has a few shortcomings:</p>
+
+<ul>
+<li>BN replies on mini-batch statistics and is thus dependent on the mini-batch size. BN cannot be applied to to online learning tasks (batch size of 1) or tasks that require a small batch size.</li>
+<li>There is no elegant way to apply BN to RNNs. Applying BN to RNNs requires computing and storing batch statistics for each time step in a sequence.</li>
+</ul>
+
+
+<p>To tackle the above issues, <a href="https://arxiv.org/pdf/1607.06450.pdf">Ba et al.</a> proposed Layer Normalization(LN), a transpose of BN that computes the mean and variance used for normalization from all of the summed inputs to the neurons in a layer on a <strong>single</strong> training sample.</p>
+
+<p>Using the same notation as above, we have $Z^{l}$ is a $m \times n_{out}$ matrix, whose element $z_{ij}$ is the summed input to the <em>j</em>-th neuron from the <em>i</em>-th sample in the mini-batch. Row <em>i</em> of $Z^{l}$ is the summed inputs to the all neuron in the <em>l</em>-th layer from the <em>i</em>-th sample in the mini-batch. As a direct transpose of BN, the LN layer is a <strong>row-wise normalization</strong> procedure to normalize $\left[ \textbf{z}_{1}, \textbf{z}_{2}, \cdots, \textbf{z}_{m}\right]$ to have mean zero and standard deviation of one. Same as BN, each neuron is given its own adaptive bias and scale parameters.</p>
+
+<p>$$ Z^{l} =
+\begin{bmatrix}
+z_{11} &amp; \cdots &amp; z_{1n_{out}} \\
+\vdots &amp; \ddots &amp; \vdots \\
+z_{m1} &amp; \cdots &amp; z_{mn_{out}}
+\end{bmatrix} =
+\begin{bmatrix}
+- &amp; \textbf{z}_{1} &amp; - \\
+- &amp; \textbf{z}_{2} &amp; - \\
+\cdots &amp; \cdots &amp; \cdots \\
+- &amp; \textbf{z}_{m} &amp; - \\
+\end{bmatrix}
+$$</p>
+
+<p>$$\textbf{BN}_{\gamma, \beta}(Z^{l}) =
+\begin{bmatrix}
+- &amp; \hat{\textbf{z}}_{1} &amp; - \\
+- &amp; \hat{\textbf{z}}_{2} &amp; - \\
+\cdots &amp; \cdots &amp; \cdots \\
+- &amp; \hat{\textbf{z}}_{m} &amp; - \\
+\end{bmatrix}
+\circ
+\begin{bmatrix}
+| &amp; | &amp; \cdots &amp;| \\
+\gamma_1 &amp; \gamma_2 &amp; \cdots &amp; \gamma_{n_{out}} \\
+| &amp; | &amp; \cdots&amp; | \\
+\end{bmatrix}
++
+\begin{bmatrix}
+| &amp; | &amp; \cdots &amp;| \\
+\beta_1 &amp; \beta_2 &amp; \cdots &amp; \beta_{n_{out}} \\
+| &amp; | &amp; \cdots&amp; | \\
+\end{bmatrix}
+$$</p>
+
+<h4>Layer Normalization on RNN</h4>
+
+<p>In RNN, the summed input are computed from the current input $\textbf{x}^t$ and previous hidden state $\textbf{h}^{t-1}$ as
+$$\textbf{a}^{(t)} = W_{hh}\textbf{h}^{(t-1)} + W_{xh}\textbf{x}^{(t)}$$.</p>
+
+<p>LN computes the layer-wise mean and standard deviation, then then re-centers and re-scales the activations
+$$\boldsymbol{\mu}^{(t)} =\frac{1}{H} \sum_{i=1}^H \textbf{a}^{(t)} \ \ \ \ \
+\boldsymbol{\sigma}^{(t)} = \sqrt{\frac{1}{H} \sum_{i=1}^H (\textbf{a}^{(t)} - \boldsymbol{\mu}^{(t)})^2 } \ \ \ \ \
+\textbf{h}^{(t)} = f \left( \frac{\boldsymbol{\gamma}}{\boldsymbol{\sigma}^{(t)}} \circ \left( \textbf{a}^{(t)} - \boldsymbol{\mu}^{(t)}\right) + \boldsymbol{\beta} \right)
+$$</p>
+
+<p>LN provides the following benefits when applied to RNN:</p>
+
+<ul>
+<li>No need to compute and store separate running averages for each time step in a sequence because the normalization terms depend on only the current time-step.</li>
+<li>With LN, the normalization makes it invariant to re-scaling all of the summed inputs to a layer, which helps preventing exploding or vanishing gradients and results in much more stable hidden-to-hidden dynamics.</li>
+</ul>
+
+
+<h4>Invariance Properties of Normalizations</h4>
+
+<p>The below table shows the invariant properties of three different normalization procedures. <strong>These invariance properties make the training of the network more robust</strong>. Invariance to the scaling and shifting of weights means that proper weight initialization is not as important. Invariance to the scaling and shifting of data means that one bad (too big, too small, etc.) batch of input from the previous layer don&rsquo;t ruin the training of next layer.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/invariance.png" height="400" width="800" alt="covariate_shift" /></p>
+
+<h2>4. Not ICS, But A Smoother Optimization Landscape?</h2>
+
+<p>Despite its pervasiveness, the effectiveness of BN still lacks theoretical proof. <a href="https://arxiv.org/pdf/1805.11604.pdf">Santurkar and Tsipras et al.</a> recently proposed that <strong>ICS has little to do with the success of BN</strong>. Instead, BN <strong>makes the optimization landscape much smoother</strong>, which induces a more predictive and stable behavior of the gradients.</p>
+
+<h4>The performance of BN Doesn&rsquo;t Stem From reducing ICS</h4>
+
+<p>Santurkar and Tsipras et al. designed a clever experiment, where a network was trained with <em>random</em> noise (non-zero mean and non-unit variance distribution, changes at every time step) injected after BN layers, creating an artificial ICS. The performance of the network with &ldquo;noisy&rdquo; BN was compared with networks trained with and without BN. “Noisy” BN network has less stable distributions than the standard, no BN network due to the artificial ICS, yet it still performs better.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/noisy_bn_ics.png" height="400" width="800" alt="BN_ICS" /></p>
+
+<h4>BN doesn&rsquo;t even reduce ICS</h4>
+
+<p>Previously, ICS is a conception that has no measurement. Santurkar and Tsipras et al. defined a metric for ICS, which is difference ($||G_{t,i} - G_{t,i}\prime||_2$) between the gradient $G_{t,i}$ of the layer parameters and the same gradient $G_{t,i}\prime$ <strong>after</strong> all the previous layers have been updated. Experiments showed that models with BN have similar, or even worse, ICS, despite performing better.</p>
+
+<h4>The Fundamental Phenomenon at Play: the Smoothing Effect</h4>
+
+<p>Santurkar and Tsipras et al. argued that the key impact of BN is that it reparametrizes the underlying optimization problem to <strong>make its landscape significantly more smooth</strong>. With BN,</p>
+
+<ul>
+<li>The loss landscape is smoother and has less discontinuity (i.e. kinks, sharp minima). The loss changes at a smaller rate and the magnitudes of the gradient is smaller too. In other words, the Lipschitzness of the loss function is improved. (a function f is <em>L</em>-Lipschitz, $|f(x_1) - f(x_2)| \leq L||x_1 - x_2||$)</li>
+<li>Improved Lipschitzness of the gradients gives us confidence that
+when we take a larger step in a direction of a computed gradient, this gradient direction remains a fairly accurate estimate of the actual gradient direction after taking that step.</li>
+<li>The gradients are more stable and changes more reliably and predictively. In other words, the loss exhibits a significantly better “effective” $\beta$-smoothness. (a function f is $\beta$-smooth if its gradients are $\beta$-Lipschitz, i.e. $||\nabla f(x_1) - \nabla f(x_2)| \leq \beta||x_1 - x_2||$)</li>
+<li>Improved Lipschitzness of the gradients gives us confidence that
+when we take a larger step in a direction of a computed gradient, this gradient direction remains a fairly accurate estimate of the actual gradient direction after taking that step.</li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/bn_smooth.png" height="400" width="800" alt="BN_ICS" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Classifying Toxic Comment]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/05/01/kaggle-toxic-comment/"/>
+    <updated>2018-05-01T17:51:44-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/05/01/kaggle-toxic-comment</id>
+    <content type="html"><![CDATA[<p>I had lots of fun at my last Kaggle competition <a href="https://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/">Mercari Price Suggestion Challenge</a>. Without a second thought, I dived right in the <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge">Toxic Comment Classification Challenge</a> to further practice my NLP skills.</p>
+
+<p>To get a different experience, I decided to team up instead of going solo. It turned out great, as I learned a ton from my teammates <a href="https://www.kaggle.com/learnmower">Thomas</a>, <a href="https://www.kaggle.com/konradb">Konrad</a> and <a href="https://www.kaggle.com/newtohere">Song</a>, who have been doing this much longer than I have. Unknownly, I put myself in the best situation for learning - being the least experienced team member.</p>
+
+<p><strong>TL;DR The Jigsaw Toxic Comment Classification Challenge is the most nail-biting that I have participated in. I am estatic that my team ranked top 1% out of 4,500+ teams</strong></p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/toxic_comment_rank.png" alt="toxic" /></p>
+
+<!--more-->
+
+
+<h2>1. The Competition</h2>
+
+<p>The <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge">Jigsaw Toxic Comment Classification Challenge</a> is sponsored by Google and Jigsaw, with a purpose to improve online conversation. The task is to build a multi-headed model that’s capable of detecting different types of of toxicity like threats, obscenity, insults, and identity-based hate. The dataset consists of comments from Wikipedia’s talk page edits.</p>
+
+<p>The competition isn&rsquo;t smooth sailing by any means. It had several major changes through its course:</p>
+
+<ul>
+<li><strong>Dataset Change</strong>: since a portion of the data was previously released (a.k.a data leak), Jigsaw had to collect and label more data for a new test set, which turned out to be on a slightly different distribution from the training set. Therefore one of the biggest challenge of the competition is to find a reliable cross-validation strategy. The competition was also extended for 1 month to accommodate the new dataset.</li>
+<li><strong>Metric Change</strong>: the competition started with <a href="http://scikit-learn.org/stable/modules/generated/sklearn.metrics.log_loss.html">log loss</a> (also known as cross entropy) as the evaluation metric. However, log loss is not <a href="https://en.wikipedia.org/wiki/Scale_invariance">scale-invariant</a> so teams were focusing on silly post-processing that improves the score. The host made a good call to switch to <a href="https://en.wikipedia.org/wiki/Receiver_operating_characteristic">ROC AUC</a>, which is scale-invariant and makes more business sense.</li>
+</ul>
+
+
+<p>Since the corpus is relatively small and there is a difference in distribution between training and test set, the key to success is to <strong>build a robust model that can generalize to the different distribution of the test set.</strong> In retrospect, we found that all successful techniques in this competition specifically addressed the point above.</p>
+
+<h2>2. Our Experience</h2>
+
+<h3>2.1 Pre-Processing</h3>
+
+<p>Since the corpus consists of online comments that are likely toxic, there is an abundance of intentional misspells (to avoid bad words filtering), typos, emojis and derogatory ascii art. Thomas and I wrote quite an exhaustive script trying to clean and normalize the corpus. Here are some examples:</p>
+
+<pre><code class="python">## cleaning smile emoji
+text = re.sub("\(:", " smile ", text) 
+## cleaning the penis asci art...
+text = re.sub('8=+D', 'dick', text)
+</code></pre>
+
+<p>It turns out that the pre-processing was not impactful at all. All of the top teams have had the same experience as well. Our effort of a 400+ line pre-processing script went nowhere, but I am actually happy since I hate pre-processing/feature engineering and I don&rsquo;t believe they are part of the path to generalizable machine learning /AI.</p>
+
+<h3>2.2 Embeddings</h3>
+
+<p>Word embedding is a technique of representing the meaning of words by mapping them to a continuous high dimensional vector space. The most well-known embedding is <a href="https://www.tensorflow.org/tutorials/word2vec">word2vec</a> by <a href="https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf">Mikolov et al</a>. The embedding we used in the competition were <a href="https://nlp.stanford.edu/projects/glove/">GloVe</a> (common crawl &amp; twitter), <a href="https://github.com/facebookresearch/fastText">fastText</a> and <a href="http://anthology.aclweb.org/P16-2068">LexVec</a>, though we were only able to re-train a small portion of models with different embeddings due to time constraint.</p>
+
+<p><strong>Using a variety of embeddings turned out to be crucial in this competition</strong>. In the context of <a href="https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff">bias-variance decomposition</a>, there is an irreducible bias term due to the different distribution of training and test set. Hence, the best way to improve the model performance is to decrease the variance. Ensembling a wide range of diverse models is a great way to decrease the variance of the Ensemble. Alas, it was towards the end of the competition that Thomas found out training the same model with different embedding was a very effective way to produce performant yet diverse base models.</p>
+
+<p>Out of all embeddings, <a href="https://github.com/facebookresearch/fastText">fastText</a> gave the best performance overall. The capability of <a href="https://arxiv.org/abs/1607.04606">generating word vectors for out-of-vocabulary words using subword information</a> was tremendously helpful for correcting misspells and typos.</p>
+
+<h3>2.3 Base Models</h3>
+
+<h4>2.3.1 NB-SVM</h4>
+
+<p><a href="https://sijunhe.github.io/blog/2018/04/03/nb-svm/">NB-SVM</a> is a widely-used baseline for text classification. It is based on bag-of-words approach and has a robust performance across tasks and datasets (important for this competition). NB-SVM was popular in this competition as a base model, thanks to this wonderful baseline <a href="https://www.kaggle.com/jhoward/nb-svm-strong-linear-baseline">kernel</a> by <a href="https://www.kaggle.com/jhoward">Jeremy Howard</a> with a public leaderboard score of <code>0.9770</code>.</p>
+
+<p>After some additional pre-processing and hyperparameter tuning, we were able to improve the model to <code>0.9813</code> on public leaderboard. The surprise came after the competition, when we found that our NB-SVM scored <code>0.9821</code> on the private leaderboard. This is impressive since</p>
+
+<ul>
+<li><strong>Generalization</strong>: all other models of ours <em>overfitted</em> to the public leaderboard (higher public score than private score) and NB-SVM was the only exception.</li>
+<li><strong>Performance</strong>: the performance of <code>0.9821</code> was very good for such a minimal linear model. In comparison, our best single model scored <code>0.9857</code> (+0.36) and the best single model of the competition was around <code>0.9869</code> (+0.48). NB-SVM is also much faster to train and a breeze to deploy compared with the other two so one could argue that the NB-SVM is a more viable solution.</li>
+</ul>
+
+
+<h4>2.3.2 RNN</h4>
+
+<p>As expected in the NLP domain, Recurrent Neural Network (RNN) dominates this competition. Our strongest single model was a single layer RNN-Capsule Network with GRU cell at <code>0.9857</code> on the private leaderboard. Following closely is a single layer RNN with linear attention and GRU cell at <code>0.9856</code>. From what I have read, the best single models of all released top solutions are RNN-based.</p>
+
+<p>Given that the challenge is on generalization, most RNN-based models I have seen lean on the simple side, with a single layer of RNN followed by some variant of an attention layer (i.e. global max pooling, global mean pooling, attention, etc) over the time axis. Also, we have observed that GRU outperforms LSTM in general, probably because GRU has less parameters and thus less prone to overfitting.</p>
+
+<h4>2.3.3 CNN</h4>
+
+<p>There is a lot of arguments about whether RNN or CNN is better at NLP task. A <a href="https://arxiv.org/abs/1702.01923">comparative study</a> suggested that CNN is good at extracting position-invariant features and RNN at modeling units in sequence. For me, CNN is a generalized n-gram feature extractor. I thought CNN would be strong at this competition since the task is more similar to key word detection than sentiment analysis. I was wrong.</p>
+
+<p>I didn&rsquo;t have much success on CNN and I didn&rsquo;t see any CNNs that could compete with RNNs on public kernel. My best CNN is a <a href="https://arxiv.org/abs/1408.5882">wide and shallow CNN</a> with a private leaderboard score of <code>0.9835</code>. The CNN got &ldquo;feature selected&rdquo; in our ensemble and contributed nothing. Though, the 2nd place team wrote that they had <a href="http://ai.tencent.com/ailab/media/publications/ACL3-Brady.pdf">DPCNN</a> as one of their base models. I too have experimented with DPCNN during the competition but didn&rsquo;t have any success.</p>
+
+<h4>2.3.4 Tree-Based Models</h4>
+
+<p>In theory, tree-based models aren&rsquo;t well-suited for NLP task, primarily due to high cardinality categorical features from huge word vocabulary space. Tree-based models sucked in practice as well. We experimented with Random Forest, Extra Tree, LightGBM and XGBoost and all of them severely underperformed other models. Our best attempt was a <a href="http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesClassifier.html">Extra Tree model</a> by Konrad with <code>0.9792</code> on private leaderboard. It is worth noting that despite their underwhelming performances, tree-based models still accounted for about 10% of the weight in our linear stacking ensemble.</p>
+
+<h3>2.4 Ensembling</h3>
+
+<p><a href="http://blog.kaggle.com/2016/12/27/a-kagglers-guide-to-model-stacking-in-practice/">Stacking</a> (also called meta ensembling) is a model ensembling technique used to combine information from multiple predictive models to generate a new model. This competition was the first time I used <a href="http://blog.kaggle.com/2017/06/15/stacking-made-easy-an-introduction-to-stacknet-by-competitions-grandmaster-marios-michailidis-kazanova/">stacking</a> and it was the most valuable learning experience of the competition.</p>
+
+<p>Since the data size is relatively small, the competition is the perfect candidate for stacking. We split the dataset into 10 folds, trained L1 models and produced out-of-fold predictions to the train L2 model. We had about 35 L1 models from a wide range of performances. The 2 L2 model we experimented with were XGBoost and LASSO. Their performance were comparable at <code>0.9871</code>. A simple average of the two stacking model gave us our best and final model at <code>0.9872</code>.</p>
+
+<h3>2.5 Selected Model Performance</h3>
+
+<table>
+<thead>
+<tr>
+<th> Model            </th>
+<th style="text-align:center;"> Private Leaderboard </th>
+<th style="text-align:center;"> Public Leaderboard </th>
+<th style="text-align:center;"> Overfitting Delta </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> Extra Tree         </td>
+<td style="text-align:center;"> 0.9792 </td>
+<td style="text-align:center;"> 0.9805 </td>
+<td style="text-align:center;"> -0.0013 </td>
+</tr>
+<tr>
+<td> NB-SVM             </td>
+<td style="text-align:center;"> 0.9821 </td>
+<td style="text-align:center;"> 0.9813 </td>
+<td style="text-align:center;"> <strong>+0.0008</strong> </td>
+</tr>
+<tr>
+<td> Shallow &amp; Wide CNN </td>
+<td style="text-align:center;"> 0.9835 </td>
+<td style="text-align:center;"> 0.9846 </td>
+<td style="text-align:center;"> -0.0011 </td>
+</tr>
+<tr>
+<td> GRU + Attention    </td>
+<td style="text-align:center;"> 0.9856 </td>
+<td style="text-align:center;"> 0.9864 </td>
+<td style="text-align:center;"> -0.0008 </td>
+</tr>
+<tr>
+<td> GRU + Capsule Net  </td>
+<td style="text-align:center;"> 0.9857 </td>
+<td style="text-align:center;"> 0.9863 </td>
+<td style="text-align:center;"> -0.0006 </td>
+</tr>
+<tr>
+<td> Lasso Stacking     </td>
+<td style="text-align:center;"> 0.9870 </td>
+<td style="text-align:center;"> 0.9874 </td>
+<td style="text-align:center;"> -0.0004 </td>
+</tr>
+<tr>
+<td> XGBoost Stacking   </td>
+<td style="text-align:center;"> 0.9870 </td>
+<td style="text-align:center;"> 0.9873 </td>
+<td style="text-align:center;"> -0.0003 </td>
+</tr>
+<tr>
+<td> <strong>Average of Lasso &amp; XGBoost Stacking</strong>   </td>
+<td style="text-align:center;"> <strong>0.9872</strong> </td>
+<td style="text-align:center;"> <strong>0.9875</strong> </td>
+<td style="text-align:center;"> <strong>-0.0003</strong> </td>
+</tr>
+</tbody>
+</table>
+
+
+<h2>3. Reflections</h2>
+
+<h3>3.1 What We did well</h3>
+
+<ul>
+<li><strong>Stacking</strong>: Biggest learning of this competition. It also contributed a lot to our rank since our single model performance is lower than other teams around us.</li>
+<li><strong>Model Diversity</strong>: We experimented with a wide range of models and helped with stacking. It was also nice to revisit all the different models.</li>
+</ul>
+
+
+<h3>3.2 Areas of Improvements</h3>
+
+<ul>
+<li><strong>Single model performance</strong>: Our single model performance is lower than top teams around us since we missed a few key techniques that other top teams used.</li>
+<li><strong>Team collaboration</strong>: We literally had teammates all over the world (Netherlands, New York, Hawaii and California) and it was difficult to collaborate around the time difference. We never had a team call or a discussion when everybody were awake.</li>
+</ul>
+
+
+<h3>3.3. Learning From Top Solutions</h3>
+
+<h4>3.3.1 1st Place Solution</h4>
+
+<p>The 1st place team had a very systematic approach to the problem with an scientific rigor that I truly admire. They even did an ablation analysis! An elaborate solution overview can be found <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/discussion/52557">here</a>. Their approach can be summarized as the following:</p>
+
+<ul>
+<li><strong>Diverse Embedding</strong>: as described in the above embedding section</li>
+<li><strong>Train/Test Time Augmentation (TTA)</strong>: They did data augmentation at both training and test time leveraging <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/discussion/48038">translation</a>. Each input sentence was translated to French, German and Spanish and then back to English. At training time, the translations of a sentence stay in the same fold to avoid leakage. At test time, the prediction is made by averaging various translations. TTA had a big impact on the performance of their models, with the following ablation analysis</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th> Model            </th>
+<th style="text-align:center;"> Leaderboard Score </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> Baseline Bi-GRU  </td>
+<td style="text-align:center;"> 0.9862 </td>
+</tr>
+<tr>
+<td> + train-time augmentation      </td>
+<td style="text-align:center;"> 0.9867      </td>
+</tr>
+<tr>
+<td> + test-time augmentation       </td>
+<td style="text-align:center;"> 0.9865      </td>
+</tr>
+<tr>
+<td> + train/test-time augmentation </td>
+<td style="text-align:center;"> 0.9874      </td>
+</tr>
+</tbody>
+</table>
+
+
+<ul>
+<li><strong>Pseudo Labeling</strong>: Pseudo Labeling is a semi-supervised technique introduced in ICML 2013 by <a href="http://deeplearning.net/wp-content/uploads/2013/03/pseudo_label_final.pdf">Lee</a> that improves generalization performance (just what we need for this competition) using unlabeled data. The procedure is to train a model on the training set, predict the &ldquo;pseudo-labels&rdquo; on the test set and treat the pseudo-labeled test set as part of the new training set. The method is similar to <a href="https://pdfs.semanticscholar.org/1ee2/7c66fabde8ffe90bd2f4ccee5835f8dedbb9.pdf">Entropy Regularization</a>. By minimizing the cross entropy for unlabeled data, the overlap of class probability distribution can be reduced and the decision boundary of the model becomes more accurate. The team reported a increase in leaderboard score from <code>0.9880</code> to <code>0.9885</code> with the Pseudo Labeling technique.</li>
+</ul>
+
+
+<h4>3.3.2 3rd Place Solution</h4>
+
+<p>The 3rd place team has the <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/discussion/52644">strongest single model</a> I have read, with a private leaderboard score of <code>0.9869</code>. With the <a href="https://explosion.ai/blog/deep-learning-formula-nlp">embed-encode-attend-predict</a> framework, it can be break down as following:</p>
+
+<ul>
+<li><strong>embed</strong>: concatenated <a href="https://github.com/facebookresearch/fastText">fastText</a> and <a href="https://nlp.stanford.edu/projects/glove/">GloVe</a> twitter embeddings. The redundancy definitely helped</li>
+<li><strong>encode</strong>: 2-layer RNN setting, with Bi-LSTM following by Bi-GRU. I also experimented brief with deeper RNN models during the competition but it didn&rsquo;t go anywhere</li>
+<li><strong>attend</strong>: A concatenation of the last states, global maximum pool, global average pool and two features: &ldquo;Unique words rate&rdquo; and &ldquo;Rate of all-caps words&rdquo;. Again, the redundancy helped</li>
+<li><strong>predict</strong>: dense layer</li>
+</ul>
+
+
+<p>The other interesting thing is that Alex trained with a larger batch size (512) but for many epochs (15 epochs). I did the exact opposite and trained with small batch size (64 or 128) for a small number of epochs (usually 4 - 6 epochs). I am not sure if the training schedule had any impact.</p>
+
+<h3>4. Summary</h3>
+
+<p>Another great experience and my best finish on Kaggle so far! Teaming up gave a entirely different experience and I learned a lot working with my teammates. While it was a pity that we didn&rsquo;t get a gold metal (we were very close with a difference of <code>-0.0002</code>), we did miss a few key techniques used by the gold-winning teams so we didn&rsquo;t really deserve it. The push for a gold medal and the kaggle master tier continues.</p>
+]]></content>
+  </entry>
+  
+</feed>

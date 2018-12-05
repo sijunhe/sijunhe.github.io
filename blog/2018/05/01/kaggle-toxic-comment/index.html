@@ -1,0 +1,415 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Classifying Toxic Comment - Blog | Sijun He</title>
+	<meta name="author" content="Sijun He">
+
+	
+	<meta name="description" content="Classifying Toxic Comment I had lots of fun at my last Kaggle competition Mercari Price Suggestion Challenge. Without a second thought, I dived &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Blog | Sijun He" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://sijunhe.github.io/blog/2018/05/01/kaggle-toxic-comment/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='https://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!--- MathJax Configuration -->
+	<script type="text/x-mathjax-config">
+  		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML">
+	</script>
+	<!-- <script type="text/javascript" async
+	  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+	</script> -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-69112205-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><img src= 'https://s3-us-west-1.amazonaws.com/sijunhe-blog/images/name_white.png' height: 150px width: 150px >
+<nav id="main-nav">
+<section class="aboutme">
+  <h3>
+    Sijun's Data Science Odyssey
+  </h3>
+</section>
+
+<ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/blog/categories">Categories</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+</ul></nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:sijun.he@hotmail.com" title="Email">Email</a>
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/sijunhe" title="GitHub">GitHub</a>
+		
+		
+		
+		
+			<a class="linkedin" href="http://www.linkedin.com/in/sijunhe48" title="LinkedIn">LinkedIn</a>
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Classifying Toxic Comment</h1>
+	<div class="entry-content" itemprop="articleBody"><p>I had lots of fun at my last Kaggle competition <a href="https://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/">Mercari Price Suggestion Challenge</a>. Without a second thought, I dived right in the <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge">Toxic Comment Classification Challenge</a> to further practice my NLP skills.</p>
+
+<p>To get a different experience, I decided to team up instead of going solo. It turned out great, as I learned a ton from my teammates <a href="https://www.kaggle.com/learnmower">Thomas</a>, <a href="https://www.kaggle.com/konradb">Konrad</a> and <a href="https://www.kaggle.com/newtohere">Song</a>, who have been doing this much longer than I have. Unknownly, I put myself in the best situation for learning - being the least experienced team member.</p>
+
+<p><strong>TL;DR The Jigsaw Toxic Comment Classification Challenge is the most nail-biting that I have participated in. I am estatic that my team ranked top 1% out of 4,500+ teams</strong></p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/toxic_comment_rank.png" alt="toxic" /></p>
+
+<!--more-->
+
+
+<h2>1. The Competition</h2>
+
+<p>The <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge">Jigsaw Toxic Comment Classification Challenge</a> is sponsored by Google and Jigsaw, with a purpose to improve online conversation. The task is to build a multi-headed model that’s capable of detecting different types of of toxicity like threats, obscenity, insults, and identity-based hate. The dataset consists of comments from Wikipedia’s talk page edits.</p>
+
+<p>The competition isn&rsquo;t smooth sailing by any means. It had several major changes through its course:</p>
+
+<ul>
+<li><strong>Dataset Change</strong>: since a portion of the data was previously released (a.k.a data leak), Jigsaw had to collect and label more data for a new test set, which turned out to be on a slightly different distribution from the training set. Therefore one of the biggest challenge of the competition is to find a reliable cross-validation strategy. The competition was also extended for 1 month to accommodate the new dataset.</li>
+<li><strong>Metric Change</strong>: the competition started with <a href="http://scikit-learn.org/stable/modules/generated/sklearn.metrics.log_loss.html">log loss</a> (also known as cross entropy) as the evaluation metric. However, log loss is not <a href="https://en.wikipedia.org/wiki/Scale_invariance">scale-invariant</a> so teams were focusing on silly post-processing that improves the score. The host made a good call to switch to <a href="https://en.wikipedia.org/wiki/Receiver_operating_characteristic">ROC AUC</a>, which is scale-invariant and makes more business sense.</li>
+</ul>
+
+
+<p>Since the corpus is relatively small and there is a difference in distribution between training and test set, the key to success is to <strong>build a robust model that can generalize to the different distribution of the test set.</strong> In retrospect, we found that all successful techniques in this competition specifically addressed the point above.</p>
+
+<h2>2. Our Experience</h2>
+
+<h3>2.1 Pre-Processing</h3>
+
+<p>Since the corpus consists of online comments that are likely toxic, there is an abundance of intentional misspells (to avoid bad words filtering), typos, emojis and derogatory ascii art. Thomas and I wrote quite an exhaustive script trying to clean and normalize the corpus. Here are some examples:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">## cleaning smile emoji</span>
+</span><span class='line'><span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&quot;\(:&quot;</span><span class="p">,</span> <span class="s">&quot; smile &quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+</span><span class='line'><span class="c">## cleaning the penis asci art...</span>
+</span><span class='line'><span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&#39;8=+D&#39;</span><span class="p">,</span> <span class="s">&#39;dick&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It turns out that the pre-processing was not impactful at all. All of the top teams have had the same experience as well. Our effort of a 400+ line pre-processing script went nowhere, but I am actually happy since I hate pre-processing/feature engineering and I don&rsquo;t believe they are part of the path to generalizable machine learning /AI.</p>
+
+<h3>2.2 Embeddings</h3>
+
+<p>Word embedding is a technique of representing the meaning of words by mapping them to a continuous high dimensional vector space. The most well-known embedding is <a href="https://www.tensorflow.org/tutorials/word2vec">word2vec</a> by <a href="https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf">Mikolov et al</a>. The embedding we used in the competition were <a href="https://nlp.stanford.edu/projects/glove/">GloVe</a> (common crawl &amp; twitter), <a href="https://github.com/facebookresearch/fastText">fastText</a> and <a href="http://anthology.aclweb.org/P16-2068">LexVec</a>, though we were only able to re-train a small portion of models with different embeddings due to time constraint.</p>
+
+<p><strong>Using a variety of embeddings turned out to be crucial in this competition</strong>. In the context of <a href="https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff">bias-variance decomposition</a>, there is an irreducible bias term due to the different distribution of training and test set. Hence, the best way to improve the model performance is to decrease the variance. Ensembling a wide range of diverse models is a great way to decrease the variance of the Ensemble. Alas, it was towards the end of the competition that Thomas found out training the same model with different embedding was a very effective way to produce performant yet diverse base models.</p>
+
+<p>Out of all embeddings, <a href="https://github.com/facebookresearch/fastText">fastText</a> gave the best performance overall. The capability of <a href="https://arxiv.org/abs/1607.04606">generating word vectors for out-of-vocabulary words using subword information</a> was tremendously helpful for correcting misspells and typos.</p>
+
+<h3>2.3 Base Models</h3>
+
+<h4>2.3.1 NB-SVM</h4>
+
+<p><a href="https://sijunhe.github.io/blog/2018/04/03/nb-svm/">NB-SVM</a> is a widely-used baseline for text classification. It is based on bag-of-words approach and has a robust performance across tasks and datasets (important for this competition). NB-SVM was popular in this competition as a base model, thanks to this wonderful baseline <a href="https://www.kaggle.com/jhoward/nb-svm-strong-linear-baseline">kernel</a> by <a href="https://www.kaggle.com/jhoward">Jeremy Howard</a> with a public leaderboard score of <code>0.9770</code>.</p>
+
+<p>After some additional pre-processing and hyperparameter tuning, we were able to improve the model to <code>0.9813</code> on public leaderboard. The surprise came after the competition, when we found that our NB-SVM scored <code>0.9821</code> on the private leaderboard. This is impressive since</p>
+
+<ul>
+<li><strong>Generalization</strong>: all other models of ours <em>overfitted</em> to the public leaderboard (higher public score than private score) and NB-SVM was the only exception.</li>
+<li><strong>Performance</strong>: the performance of <code>0.9821</code> was very good for such a minimal linear model. In comparison, our best single model scored <code>0.9857</code> (+0.36) and the best single model of the competition was around <code>0.9869</code> (+0.48). NB-SVM is also much faster to train and a breeze to deploy compared with the other two so one could argue that the NB-SVM is a more viable solution.</li>
+</ul>
+
+
+<h4>2.3.2 RNN</h4>
+
+<p>As expected in the NLP domain, Recurrent Neural Network (RNN) dominates this competition. Our strongest single model was a single layer RNN-Capsule Network with GRU cell at <code>0.9857</code> on the private leaderboard. Following closely is a single layer RNN with linear attention and GRU cell at <code>0.9856</code>. From what I have read, the best single models of all released top solutions are RNN-based.</p>
+
+<p>Given that the challenge is on generalization, most RNN-based models I have seen lean on the simple side, with a single layer of RNN followed by some variant of an attention layer (i.e. global max pooling, global mean pooling, attention, etc) over the time axis. Also, we have observed that GRU outperforms LSTM in general, probably because GRU has less parameters and thus less prone to overfitting.</p>
+
+<h4>2.3.3 CNN</h4>
+
+<p>There is a lot of arguments about whether RNN or CNN is better at NLP task. A <a href="https://arxiv.org/abs/1702.01923">comparative study</a> suggested that CNN is good at extracting position-invariant features and RNN at modeling units in sequence. For me, CNN is a generalized n-gram feature extractor. I thought CNN would be strong at this competition since the task is more similar to key word detection than sentiment analysis. I was wrong.</p>
+
+<p>I didn&rsquo;t have much success on CNN and I didn&rsquo;t see any CNNs that could compete with RNNs on public kernel. My best CNN is a <a href="https://arxiv.org/abs/1408.5882">wide and shallow CNN</a> with a private leaderboard score of <code>0.9835</code>. The CNN got &ldquo;feature selected&rdquo; in our ensemble and contributed nothing. Though, the 2nd place team wrote that they had <a href="http://ai.tencent.com/ailab/media/publications/ACL3-Brady.pdf">DPCNN</a> as one of their base models. I too have experimented with DPCNN during the competition but didn&rsquo;t have any success.</p>
+
+<h4>2.3.4 Tree-Based Models</h4>
+
+<p>In theory, tree-based models aren&rsquo;t well-suited for NLP task, primarily due to high cardinality categorical features from huge word vocabulary space. Tree-based models sucked in practice as well. We experimented with Random Forest, Extra Tree, LightGBM and XGBoost and all of them severely underperformed other models. Our best attempt was a <a href="http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesClassifier.html">Extra Tree model</a> by Konrad with <code>0.9792</code> on private leaderboard. It is worth noting that despite their underwhelming performances, tree-based models still accounted for about 10% of the weight in our linear stacking ensemble.</p>
+
+<h3>2.4 Ensembling</h3>
+
+<p><a href="http://blog.kaggle.com/2016/12/27/a-kagglers-guide-to-model-stacking-in-practice/">Stacking</a> (also called meta ensembling) is a model ensembling technique used to combine information from multiple predictive models to generate a new model. This competition was the first time I used <a href="http://blog.kaggle.com/2017/06/15/stacking-made-easy-an-introduction-to-stacknet-by-competitions-grandmaster-marios-michailidis-kazanova/">stacking</a> and it was the most valuable learning experience of the competition.</p>
+
+<p>Since the data size is relatively small, the competition is the perfect candidate for stacking. We split the dataset into 10 folds, trained L1 models and produced out-of-fold predictions to the train L2 model. We had about 35 L1 models from a wide range of performances. The 2 L2 model we experimented with were XGBoost and LASSO. Their performance were comparable at <code>0.9871</code>. A simple average of the two stacking model gave us our best and final model at <code>0.9872</code>.</p>
+
+<h3>2.5 Selected Model Performance</h3>
+
+<table>
+<thead>
+<tr>
+<th> Model            </th>
+<th style="text-align:center;"> Private Leaderboard </th>
+<th style="text-align:center;"> Public Leaderboard </th>
+<th style="text-align:center;"> Overfitting Delta </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> Extra Tree         </td>
+<td style="text-align:center;"> 0.9792 </td>
+<td style="text-align:center;"> 0.9805 </td>
+<td style="text-align:center;"> -0.0013 </td>
+</tr>
+<tr>
+<td> NB-SVM             </td>
+<td style="text-align:center;"> 0.9821 </td>
+<td style="text-align:center;"> 0.9813 </td>
+<td style="text-align:center;"> <strong>+0.0008</strong> </td>
+</tr>
+<tr>
+<td> Shallow &amp; Wide CNN </td>
+<td style="text-align:center;"> 0.9835 </td>
+<td style="text-align:center;"> 0.9846 </td>
+<td style="text-align:center;"> -0.0011 </td>
+</tr>
+<tr>
+<td> GRU + Attention    </td>
+<td style="text-align:center;"> 0.9856 </td>
+<td style="text-align:center;"> 0.9864 </td>
+<td style="text-align:center;"> -0.0008 </td>
+</tr>
+<tr>
+<td> GRU + Capsule Net  </td>
+<td style="text-align:center;"> 0.9857 </td>
+<td style="text-align:center;"> 0.9863 </td>
+<td style="text-align:center;"> -0.0006 </td>
+</tr>
+<tr>
+<td> Lasso Stacking     </td>
+<td style="text-align:center;"> 0.9870 </td>
+<td style="text-align:center;"> 0.9874 </td>
+<td style="text-align:center;"> -0.0004 </td>
+</tr>
+<tr>
+<td> XGBoost Stacking   </td>
+<td style="text-align:center;"> 0.9870 </td>
+<td style="text-align:center;"> 0.9873 </td>
+<td style="text-align:center;"> -0.0003 </td>
+</tr>
+<tr>
+<td> <strong>Average of Lasso &amp; XGBoost Stacking</strong>   </td>
+<td style="text-align:center;"> <strong>0.9872</strong> </td>
+<td style="text-align:center;"> <strong>0.9875</strong> </td>
+<td style="text-align:center;"> <strong>-0.0003</strong> </td>
+</tr>
+</tbody>
+</table>
+
+
+<h2>3. Reflections</h2>
+
+<h3>3.1 What We did well</h3>
+
+<ul>
+<li><strong>Stacking</strong>: Biggest learning of this competition. It also contributed a lot to our rank since our single model performance is lower than other teams around us.</li>
+<li><strong>Model Diversity</strong>: We experimented with a wide range of models and helped with stacking. It was also nice to revisit all the different models.</li>
+</ul>
+
+
+<h3>3.2 Areas of Improvements</h3>
+
+<ul>
+<li><strong>Single model performance</strong>: Our single model performance is lower than top teams around us since we missed a few key techniques that other top teams used.</li>
+<li><strong>Team collaboration</strong>: We literally had teammates all over the world (Netherlands, New York, Hawaii and California) and it was difficult to collaborate around the time difference. We never had a team call or a discussion when everybody were awake.</li>
+</ul>
+
+
+<h3>3.3. Learning From Top Solutions</h3>
+
+<h4>3.3.1 1st Place Solution</h4>
+
+<p>The 1st place team had a very systematic approach to the problem with an scientific rigor that I truly admire. They even did an ablation analysis! An elaborate solution overview can be found <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/discussion/52557">here</a>. Their approach can be summarized as the following:</p>
+
+<ul>
+<li><strong>Diverse Embedding</strong>: as described in the above embedding section</li>
+<li><strong>Train/Test Time Augmentation (TTA)</strong>: They did data augmentation at both training and test time leveraging <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/discussion/48038">translation</a>. Each input sentence was translated to French, German and Spanish and then back to English. At training time, the translations of a sentence stay in the same fold to avoid leakage. At test time, the prediction is made by averaging various translations. TTA had a big impact on the performance of their models, with the following ablation analysis</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th> Model            </th>
+<th style="text-align:center;"> Leaderboard Score </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> Baseline Bi-GRU  </td>
+<td style="text-align:center;"> 0.9862 </td>
+</tr>
+<tr>
+<td> + train-time augmentation      </td>
+<td style="text-align:center;"> 0.9867      </td>
+</tr>
+<tr>
+<td> + test-time augmentation       </td>
+<td style="text-align:center;"> 0.9865      </td>
+</tr>
+<tr>
+<td> + train/test-time augmentation </td>
+<td style="text-align:center;"> 0.9874      </td>
+</tr>
+</tbody>
+</table>
+
+
+<ul>
+<li><strong>Pseudo Labeling</strong>: Pseudo Labeling is a semi-supervised technique introduced in ICML 2013 by <a href="http://deeplearning.net/wp-content/uploads/2013/03/pseudo_label_final.pdf">Lee</a> that improves generalization performance (just what we need for this competition) using unlabeled data. The procedure is to train a model on the training set, predict the &ldquo;pseudo-labels&rdquo; on the test set and treat the pseudo-labeled test set as part of the new training set. The method is similar to <a href="https://pdfs.semanticscholar.org/1ee2/7c66fabde8ffe90bd2f4ccee5835f8dedbb9.pdf">Entropy Regularization</a>. By minimizing the cross entropy for unlabeled data, the overlap of class probability distribution can be reduced and the decision boundary of the model becomes more accurate. The team reported a increase in leaderboard score from <code>0.9880</code> to <code>0.9885</code> with the Pseudo Labeling technique.</li>
+</ul>
+
+
+<h4>3.3.2 3rd Place Solution</h4>
+
+<p>The 3rd place team has the <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/discussion/52644">strongest single model</a> I have read, with a private leaderboard score of <code>0.9869</code>. With the <a href="https://explosion.ai/blog/deep-learning-formula-nlp">embed-encode-attend-predict</a> framework, it can be break down as following:</p>
+
+<ul>
+<li><strong>embed</strong>: concatenated <a href="https://github.com/facebookresearch/fastText">fastText</a> and <a href="https://nlp.stanford.edu/projects/glove/">GloVe</a> twitter embeddings. The redundancy definitely helped</li>
+<li><strong>encode</strong>: 2-layer RNN setting, with Bi-LSTM following by Bi-GRU. I also experimented brief with deeper RNN models during the competition but it didn&rsquo;t go anywhere</li>
+<li><strong>attend</strong>: A concatenation of the last states, global maximum pool, global average pool and two features: &ldquo;Unique words rate&rdquo; and &ldquo;Rate of all-caps words&rdquo;. Again, the redundancy helped</li>
+<li><strong>predict</strong>: dense layer</li>
+</ul>
+
+
+<p>The other interesting thing is that Alex trained with a larger batch size (512) but for many epochs (15 epochs). I did the exact opposite and trained with small batch size (64 or 128) for a small number of epochs (usually 4 - 6 epochs). I am not sure if the training schedule had any impact.</p>
+
+<h3>4. Summary</h3>
+
+<p>Another great experience and my best finish on Kaggle so far! Teaming up gave a entirely different experience and I learned a lot working with my teammates. While it was a pity that we didn&rsquo;t get a gold metal (we were very close with a difference of <code>-0.0002</code>), we did miss a few key techniques used by the gold-winning teams so we didn&rsquo;t really deserve it. The push for a gold medal and the kaggle master tier continues.</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    Sijun He
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'sijunhe';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sijunhe.github.io/blog/2018/05/01/kaggle-toxic-comment/';
+        var disqus_url = 'http://sijunhe.github.io/blog/2018/05/01/kaggle-toxic-comment/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+</body>
+</html>

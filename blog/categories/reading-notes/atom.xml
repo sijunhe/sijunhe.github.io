@@ -1,0 +1,985 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: reading-notes | Blog | Sijun He]]></title>
+  <link href="http://sijunhe.github.io/blog/categories/reading-notes/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2018-11-03T16:42:42-07:00</updated>
+  <id>http://sijunhe.github.io/</id>
+  <author>
+    <name><![CDATA[Sijun He]]></name>
+    <email><![CDATA[sijun.he@hotmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[On Normalization Layers]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/06/11/on-normalization-layers/"/>
+    <updated>2018-06-11T14:34:57-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/06/11/on-normalization-layers</id>
+    <content type="html"><![CDATA[<p>Reading notes / survey of three papers related to Batch Normalization</p>
+
+<ul>
+<li><a href="https://arxiv.org/pdf/1502.03167.pdf">Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</a>, the paper that introduced Batch Normalization, one of the breakthroughs in Deep Learning</li>
+<li><a href="https://arxiv.org/pdf/1607.06450.pdf">Layer Normalization</a> that extended Batch Normalization to RNNs</li>
+<li><a href="https://arxiv.org/pdf/1805.11604.pdf">How Does Batch Normalization Help Optimization?(No, It Is Not About Internal Covariate Shift)</a>, a paper (barely one week old at the time of writing) that dived into the fundamental factors for Batch Normalization&rsquo;s success empirically and theoretically</li>
+</ul>
+
+
+<!--more-->
+
+
+<h2>1. Why Normalization?</h2>
+
+<h4>Covariate Shift</h4>
+
+<p>Covariate Shift refers to the change in the distribution of the input variables $X$ between a source domain $\mathcal{s}$ and a target domain $\mathcal{t}$. We assume $P_{\mathcal{s}}(Y|X) = P_{\mathcal{t}}(Y|X)$ but a different marginal distribution $P_{\mathcal{s}}(X) \neq P_{\mathcal{t}}(X)$.</p>
+
+<p>We are interested in modeling $P(Y|X)$. However, we can only observe $P_{\mathcal{s}}(Y|X)$. The optimal model for source domain $\mathcal{s}$ will be different from the optimal model for target domain $\mathcal{t}$. The intuition, as shown in the diagram below, is that the optimal model for $P_{\mathcal{s}}(X)$ will put more weights and perform better in dense area of $P_{\mathcal{s}}(X)$, which is different from the dense area of $P_{\mathcal{t}}(X)$.
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/covariate_shift.png" height="400" width="400" alt="covariate_shift" />
+<em>Covariate Shift Diagram <a href="http://iwann.ugr.es/2011/pdfInvitedTalk-FHerrera-IWANN11.pdf">Source</a></em></p>
+
+<h4>Internal Covariate Shift (ICS)</h4>
+
+<p>In Neural Networks (NN), we face a similar situation like Covariate Shift. A layer $l$ in a vanilla feedforward NN can be defined as</p>
+
+<p>$$X^{l} = f\left(X^{l-1}W^{l} + b^l \right) \ \ \ $$</p>
+
+<p>where $X^{l-1}$ is $m \times n_{in}$  and $W^{l}$ is $n_{in} \times n_{out}$. $m$ is the number of samples in the batch. $n_{in}$ and $n_{out}$ are the input and output feature dimension of the layer.</p>
+
+<p>The weights $W^{l}$ is learned to approximate $P_{\mathcal{s}}(X^{l}|X^{l-1})$. However, the input from last layer $X^{l-1}$ is constantly changing so $W^{l}$ needs to continuously adapt to the new distribution of $X^{l-1}$. <a href="https://arxiv.org/pdf/1502.03167.pdf">Ioffe et al.</a> defined such change in the distributions of internal nodes of a deep network during training as <strong>Internal Covariate Shift</strong>.</p>
+
+<h2>2. Batch Normalization (BN)</h2>
+
+<p>An obvious procedure to reduce ICS is to fix the input distribution to each layer. And that is exactly what Ioffe et al. proposed. Batch Normalization (BN) is a layer that normalizes each input feature to have mean of 0 and variance of 1. For a BN layer with $d$-dimensional input $X = (x^{1}, \cdots, x^{d})$, each feature is normalized as</p>
+
+<p>$$\hat{x}^{(k)} = \frac{x^{(k)} - \mu_{x^{(k)}}}{\sigma_{x^{(k)}}}$$</p>
+
+<h4>Mini Batch Statistics</h4>
+
+<p>Computing the mean and standard deviation of each feature requires iterating through the whole dataset, which is impractical. Thus, $\mu_{x^{(k)}}$ and $\sigma_{x^{(k)}}$ are estimated using the empirical samples from the current batch.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/bn.png" height="10" width="300" alt="bn" /></p>
+
+<h4>Scale and Shift Parameters</h4>
+
+<p>To compensate for the loss of expressiveness due to normalization, a pair of parameters $\gamma^{(k)}$ and $\beta^{(k)}$ are trained to scale and shift the normalized value.</p>
+
+<p>$$y^{(k)} = \gamma^{(k)} x^{(k)} + \beta^{(k)}$$</p>
+
+<p>The scale and shift parameters restore the representation power of the network. By setting $\beta^{(k)} = \mu_{x^{(k)}}$ and $\gamma^{(k)} = \sigma_{x^{(k)}}$, the original activations could be recovered, if that were the optimal thing to do.</p>
+
+<h4>Batch Normalization in Feed-forward NN</h4>
+
+<p>Consider the <em>l</em>-th hidden layer in a feed-forward NN. The summed inputs are computed through a linear projection with the weight matrix $W^l$ and the bottom-up inputs $X^l$. The summed inputs are passed through a BN layer and then an activation layer (<em>whether to apply BN before or after the activation layer is a topic of debate</em>), as following:</p>
+
+<p>$Z^{l}$ is a</p>
+
+<p>$$Z^{l} = X^{l-1}W^{l} + b^l \ \ \ \ \
+\hat{Z}^{l} = \textbf{BN}_{\gamma, \beta}(Z^{l}) \ \ \ \ \
+X^{l} = f(\hat{Z}^{l})$$</p>
+
+<p>$Z^{l}$ is a $m \times n_{out}$ matrix, whose element $z_{ij}$ is the summed input to the <em>j</em>-th neuron from the <em>i</em>-th sample in the mini-batch.</p>
+
+<p>$$ Z^{l} =
+\begin{bmatrix}
+z_{11} &amp; \cdots &amp; z_{1n_{out}} \\
+\vdots &amp; \ddots &amp; \vdots \\
+z_{m1} &amp; \cdots &amp; z_{mn_{out}}
+\end{bmatrix} =
+\begin{bmatrix}
+| &amp; | &amp; \cdots &amp;| \\
+\textbf{z}_{1} &amp; \textbf{z}_{2} &amp; \cdots &amp; \textbf{z}_{n_{out}} \\
+| &amp; | &amp; \cdots&amp; | \\
+\end{bmatrix}
+$$</p>
+
+<p>$$\textbf{BN}_{\gamma, \beta}(Z^{l}) =
+\begin{bmatrix}
+| &amp; | &amp; \cdots &amp;| \\
+\gamma_1 \hat{\textbf{z}}_{1} + \beta_1 &amp; \gamma_2 \hat{\textbf{z}}_{2} + \beta_2 &amp; \cdots &amp; \gamma_{n_{out}} \hat{\textbf{z}}_{n_{out}} + \beta_{n_{out}} \\
+| &amp; | &amp; \cdots&amp; | \\
+\end{bmatrix}
+$$</p>
+
+<p>Column <em>j</em> of $Z^{l}$ is the summed inputs to the <em>j</em>-th neuron from each <em>m</em> samples in the mini-batch. The BN layer is a <strong>whitening / column-wise normalization</strong> procedure to normalize $\left[ \textbf{z}_{1}, \textbf{z}_{2}, \cdots, \textbf{z}_{n_{out}}\right]$ to $\mathcal{N}(0,1)$. Each neuron/column has a pair of scale $\gamma$ and shift parameters $\beta$.</p>
+
+<h2>3. Layer Normalization (LN)</h2>
+
+<p>BN has had a lot of success in Deep Learning, especially in Computer Vision due to its effect on CNNs. However, it also has a few shortcomings:</p>
+
+<ul>
+<li>BN replies on mini-batch statistics and is thus dependent on the mini-batch size. BN cannot be applied to to online learning tasks (batch size of 1) or tasks that require a small batch size.</li>
+<li>There is no elegant way to apply BN to RNNs. Applying BN to RNNs requires computing and storing batch statistics for each time step in a sequence.</li>
+</ul>
+
+
+<p>To tackle the above issues, <a href="https://arxiv.org/pdf/1607.06450.pdf">Ba et al.</a> proposed Layer Normalization(LN), a transpose of BN that computes the mean and variance used for normalization from all of the summed inputs to the neurons in a layer on a <strong>single</strong> training sample.</p>
+
+<p>Using the same notation as above, we have $Z^{l}$ is a $m \times n_{out}$ matrix, whose element $z_{ij}$ is the summed input to the <em>j</em>-th neuron from the <em>i</em>-th sample in the mini-batch. Row <em>i</em> of $Z^{l}$ is the summed inputs to the all neuron in the <em>l</em>-th layer from the <em>i</em>-th sample in the mini-batch. As a direct transpose of BN, the LN layer is a <strong>row-wise normalization</strong> procedure to normalize $\left[ \textbf{z}_{1}, \textbf{z}_{2}, \cdots, \textbf{z}_{m}\right]$ to have mean zero and standard deviation of one. Same as BN, each neuron is given its own adaptive bias and scale parameters.</p>
+
+<p>$$ Z^{l} =
+\begin{bmatrix}
+z_{11} &amp; \cdots &amp; z_{1n_{out}} \\
+\vdots &amp; \ddots &amp; \vdots \\
+z_{m1} &amp; \cdots &amp; z_{mn_{out}}
+\end{bmatrix} =
+\begin{bmatrix}
+- &amp; \textbf{z}_{1} &amp; - \\
+- &amp; \textbf{z}_{2} &amp; - \\
+\cdots &amp; \cdots &amp; \cdots \\
+- &amp; \textbf{z}_{m} &amp; - \\
+\end{bmatrix}
+$$</p>
+
+<p>$$\textbf{BN}_{\gamma, \beta}(Z^{l}) =
+\begin{bmatrix}
+- &amp; \hat{\textbf{z}}_{1} &amp; - \\
+- &amp; \hat{\textbf{z}}_{2} &amp; - \\
+\cdots &amp; \cdots &amp; \cdots \\
+- &amp; \hat{\textbf{z}}_{m} &amp; - \\
+\end{bmatrix}
+\circ
+\begin{bmatrix}
+| &amp; | &amp; \cdots &amp;| \\
+\gamma_1 &amp; \gamma_2 &amp; \cdots &amp; \gamma_{n_{out}} \\
+| &amp; | &amp; \cdots&amp; | \\
+\end{bmatrix}
++
+\begin{bmatrix}
+| &amp; | &amp; \cdots &amp;| \\
+\beta_1 &amp; \beta_2 &amp; \cdots &amp; \beta_{n_{out}} \\
+| &amp; | &amp; \cdots&amp; | \\
+\end{bmatrix}
+$$</p>
+
+<h4>Layer Normalization on RNN</h4>
+
+<p>In RNN, the summed input are computed from the current input $\textbf{x}^t$ and previous hidden state $\textbf{h}^{t-1}$ as
+$$\textbf{a}^{(t)} = W_{hh}\textbf{h}^{(t-1)} + W_{xh}\textbf{x}^{(t)}$$.</p>
+
+<p>LN computes the layer-wise mean and standard deviation, then then re-centers and re-scales the activations
+$$\boldsymbol{\mu}^{(t)} =\frac{1}{H} \sum_{i=1}^H \textbf{a}^{(t)} \ \ \ \ \
+\boldsymbol{\sigma}^{(t)} = \sqrt{\frac{1}{H} \sum_{i=1}^H (\textbf{a}^{(t)} - \boldsymbol{\mu}^{(t)})^2 } \ \ \ \ \
+\textbf{h}^{(t)} = f \left( \frac{\boldsymbol{\gamma}}{\boldsymbol{\sigma}^{(t)}} \circ \left( \textbf{a}^{(t)} - \boldsymbol{\mu}^{(t)}\right) + \boldsymbol{\beta} \right)
+$$</p>
+
+<p>LN provides the following benefits when applied to RNN:</p>
+
+<ul>
+<li>No need to compute and store separate running averages for each time step in a sequence because the normalization terms depend on only the current time-step.</li>
+<li>With LN, the normalization makes it invariant to re-scaling all of the summed inputs to a layer, which helps preventing exploding or vanishing gradients and results in much more stable hidden-to-hidden dynamics.</li>
+</ul>
+
+
+<h4>Invariance Properties of Normalizations</h4>
+
+<p>The below table shows the invariant properties of three different normalization procedures. <strong>These invariance properties make the training of the network more robust</strong>. Invariance to the scaling and shifting of weights means that proper weight initialization is not as important. Invariance to the scaling and shifting of data means that one bad (too big, too small, etc.) batch of input from the previous layer don&rsquo;t ruin the training of next layer.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/invariance.png" height="400" width="800" alt="covariate_shift" /></p>
+
+<h2>4. Not ICS, But A Smoother Optimization Landscape?</h2>
+
+<p>Despite its pervasiveness, the effectiveness of BN still lacks theoretical proof. <a href="https://arxiv.org/pdf/1805.11604.pdf">Santurkar and Tsipras et al.</a> recently proposed that <strong>ICS has little to do with the success of BN</strong>. Instead, BN <strong>makes the optimization landscape much smoother</strong>, which induces a more predictive and stable behavior of the gradients.</p>
+
+<h4>The performance of BN Doesn&rsquo;t Stem From reducing ICS</h4>
+
+<p>Santurkar and Tsipras et al. designed a clever experiment, where a network was trained with <em>random</em> noise (non-zero mean and non-unit variance distribution, changes at every time step) injected after BN layers, creating an artificial ICS. The performance of the network with &ldquo;noisy&rdquo; BN was compared with networks trained with and without BN. “Noisy” BN network has less stable distributions than the standard, no BN network due to the artificial ICS, yet it still performs better.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/noisy_bn_ics.png" height="400" width="800" alt="BN_ICS" /></p>
+
+<h4>BN doesn&rsquo;t even reduce ICS</h4>
+
+<p>Previously, ICS is a conception that has no measurement. Santurkar and Tsipras et al. defined a metric for ICS, which is difference ($||G_{t,i} - G_{t,i}\prime||_2$) between the gradient $G_{t,i}$ of the layer parameters and the same gradient $G_{t,i}\prime$ <strong>after</strong> all the previous layers have been updated. Experiments showed that models with BN have similar, or even worse, ICS, despite performing better.</p>
+
+<h4>The Fundamental Phenomenon at Play: the Smoothing Effect</h4>
+
+<p>Santurkar and Tsipras et al. argued that the key impact of BN is that it reparametrizes the underlying optimization problem to <strong>make its landscape significantly more smooth</strong>. With BN,</p>
+
+<ul>
+<li>The loss landscape is smoother and has less discontinuity (i.e. kinks, sharp minima). The loss changes at a smaller rate and the magnitudes of the gradient is smaller too. In other words, the Lipschitzness of the loss function is improved. (a function f is <em>L</em>-Lipschitz, $|f(x_1) - f(x_2)| \leq L||x_1 - x_2||$)</li>
+<li>Improved Lipschitzness of the gradients gives us confidence that
+when we take a larger step in a direction of a computed gradient, this gradient direction remains a fairly accurate estimate of the actual gradient direction after taking that step.</li>
+<li>The gradients are more stable and changes more reliably and predictively. In other words, the loss exhibits a significantly better “effective” $\beta$-smoothness. (a function f is $\beta$-smooth if its gradients are $\beta$-Lipschitz, i.e. $||\nabla f(x_1) - \nabla f(x_2)| \leq \beta||x_1 - x_2||$)</li>
+<li>Improved Lipschitzness of the gradients gives us confidence that
+when we take a larger step in a direction of a computed gradient, this gradient direction remains a fairly accurate estimate of the actual gradient direction after taking that step.</li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/bn_smooth.png" height="400" width="800" alt="BN_ICS" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[On Factorization Models]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/04/19/factorization-machines/"/>
+    <updated>2018-04-19T16:37:42-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/04/19/factorization-machines</id>
+    <content type="html"><![CDATA[<p>Recently, I have been working on the <a href="https://www.kaggle.com/c/talkingdata-adtracking-fraud-detection">TalkingData AdTracking Fraud Detection Challenge</a>. This is my first experience with CTR prediction, which is similar to NLP and Recommendation Systems in a way that features are very sparse. <a href="https://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf">Field-aware Factorization Models</a> have been dominating the last few CTR prediction competitions on Kaggle so here is my a little write-up for <a href="https://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf">Field-aware Factorization Models</a> and the its origin - <a href="https://www.csie.ntu.edu.tw/~b97053/paper/Rendle2010FM.pdf">Factorization Model</a>.</p>
+
+<!--more-->
+
+
+<h2>1. Factorization Machines (FM)</h2>
+
+<ul>
+<li>The most common prediction task is to estimate a function $y: \mathcal{R}^n \rightarrow T$ from a real valued feature vector $\textbf{x} \in \mathcal{R}^n$ to a target domain $T$ ($T = \mathcal{R}$ for regression or $T = \{+, -\}$ for classification)</li>
+<li>Under sparsity, almost all of the elements in $\textbf{x}$ are zero. Huge sparsity appears in many real-world data like recommender systems or text analysis. One reason for huge sparsity is that the underlying problem deals with large categorical variable domains.</li>
+<li>The paper uses the following example of transaction data of a movie review system, with user $u \in U$ rates a movie $i \in I$ at a time $t \in \mathcal{R}$ with a rating $r = \{1, 2, 3, 4, 5\}$
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post15/fm_example.png" alt="fm_example" /></li>
+<li>The above figure shows an example of how feature vectors can be created.
+
+<ul>
+<li>$|U|$ and $|I|$ binary indicators variables for the active user and item, respectively</li>
+<li>Implicit indicators of all other movies the users has ever rated, normalized to sum up to 1</li>
+<li>Binary indicators of the last movie rated before the current one</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>1.1 Factorization Machine Model</h4>
+
+<ul>
+<li><p>The equation for a factorization machine of degree $d = 2$
+$$\hat{y}(\textbf{x}) = w_0 + \sum_{i=1}^n w_i x_i + \sum_{i=1}^n \sum_{j=i+1}^n \langle \textbf{v}_i, \textbf{v}_j \rangle x_i x_j \tag{1}$$
+where $w_0 \in \mathcal{R} \ \  \textbf{w} \in \mathcal{R}^n \ \ \textbf{V} \in \mathcal{R}^{n \times k}$</p></li>
+<li><p>A row $\textbf{v}_i$ describes the <em>i</em>-th variable with <em>k</em>-factors. $k$ is a hyperparameter that defines the dimensionality of the factorization</p></li>
+<li><p>The 2-way FM captures all single and pairwise interactions between variables</p>
+
+<ul>
+<li>$w_0$ is the global bias, $w_i$ models the strength of the i-th variable</li>
+<li>$\hat{w}_{i,j} = \langle \textbf{v}_i, \textbf{v}_j \rangle$ models the interaction between i-th and j-th variable. The FM models the interaction by factorizing it, which is the key point which allows high quality parameter estimates of higher-order interactions under sparsity</li>
+</ul>
+</li>
+<li><p><strong>Expressiveness</strong>: For any positive definite matrix $\textbf{W}$, there exists a matrix $\textbf{V}$ such that $W = \textbf{V}\textbf{V}^T$ if $k$ is large enough. Thus, FM can express any interaction matrix $\textbf{W}$ if $k$ is chosen large enough. However, in sparse settings, typically a small $k$ should be chosen because there is not enough data to estimate complex interactions. <strong>Restricting $k$ and the expressiveness of FM often lead to better generalization under sparsity.</strong></p></li>
+<li><p><strong>Parameter Estimation Under Sparsity</strong>: FM can estimate interactions even in sparse settings well because they break the independence of the interaction parameters by factorizing them. This means that the data for one interaction helps also to estimate the parameters for related interactions.</p></li>
+<li><p><strong>Computation</strong>: The complexity of straight forward computational of Eq. 1 is in $O(kn^2)$ due to pairwise interactions. With the kernel trick, the model equation can be computed in linear time $O(kn)$</p></li>
+</ul>
+
+
+<p>$$\begin{align}
+\sum_{i=1}^n \sum_{j=i+1}^n \langle \textbf{v}_i, \textbf{v}_j \rangle x_i x_j &amp;= \frac{1}{2} \left[ \sum_{i=1}^n \sum_{j=1}^n \langle \textbf{v}_i, \textbf{v}_j \rangle x_i x_j - \sum_{i=1}^n \langle \textbf{v}_i, \textbf{v}_i \rangle x_i^2 \right] \\
+&amp;= \frac{1}{2} \left[ \sum_{i=1}^n \sum_{j=1}^n \sum_{f=1}^k v_{i,f} v_{j,f}  x_i x_j - \sum_{i=1}^n  \sum_{f=1}^k v_{i,f} v_{i,f} x_i^2 \right] \\
+&amp;= \frac{1}{2} \sum_{f=1}^k \left[ \left( \sum_{i=1}^n v_{i,f} x_i \right)  \left( \sum_{j=1}^n v_{j,f} x_j \right) - \sum_{i=1}^n v_{i,f}^2 x_i^2 \right] \\
+&amp;= \frac{1}{2} \sum_{f=1}^k \left[ \left( \sum_{i=1}^n v_{i,f} x_i \right)^2 - \sum_{i=1}^n v_{i,f}^2 x_i^2 \right]
+\end{align}$$</p>
+
+<h4>1.2 Loss Function of FM</h4>
+
+<ul>
+<li><strong>Regression</strong>: $\hat{y}(\textbf{x})$ can be used directly as the predicator and the loss is MSE</li>
+<li><strong>Binary Classification</strong> the sign of $\hat{y}(\textbf{x})$ is used and the loss is the hinge loss or logit loss</li>
+<li><strong>Ranking</strong>: the vectorr $\textbf{x}$ are odered by the score of $\hat{y}(\textbf{x})$ and loss is calculated over pairs of vectors with a pairwise classification loss</li>
+</ul>
+
+
+<h4>1.3 Learning Factorization Machines</h4>
+
+<p>Since FM has a closed model equation, the model parameters $w_0, \textbf{w}, \textbf{V}$ can be learned efficiently by gradient descent methods for a varity of loss.</p>
+
+<p>$$\frac{\partial }{\partial \theta}\hat{y}(\textbf{x}) =
+\begin{cases}
+1,  &amp; \theta = w_0 \\
+x_i, &amp; \theta = w_i \\
+x_i \sum_{i=1}^n v_{i,f} x_i - v_{i,f} x_i^2, &amp; \theta = v_{i, f}
+\end{cases}$$</p>
+
+<h4>1.4 d-way FM</h4>
+
+<p>The 2-way FM can easily be generalized into a d-way FM and it can still be computed in linear time.</p>
+
+<h2>2. FM vs SVM</h2>
+
+<ul>
+<li>The model equation of an SVm can be expressed as the dot product between the transformed input $\textbf{x}$ and model parameter $\textbf{w}$, $\hat{y}(\textbf{x}) = \langle \phi(\textbf{x}), \textbf{w} \rangle$, where $\phi$ is a mapping from the feature space $\mathcal{R}^n$ to a more complex space $\mathcal{F}$.</li>
+<li>We can define the kernel as $K(\textbf{x}, \textbf{z}) = \langle \phi(\textbf{x}), \phi(\textbf{z}) \rangle$</li>
+</ul>
+
+
+<h4>2.1 SVM Model</h4>
+
+<h5>Linear Kernel</h5>
+
+<ul>
+<li>The linear kernel is $K(\textbf{x}, \textbf{z}) = 1 + \langle \textbf{x}, \textbf{z} \rangle$, which translate to the mapping $\theta(\textbf{x}) = [1, x_1, \cdots, x_n]$.</li>
+<li>The model equation of a linear SVM can also be written as $\hat{y}(\textbf{x}) = w_0 + \sum_{i=1}^n w_i x_i$, which is identical to FM with degree $d = 1$</li>
+</ul>
+
+
+<h5>Polynomial Kernel</h5>
+
+<ul>
+<li>The polynomial kernel  $K(\textbf{x}, \textbf{z}) = (1 + \langle \textbf{x}, \textbf{z} \rangle)^d$ allow the SVM to model higher interactions between variables.</li>
+<li>For $d = 2$, the polynomial SVMs can be written as
+$$\hat{y}(\textbf{x}) = w_0 + \sqrt{2}\sum_{i=1}^n w_i x_i + \sum_{i=1}^n w_{i,i}^{(2)} x_i^2 + \sqrt{2}\sum_{i=1}^n \sum_{j=i+1}^n w_{i,j}^{(2)} x_i \tag{1}$$</li>
+<li>The main difference between a polynomial SVM (eq (2)) and the FM with degree $d = 2$ (eq (1)) is the parameterization: <strong>all interaction parameters $w_{i,j}$ of SVMs are completely independent</strong>. In contrast to the this, <strong>interaction parameters of FMs are factorized</strong> and $\langle \textbf{v}_i, \textbf{v}_j \rangle$ and $\langle \textbf{v}_i, \textbf{v}_l \rangle$ dependent on each other</li>
+</ul>
+
+
+<h4>2.2 Parameter Estimation Under Sparsity</h4>
+
+<ul>
+<li>For very sparse problems in collaborative filtering settings, linear and polynomial SVMs fail.</li>
+<li>This is primarily due to the fact that all interaction parameters of SVMs are independent. For a reliable estimate of the interaction parameter $w_{i,j}$, there must be enough data points where $x_i \neq 0$ and $x_j \neq 0$. As soon as either $x_i = 0$ or $x_j$, the case $\textbf{x}$ cannot be used for estimating the parameter $w_{i,j}$. If the data is too sprase, SVMs are likely to fail due to too few or even no cases for $(i,j)$</li>
+</ul>
+
+
+<h2>3. Field-aware Factorization Machine (FFM)</h2>
+
+<ul>
+<li>A variant of FMs, field-aware factorization machiens (FFMs), have been outperforming existing models in a number of CTR-prediction competitions (<a href="https://www.kaggle.com/c/avazu-ctr-prediction">Avazu CTR Prediction</a> and <a href="https://www.kaggle.com/c/criteo-display-ad-challenge">Criteo CTR Prediction</a>)</li>
+<li>The key idea in FFM is <strong>field</strong> and each feature has several latent vectors, depending on the field of other features.</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th style="text-align:center;"> Clicked </th>
+<th style="text-align:center;"> Publisher (P) </th>
+<th style="text-align:center;"> Advertiser (A) </th>
+<th style="text-align:center;"> Gender (G) </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;"> Yes     </td>
+<td style="text-align:center;"> ESPN </td>
+<td style="text-align:center;"> Nike </td>
+<td style="text-align:center;"> Male </td>
+</tr>
+</tbody>
+</table>
+
+
+<ul>
+<li>For the above example, FM will model it as (neglecting the bias terms),
+$$\hat{y}_{FM} = \langle v_{ESPN}, v_{Nike} \rangle + \langle v_{ESPN}, v_{Male} \rangle + \langle v_{Male}, v_{Nike} \rangle$$</li>
+<li>In FM, eveyr feature has only one latent vector to learn the latent effect with any other features. $v_{ESPN}$ is used to learn the latent effect with Nike $\langle v_{ESPN}, v_{Nike} \rangle$ and Male $\langle v_{ESPN}, v_{Male} \rangle$. However, Nike and Male belong to different fields so the latent efects of (ESPN, Nike) and (ESPN, Male) may be different.</li>
+<li><p>In FFM, each feature has several latent vectors. Depending on the field of other features, one of them is used to do the inner product. For the same example, FFM will model it as
+$$\hat{y}_{FFM} = \langle v_{ESPN,A}, v_{Nike,P} \rangle + \langle v_{ESPN,G}, v_{Male,P} \rangle + \langle v_{Male,G}, v_{Nike,A} \rangle$$</p></li>
+<li><p>Neglecting the global bias terms, the model equation of degree $d = 2$ FM is defined as
+$$\hat{y}(\textbf{x}) = \sum_{i=1}^n \sum_{j=i+1}^n \langle \textbf{v}_i, \textbf{v}_j \rangle x_i x_j \tag{3}$$</p></li>
+<li>the model equation of degree $d = 2$ FFM is defined as
+$$\hat{y}(\textbf{x}) = \sum_{i=1}^n \sum_{j=i+1}^n \langle \textbf{v}_i^{(J)}, \textbf{v}_j^{(I)} \rangle x_i x_j \tag{4}$$
+where $I$ and $J$ are the fields of $i, j$</li>
+<li>If $m$ is the number of fields, the total parameters of FFM is $mnk$ and the total parameter of FM is $nk$</li>
+<li>The time complexity of FFM is $O(kn^2)$ and the time complexity of FM is $O(kn)$</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[NB-SVM]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/04/03/nb-svm/"/>
+    <updated>2018-04-03T16:42:23-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/04/03/nb-svm</id>
+    <content type="html"><![CDATA[<p>A commonly-used baseline for text classification competitions on Kaggle is NB-SVM, introduced by Sida Wang and Chris Manning in the paper <a href="https://nlp.stanford.edu/pubs/sidaw12_simple_sentiment.pdf">Baselines and Bigrams: Simple, Good Sentiment and Topic Classification</a> in 2012. With Deep Learning based models dominating the field of NLP, it is nice to have a bag-of-words model that trains with a fraction of the resource (time &amp; compute) but performs only slightly worse.</p>
+
+<!--more-->
+
+
+<h2>1. Abstract</h2>
+
+<ul>
+<li>Naive Bayes (NB) and Support Vector Machine (SVM) are widely used as baselines in text-related tasks but their performance varies significantly across variants, features and datasets.</li>
+<li>Word bigrams are useful for sentiment analysis, but not so much for topical text classification
+tasks</li>
+<li>NB does better than SVM for short snippet sentiment tasks, while SVM outperforms NB for longer documents</li>
+<li>A SVM variant using NB log-count ratios as feature values consistently performs well across tasks and datasets</li>
+</ul>
+
+
+<h2>2. Methods</h2>
+
+<ul>
+<li>The main model is formulated as a linear classifier</li>
+</ul>
+
+
+<p>$$\textbf{y} = \text{sign}(\textbf{w}^T\textbf{x} + \textbf{b})\tag{1}$$</p>
+
+<ul>
+<li>Let $\textbf{f}^{(i)}$ be the feature vector for training case $i$ with binary label $y^{(i)} \in {-1, 1}$. Define the two count vectors $\textbf{p}$ and $\textbf{q}$ as</li>
+</ul>
+
+
+<p>$$\textbf{p} = \alpha + \sum_{i: y^{(i)} = 1} \textbf{f}^{(i)}\tag{2}$$</p>
+
+<p>$$\textbf{q} = \alpha + \sum_{i: y^{(i)} = -1} \textbf{f}^{(i)}\tag{3}$$</p>
+
+<ul>
+<li>$\alpha$ is the smoothing parameter</li>
+<li>Log-count ratio can be defined as</li>
+</ul>
+
+
+<p>$$\textbf{r} = \text{log}\left( \frac{\textbf{p} / ||\textbf{p}||_1 }{ \textbf{q} / ||\textbf{q}||_1 } \right)\tag{4}$$</p>
+
+<h4>2.1 Multinomial Naive Bayes (MNB)</h4>
+
+<ul>
+<li>For MNB, the feature vectors represent the frequencies with which events are generated by a multinomial distribution $\textbf{p} = (p_1, \cdots, p_n)$.</li>
+<li>The feature vector $\textbf{x} = (x_1, \cdots, x_n)$ is a histogram, where $x_k$ is the number of times event $k$ was observed in a particular instance.</li>
+<li>With the multinomial assumption and the Naive Bayes assumption, the likelihood of $\textbf{x}$ conditional on y is given by
+$$p(\textbf{x} | y) = \frac{\sum_k x_k !}{\prod_k x_k !} \prod_k p_{yk}^{x_k}$$
+$$p(y | \textbf{x}) = \frac{p(y) p(\textbf{x} | y)}{p(\textbf{x})} \propto p(y) p(\textbf{x} | y) $$
+$$
+\begin{align}
+\text{log} \ p(y | \textbf{x}) &amp;\propto \text{log} \ \left[ p(y) \prod_k p_{yk}^{x_k} \right] \\
+&amp;= \text{log} \ p(y) + \sum_k x_k \text{log} \ p_{yk} \tag{4}
+\end{align}
+$$</li>
+<li><p>The multinomial naive Bayes classifier becomes a linear classifier when expressed in log-space, since $Eq. (4)$ can be change into the format of $Eq. (1)$
+$$
+\begin{align}
+y &amp;= \text{argmax} \ \text{log} \ p(y) + \sum_k x_k \ \text{log} \ p_{k} \\
+&amp;= \text{sign} \left( \text{log} \ \frac{p(y = 1)}{p(y = -1)} + \sum_k x_k \ \text{log} \ \frac{p_{1k}}{p_{-1k}} \right) \\
+&amp;= \text{sign} \left( \text{log} \ \frac{N_+}{N_-} + \textbf{r}^T\textbf{f} \right)
+\end{align}
+$$</p></li>
+<li><p><a href="http://www2.aueb.gr/users/ion/docs/ceas2006_paper.pdf">Metsis et al.</a> showed that binarizing $\textbf{f}$ is better. Hence we define $\hat{\textbf{f}} = \textbf{1}(\textbf{f} > 0)$ and use $\hat{\textbf{f}}$ to compute $\hat{\textbf{p}}, \hat{\textbf{q}}, \hat{\textbf{r}}$</p></li>
+</ul>
+
+
+<h4>2.2 Support Vector Machine (SVM)</h4>
+
+<ul>
+<li>For SVM, we set $\textbf{x} = \hat{\textbf{f}}$ and obtain the $\textbf{w}, b$ by minimizing the loss function</li>
+</ul>
+
+
+<p>$$L(\textbf{w}, b) = \textbf{w}^T \textbf{w} + C \sum_i \text{max}\left(0, 1 - y^{(i)}(\textbf{w}^T \hat{\textbf{f}}^{(i)} + b)\right)^{2}     $$</p>
+
+<h4>2.3 SVM with NB features (NBSVM)</h4>
+
+<ul>
+<li>For NBSVM, we use the log likelihood ratios as the feature vector and set $\textbf{x} = \hat{\textbf{r}} \circ \hat{\textbf{f}}$</li>
+<li>While works well for longer documents, an interpolation between MNB and SVM performs well for all documents</li>
+</ul>
+
+
+<p>$$\textbf{w}` = (1 - \beta)\bar{w} + \beta \textbf{w}$$</p>
+
+<ul>
+<li>$\bar{w}$ is the mean magnitude of $\textbf{w}$ and $\beta \in [0, 1]$ is the interpolation parameter</li>
+<li>The interpolation is a form of regularization: trust NB unless the SVM is very confident</li>
+</ul>
+
+
+<h2>3. Results</h2>
+
+<ul>
+<li>MNB is better at snippets while SVM is better at full-length reviews</li>
+<li>NBSVM performs well on snippets and longer documents for for sentiment, topic and subjectivity classification. NBSVM is a very strong baseline for sophisticated methods aiming to beat a bag of features.</li>
+<li>In sentiment classification there are gains from adding bigrams because they can capture modified verbs and nouns.</li>
+</ul>
+
+
+<h2>4. Implementation</h2>
+
+<p>A well-written implementation with scikit-learn scikit-learn estimator api and the interpolation parameter $\beta$ can be found <a href="https://github.com/scotthlee/document_classification/blob/master/nbsvm.py">here</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Highway Networks]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/01/21/reading-highway-network/"/>
+    <updated>2018-01-21T18:18:41-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/01/21/reading-highway-network</id>
+    <content type="html"><![CDATA[<p>I have been working on some NLP-related Kaggle competitions lately and have came across the <a href="https://arxiv.org/pdf/1505.00387.pdf">Highway Networks</a> in quite a few papers and models. The LSTM-inspired Highway Networks make it easier to train deep networks by adding a small twick to the vanilla feedforward layer. I am reading the paper to get an intuition of how they work.</p>
+
+<!--more-->
+
+
+<h2>1. Introduction</h2>
+
+<ul>
+<li>It&rsquo;s well known that deep networks can represent certain function classes exponentially more efficiently than shallow ones. However, optimization of deep networks is considerably more difficult.</li>
+<li>Srivastava et al. presented a architecture that enables the opmiziation of networks with virtually arbitary depth by a learned gating mechanism for regulating information flow. A network can have paths along which information can flow across several layers without attenuation.</li>
+</ul>
+
+
+<h2>2. Highway Networks</h2>
+
+<ul>
+<li><p>For a layer in a plain feedforward network
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H})$$
+where H is an affine transfor following by a non-linear activation function.</p></li>
+<li><p>For a highway network, we define two non-linear transforms $T(\mathbf{x}, \mathbf{W}_T)$ and $C(\mathbf{x}, \mathbf{W}_C)$ such that
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H}) \cdot T(\mathbf{x}, \mathbf{W}_T) + \mathbf{x} \cdot C(\mathbf{x}, \mathbf{W}_C)$$</p></li>
+<li><p>$T$ is the transform date and $C$ is the carry gate, each respectively express how much of the output is produced by transforming the input and carrying it.</p></li>
+<li><p>For simplicity, we set $C = 1 - T$, giving
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H}) \cdot T(\mathbf{x}, \mathbf{W}_T) + \mathbf{x} \cdot (1-T(\mathbf{x}, \mathbf{W}_C))$$</p></li>
+<li><p>This re-parametrization of the layer transformation is more flexible than the plain feedforward layer. Since
+$$ \mathbf{y} =
+\begin{cases}
+\mathbf{x},  &amp; \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 0 \\
+H(\mathbf{x}, \mathbf{W}_{H}), &amp; \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 1
+\end{cases}$$
+$$ \frac{d\mathbf{y}}{d\mathbf{x}} =
+\begin{cases}
+\mathbf{I} = 0 \\
+H'(\mathbf{x}, \mathbf{W}_{H}), &amp; \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 1
+\end{cases}$$</p></li>
+<li><p>Depending on the output of the transform gates $(\mathbf{x}, \mathbf{W}_C)$, a highway layer can smoothly vary its behavior between a plain layer and a layer that simply passes its inputs through.</p></li>
+<li><p>For highway layers, we user the tranform gate defined as
+$$T(\boldsymbol{x}) = \sigma(\boldsymbol{W}_T^T + \boldsymbol{b}_T)$$</p></li>
+<li><p>For training very deep networks, $\boldsymbol{b}_T$ can be initallzed with a negative value such that the network is initially biased towards <strong>carrry</strong> behavior.</p></li>
+</ul>
+
+
+<h2>Experiments and Analysis</h2>
+
+<ul>
+<li>Networks with depths of 10, 20, 50 and 100 plain or highway layers are trained.</li>
+<li><strong>Optimization</strong>: The performance of plain networks degrades significantly as depth increases, while highway networks do not seem to suffer from an increase in depth at all.</li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post14/highway_networks_depth.png" alt="highway_networks_depth" /></p>
+
+<ul>
+<li><p><strong>Performance</strong>: The performance of highway networks is similar to <a href="https://arxiv.org/abs/1412.6550">Fitnets</a> on CIFAR-10 and MNIST datasets. But highway network is much easier to train since no two-stage training procedure is needed.</p></li>
+<li><p><strong>Analysis</strong>: By analzing the biases of the transform gates and the outputs of the block, it was found that the strong negative biases at low depths are not used to shut down the gates, but to make them more selective.</p></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Crossing the Chasm]]></title>
+    <link href="http://sijunhe.github.io/blog/2017/11/22/reading-crossing-the-chasm/"/>
+    <updated>2017-11-22T18:49:19-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2017/11/22/reading-crossing-the-chasm</id>
+    <content type="html"><![CDATA[<p>After hearing numerous quotes and ideas from it in meetings, I finally decided to read <a href="https://www.amazon.com/Crossing-Chasm-3rd-Disruptive-Mainstream/dp/0062292986/">Crossing the Chasm: Marketing and Selling Disruptive Products to Mainstream Customers</a>. I wanted to understand the fundamentals of high technology business development and the book did not disappoint. While there were portion of it that I couldn&rsquo;t understand fully due to lack of experience, I could resonate with the rest of it. It wouldn&rsquo;t be an overstatement to say that this book changed the way I looked at high-tech business.</p>
+
+<!--more-->
+
+
+<h1>1. High-Tech Marketing Illusion</h1>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post13/tech_adoption_cycle.png" alt="Tech_Adoption_Cycle" /></p>
+
+<h3>Technology Adoption Life Cycle</h3>
+
+<ul>
+<li>The <strong>Technology Adoption Life Cycle</strong> is a model for understanding the acceptance of new products.</li>
+<li>Each group represents a unique psychographical profile toward a discontinuous innovation based on a new technology
+
+<ul>
+<li><strong>Innovators</strong>: Pursue new technology produces aggresively. Intrigued with any fundamental advance and often make a technology purchase simply for the pleasure of exploring the new device&rsquo;s properties</li>
+<li><strong>early adopter</strong>: Buy into new product concepts very early in their life cycle. When there is a strong match, they are willing to base their buying decisions upon it. They do not rely on well-established references in marking these buying decisions.</li>
+<li><strong>early majority</strong>: Driven by a strong sense of practicality. They want well-established references before investing substantiall. Roughly <em>a third</em> of the whole adoption life cycle and winning their business is key to profit and growth.</li>
+<li><strong>late majority</strong>: They wait until something has become an established standard, even then they want to see lots of support and tend to buy from large, well-stablished companies. Roughly <em>a third</em> of the total buying population. Courting its favor is highly profitable.</li>
+<li><strong>laggard</strong>: Simply don&rsquo;t want anything to do with new technology. The only tie they ever buy a technological product is when it is buried very deep inside another product. Generally regarded as not worth pursuing.</li>
+</ul>
+</li>
+<li>The way to develop a high-tech market is to work the curve left to right and use each &ldquo;captured&rdquo; group as a reference base for going on to market to the next group.</li>
+</ul>
+
+
+<h1>2. High-Tech Marketing Enlightenment</h1>
+
+<h4>Innovators (Techies)</h4>
+
+<ul>
+<li>Innovators are those who appreciate the technology for its own sake. They are the gatekeepers for any new technology and the first key to any high-tech marketing effort.</li>
+<li>A small class of enthusiasts will want to try the product just to see if it works. Mostly, they are not powerful enough to dictate the buying decisions. But they represent a beachhead, a source of initial product or service references, and a test bed for the product.</li>
+<li>The other key to working with enthusiasts is to find the ones who are near or have access to the big boss, a.k.a the <em>early adopters</em> or the <em>visionaries</em>.</li>
+</ul>
+
+
+<h4>Early Adopters (visionaries)</h4>
+
+<ul>
+<li>Visionaries are early adopters of high-tech products, often working with budgets in the multiple millions. They are the least price-sensitive and are great reference. They are easy to sell but very hard to please.</li>
+<li>Visionaries are not looking for an <em>improvement</em>, they are looking for a fundamental <em>breakthrough</em>. They drive the high-tech industry because they see the potential for an &ldquo;order-of-magnitude&rdquo; return on investment and willingly take high risks to pursue that goal.</li>
+<li>They are an opportunity early in a product&rsquo;s life cycle to generate a burst of revenue and gain exceptional visibility. It also comes with a big price tag since they are highly-demanding. Visioanries are the ones who give high-tech companies their first biog break. It is hard to plan for them but it even harder to plan without them.</li>
+</ul>
+
+
+<h4>Early Majority (pragmatists)</h4>
+
+<ul>
+<li>Pragmatists are prudent souls who never volunteer to be an early test site and who have learned the hard way that the &ldquo;leading edge&rdquo; is too often the &ldquo;bleeding edge&rdquo;.</li>
+<li>The goal of pragmatists is to make a percentage improvement - incremental, measurable, predictable progress.</li>
+<li>They are hard to win over, but they are loyal once won. They are prudent and they are planning on living with this decision personally for a long time to come.</li>
+<li>They tend to be &ldquo;vertically&rdquo; oriented that they communicate more with others like themselves within their own industry than do techies or visionaries who communicate &ldquo;horizontally&rdquo; across industry boundaries. This means it is very hard to break into a new industry selling to pragmatists.</li>
+<li>They like to see competition and want to buy from proven market leaders because market-leading products create an <em>aftermarket</em> that other vendors service.They are reasonably price-sensitive and are willing to pay a modest premium for top quality service. In absence of any special differentiation, they want the test deal.</li>
+</ul>
+
+
+<h4>Late Majority (conservatives)</h4>
+
+<ul>
+<li>Conservatives are against discontinuous innovation and believe far more in tradition than in progress. They often succumb to new technology only to stay on par with the rest of the world.</li>
+<li>They often fear high tech a little bit hence they tend to invest only at the end of a technology life cycle, when products are extremely mature. They do not have high aspirations about their high-tech investments and hence will not support high price margins.</li>
+<li>They like to buy preassembled packages, with everything bundled, at a heavily discounted price. They like products decitated to a single function (i.e. word processors, calculators, copies and fax machine instead of a single computer).</li>
+<li>Conservatives have enormous value since they greatly extend the market for high-tech components that are no longer state-of-the-art. But high-tech business success within the conservatives market will require a new kind of marketing imagination likned to a less venturesome financial model.</li>
+</ul>
+
+
+<h4>Laggards (skeptics)</h4>
+
+<ul>
+<li>Skeptics do not participate in the high-tech marketplace except to block purchases. Thus, the primary function of high-tech marketing in relation to skeptics is to neuralize their influence.</li>
+<li>Their favorite arguments is that the billions of dollars invested in office automation have not improved the productivity of the office place.</li>
+<li>Ultimately the service that skeptics provide to high-tech marketers is to point continually to the discrepancies between the sales claims and the delivered product.</li>
+</ul>
+
+
+<h4>The Chasm</h4>
+
+<ul>
+<li>Visionaries tend to keep in touch with the techies and conservatives look to pragmatists to help lead them in terms of high-tech products.</li>
+<li>Between visionaries and pragmatists, there is a <strong>chasm</strong>, since visionaries are not the right sort of references for pragmatists since visionaries alienate pragmatists.</li>
+</ul>
+
+
+<h1>3. D-Day Analogy</h1>
+
+<h4>Overall Strategy</h4>
+
+<ul>
+<li>Long-term goal is to enter and take control of a mainstream market that is currently dominated by an entrenched competitor, while the immediate goal is to transition from an early market base to a <strong>strategic target market segment</strong> in the mainstream</li>
+<li>Cross the chasm by targeting a very specific niche market, drive competitiors out of that market niche, and then use it as a base for broader operations.</li>
+</ul>
+
+
+<h4>Starting a fire</h4>
+
+<ul>
+<li>When crossing the chasm, be a market-driven company, not a sales-driven company, since the sole goal of the company during this stage of market development must be to secure a beachhead in a mainstream market (create a pragmatist customer base that is referenceable)</li>
+<li>There are three compelling reasons that the sales-driven strategy should be avoided
+
+<ul>
+<li>We must ensure the customer gets the <strong>whole product</strong> - the complete set of products and services needed to achieve the desired result. Whole product commitments are expensive can only be made sparingly and strategically.</li>
+<li>Seeding a <strong>strong word-of-mouth reputation</strong> among buyers. Winning four or five customers in one segment wil create the desired word-of-mouth effect, while winning one or two in each of 5 or 10 different segments won&rsquo;t.</li>
+<li>Pragmatist customers want to buy from market leaders and the only right strategy is to take a **&ldquo;big fish, small pond&rdquo; approach</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>Beyond niche</h4>
+
+<ul>
+<li>The key to moving beyong one&rsquo;s initial target niche is to select <strong>strategic</strong> target market segments to begin with. Target a segment that creates an entry point into a larger segment.</li>
+<li><strong>Example of Mac crossing the chasm</strong>: Target niche was the graphic arts department in Fortune 500 companies. Apple then leverage its win into adjacent departmens within the corporation - first marketing, then sales. The beachhead in Graphic arts also extended into external markets - creative agencies, ad agencies and publishers.</li>
+</ul>
+
+
+<h4>Application vs. Platforms</h4>
+
+<ul>
+<li>Aplications have a huge advantage in chasm crossing since disruptive innovation are more likely to be championed by end users.</li>
+<li>Platforms are infrastructure and are slower in adoption. Vendor must tie them directly to an application in order to gain the end-user sponsorship.</li>
+<li>Platforms are likely to remian the market leader for a long time to come in any niche that you have saturated. When markets go mass, platforms have the advantage of participate openly in many value chains at the same time.</li>
+</ul>
+
+
+<h1>4. Target the Point of Attack</h1>
+
+<ul>
+<li>Choosing the niche market to target is a very important marketing decision <strong>with little or no useful hard information</strong>. No one has any direct experience in the product since we are introducing a discontinuous innovation.</li>
+<li>Need to understand that <strong>informed intuition</strong>, rather than analytics reason, is the most trustworthy decision-making tool to use. Informed intuition involves conclusions based on isolating a few high-quality images that are archetypes of a broader and more complex reality.</li>
+</ul>
+
+
+<h4>Target-Customer Characterization</h4>
+
+<ul>
+<li><p>A formal process for making up target customer image s, getting them out of individual heads and in front of a marketing decision-making group.</p></li>
+<li><p>The idea is to create as many characeterizations as possible and apply technique to reduce these images into a prioritized list of desirable target amrket segment opportunities.</p></li>
+<li>A representative format for target-customer scenarios include
+
+<ul>
+<li><strong>Header information</strong>: thumbnail info about end user, the technical buyer and the economic buyer.
+
+<ul>
+<li>Business markets: industry, geograph, department, job title</li>
+<li>Consumer markets: age, sex, economic status, social group</li>
+</ul>
+</li>
+<li><strong>A day in the life (before)</strong>: describe a situation in which the user in stuck, with significant consequences for the economic buyer
+
+<ul>
+<li>Catpures the five elements: <em>situation</em>, <em>desired outcome</em>, <em>attemtped approach</em>, <em>interfering factors</em>, <em>economic consequences</em></li>
+</ul>
+</li>
+<li><strong>A day in the life (after)</strong>: Take the same situation, same desired outcome and replay the scenario with the new technology in place.
+
+<ul>
+<li>Catpures the three elements: <em>new approach</em>, <em>enabling factors</em>, <em>economic rewards</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>Market Development Strategy Checklist</h4>
+
+<ul>
+<li>The scenerios are crude at best and we need to submit them to a refinery - the market development strategy checklist. The list consists of issues around which go-to-market plans are built.</li>
+<li>The <em>Show-stopper</em> issues are:
+
+<ul>
+<li><strong>Target customer</strong>: Is there a single, identifiable economic buyer, accessible to our sales channel  and sufficiently well-funded to pay the price?</li>
+<li><strong>Compelling reason to buy</strong>: Are the economic consequences sufficient to mandate any reasonable economic buyer to fix the problem?</li>
+<li><strong>Whole product</strong>: Can we field a complete solution tto the target customer&rsquo;s compelling reason to buy in the next three months?</li>
+<li><strong>Competition</strong>: Has this problem already been addressed by another compnay such that they have crossed the chasm ahead of us and occpied the space we would be targetting?</li>
+</ul>
+</li>
+<li><p>The <em>Nice to have</em> factors are:</p>
+
+<ul>
+<li><strong>Parnters and allies</strong>: Do we already have relationships begun with other companies needed to fulfill the whole product?</li>
+<li><strong>Distribution</strong>: Do we have a sales channel in place?</li>
+<li><strong>Pricing</strong>: Is the price of the whole product consistent with the target customer&rsquo;s budget and the values gained?</li>
+<li><strong>Positioning</strong>: Is the company credible as a provider of products and services to the target niche?</li>
+<li><strong>Next target customer</strong>: Does it have good &ldquo;bowling pin&rdquo; potential?</li>
+</ul>
+</li>
+<li><p><strong>Commiting</strong>: Don&rsquo;t have to pick the optimal beachhead to be successful. Just need to win the beachhead you have picked.</p></li>
+<li><strong>Target segment size</strong>: Pick somebody your own size.</li>
+</ul>
+
+
+<h1>5. Assemble the Invasion Force</h1>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post13/whole-product.png" alt="Whole Product Model" /> <img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post13/simplfied-whole-product.png" alt="Simplified Whole Product" /></p>
+
+<ul>
+<li>Wiring the marketplace starts with targetting markets that have a compelling reason to buy your product. The next step is to ensure that you have a monopoly over fulfilling that reason to buy. To secure that monopoly, you need to understand <strong>what a whole product consists of</strong> and <strong>how to organizae a marketplace to provide a whoel product</strong></li>
+</ul>
+
+
+<h4>The Whole Product Concept</h4>
+
+<ul>
+<li>There is a gap between the marketing promise made to the customer and the ability of the shipped product to fulfill that promise. The model identified four different perceptions of product:
+
+<ul>
+<li><strong>Generic product</strong>: what is shipped in the box and covered by the purchasing contract.</li>
+<li><strong>Expected product</strong>: the product that the consumer thought she was buying when you bought the generic product. The <em>minimum</em> product and services to have any chance of achieving the buying objective</li>
+<li><strong>Augmented product</strong>: the product that provide the <em>maximum</em> chance of achieving the buying objective.</li>
+<li><strong>Potential product</strong>: the product&rsquo;s room for growth</li>
+</ul>
+</li>
+<li>The marketing battle takes place at the level of the <strong>generic product</strong> for the <em>early market</em>. But as marketplaces develop as we enter the <em>mainstream market</em>, the battle shifts increasingly to the outer circles.</li>
+<li>Technology enthusiasts are the customers least in need of whole product support. Visionaries accept that they are going to have to take responsibility for creating the whole product under their own steam. <strong>Pragmatists evalulate and buy whole products.</strong></li>
+</ul>
+
+
+<h4>Whole Product Planning</h4>
+
+<ul>
+<li><strong>Winning the whole product battle means winning the war.</strong> Whole product planning is the centerpiece for developing a market domination strategy as pragmatists will hold off committing until they see a strong whole product.</li>
+<li>The focus should be on the minimum commitment to whole product needed to cross the chasm. There are two categories in the simplified model:
+
+<ul>
+<li>what we ship</li>
+<li>whatever else the customer need in order to achieve their compelling reason to buy</li>
+</ul>
+</li>
+<li>The contract does not require the compnay to deliver on the later, but the <em>customer relationship</em> does. Lack of attention to whole product marketing is the wellspring of high tech&rsquo;s inability to deliver on its promise.</li>
+</ul>
+
+
+<h4>Partners and Allies</h4>
+
+<ul>
+<li>The purpose of <strong>tactical alliances</strong> is to accelerate the formation of whole product infrastructre within a specific target market segment. The basic commitment is to codevelop a whole product and market it jointly.</li>
+<li>for any company crossing the chasm, fostering the initial partnerships to create the whole product is the equivalent of seeding the value chain, getting it started. Once the value starts being generated, the market system becomes self-reinforcing.</li>
+</ul>
+
+
+<h1>6. Define the Battle</h1>
+
+<ul>
+<li>To dominate our beachhead we need to understand who or what the competition is, what their current relationship to our target customer consist of, and how we can best <strong>position</strong> ourselves to force them out of our target market segmgent.</li>
+<li>One of the key things a pragmatist customer wants to see is strong compeition. In crossing the chasm, that competition is not likely to exist. What you have to do then is create it.</li>
+<li>When developing an early market, competition are usually from alternative modes of operation. Resistance are growing out of commitment to the status quo, fear, risk, or lack of compelling reason to buy. Our goal is to ennlist visionary sponsors to help overcome this resistance.</li>
+<li>In pragmatist&rsquo;s domain, competition is defined by <strong>comparative evaluations of products and vendors</strong> within a common category. These evaluations are extremely reassuring to the pragmatists, who are loath to buy until they can compare. <strong>Competition</strong>, therefore, becomes a fundamental condition for purchase.</li>
+<li>Creating your competition starts with locating your product within a buying category and position your product as the indisputably correct buying choice (with some rigging). The buying category need to be both credible and attractive.</li>
+</ul>
+
+
+<h4>Competitive-Positioning Compass</h4>
+
+<ul>
+<li>Crossing the chasm requires
+
+<ul>
+<li>moving from an environment of <strong>support</strong> by the visionaries to <strong>skepticism</strong> among the pragmatists</li>
+<li>moving from an <strong>product-oriented</strong> issues to <strong>market-oriented</strong> ones</li>
+<li>moving from the audience of like-minded <strong>specialists</strong> to essentially uninterested <strong>generalists</strong></li>
+</ul>
+</li>
+<li>It&rsquo;s the <strong>market-centric value system</strong> &ndash; supplemented by the product-centric ones &ndash; that must be the basis for the value profile of the target customers when crossing the chasm.</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th> Product-Centric          </th>
+<th> Market-Centric                  </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> Fastest product          </td>
+<td> Largest installed base          </td>
+</tr>
+<tr>
+<td> Easier to use            </td>
+<td> Most third party supporters     </td>
+</tr>
+<tr>
+<td> Elegant architecture     </td>
+<td> De facto standard               </td>
+</tr>
+<tr>
+<td> Product price            </td>
+<td> Cost of ownership               </td>
+</tr>
+<tr>
+<td> Unique functionality     </td>
+<td> Quality of support              </td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>Creating the Competition</h4>
+
+<ul>
+<li><strong>Market Alternative</strong>: a company that the target customer has been buying from for years. They address the problem that we will address. The market alternative helps people identify your target customer and your compelling reason to buy.</li>
+<li><strong>Product Alternative</strong>: a company that has also harnessed a discontinuous innovation. Their existence gives credibility to the notion that now is the time to embrace a discontinuity. The product alternative helps people appreciate your technology leverage.</li>
+<li><strong>Example 1</strong>: Silicon Graphics targetting post-production film editing process in Hollywood.
+
+<ul>
+<li>Market Alternative: Tradidional editing of cutting and splicing film.</li>
+<li>Product Alternative: Sun and HP workstations.</li>
+</ul>
+</li>
+<li><strong>Example 2</strong>: Quicken targetting home computer user who pay bills
+
+<ul>
+<li>Market Alternative: paper and pen checking.</li>
+<li>Product Alternative: Professional programs for financial enthusiasts.</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>Positioning</h4>
+
+<ul>
+<li>The goal of positioning is to make products easier to buy. There are four stages in this process, corresponding the the four primary psychographic types:
+
+<ul>
+<li><strong>Name it and frame it</strong>: What the product is and what category it falls under? Positioning for technology enthusiasts.</li>
+<li><strong>Who for and what for</strong>: Who is going to use it and for what purpose? Positioning for visionaries.</li>
+<li><strong>Competition and differentiation</strong>: a comparative context for the product? Positioning for pragmatists.</li>
+<li><strong>Financials and Futures</strong>: Is the product from a vendor with staying power? Positioning for conservative.</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>The Claim: Elevator Pitch</h4>
+
+<table>
+<thead>
+<tr>
+<th> Framework                                                                          </th>
+<th> Example (Intuit Quicken)                                           </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> <strong>For</strong> (target customers &ndash; beachhead segment only)                               </td>
+<td> For the bill-paying member of the family who also uses a home PC   </td>
+</tr>
+<tr>
+<td> <strong>Who are dissatisfied with</strong> (the current market alternative)                     </td>
+<td> Who is tired of filling out the same old checks month after month  </td>
+</tr>
+<tr>
+<td> <strong>Our product is a new</strong> (new product category)                                    </td>
+<td> Quicken is a PC home finance program                               </td>
+</tr>
+<tr>
+<td> <strong>That provides</strong> (key problem-solving capability)                                 </td>
+<td> That automatically creates and tracks all your check-writing       </td>
+</tr>
+<tr>
+<td> <strong>Unlike</strong> (the product alternative),                                              </td>
+<td> Unlike <em>Managing Your Money</em>, a financial analysis package,        </td>
+</tr>
+<tr>
+<td> <strong>We have assembled</strong> (key whole product features for your specific application).  </td>
+<td> Our system is optimized specifically fofr home bill-paying         </td>
+</tr>
+</tbody>
+</table>
+
+
+<h1>7. Launch the Invasion</h1>
+
+<ul>
+<li>The #1 corporate objective when crossing the chasm is to secure a <strong>channel</strong> into the mainstream market with which pragmatist customer will be comfortable.</li>
+<li>The fundamental function of pricing during this period is to <strong>motivate the channel</strong>.</li>
+</ul>
+
+
+<h4>The Structure of High-Tech Distribution</h4>
+
+<ul>
+<li><strong>Direct sales</strong>: dedicated sales force in the direct employ of the vendor. Optimized for creating demand.</li>
+<li><strong>Retail</strong>: the retail system works optimally when its job is to fulfill demand rather than to creat it. Structurally unsuited to solve the chasm problem.</li>
+<li><strong>Value-Added Reselling</strong>: for products that are too complex for retail. These are typically small companies which specialize in a particular technology or a particular vertical market. VARs are problematic to be mainstream distribution</li>
+</ul>
+
+
+<h4>The Right Choice</h4>
+
+<ul>
+<li>Use direct sales and support as a demand-creation channel to penetrate the initial target segment</li>
+<li>Once segment has become aware of your presence, transition to the most efficient fulfillment channel</li>
+</ul>
+
+
+<h4>Pricing</h4>
+
+<ul>
+<li><strong>Customer-Oriented Pricing</strong>: perspective of the customers varies among different psychographics
+
+<ul>
+<li>Visionaries: <strong>value-based pricing</strong>, price-insensitive and seeks an order-of-magnitude ROI</li>
+<li>Conservatives: <strong>cost-based pricing</strong>, wait until complete institutionalization of the product and keep their cost way down</li>
+<li>Pragmatists: <strong>competition-based pricing</strong>, want to back the market leader and would pay premium for the market leader</li>
+</ul>
+</li>
+<li><strong>Vendor-Oriented Pricing</strong>: function of internal issues, i.e. cost og foods, cost of capital, promised rate of return, etc. Unsuitable for for the chasm perid since we need to be entirely external focused.</li>
+<li><strong>Distribution-Oriented Pricing</strong>: price does not become a major issue during the sales cycle, price high enough for a sufficient margin to reward the channel</li>
+<li><strong>Overall Strategy</strong>:
+
+<ul>
+<li>price at the market leader price point</li>
+<li>build a disproportionally high reward for the channel. The reward should phased out as the product becomes established in the mainstream.</li>
+</ul>
+</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

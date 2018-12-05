@@ -1,0 +1,719 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: algorithms | Blog | Sijun He]]></title>
+  <link href="http://sijunhe.github.io/blog/categories/algorithms/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2018-11-03T16:42:42-07:00</updated>
+  <id>http://sijunhe.github.io/</id>
+  <author>
+    <name><![CDATA[Sijun He]]></name>
+    <email><![CDATA[sijun.he@hotmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Learning Dynamic Programming]]></title>
+    <link href="http://sijunhe.github.io/blog/2016/09/26/learning-dynamic-programming/"/>
+    <updated>2016-09-26T16:50:00-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2016/09/26/learning-dynamic-programming</id>
+    <content type="html"><![CDATA[<p>Dynamic programming is a commonly-used method in a programmer&rsquo;s algorithm toolbox and one that I have yet to learn. Thus I am writing this post to document what I learned in Stanford&rsquo;s <a href="https://www.coursera.org/learn/algorithm-design-analysis-2">Design and Analysis of Algorithms</a>.</p>
+
+<p>Dynamic programming is based on the idea of solving a complex problem by breaking it down into many simpler subproblems, solving each of the subproblems just once and storing the solution. When the same subproblem occurs again, the solution can be simply looked up from storage, thus saves time at the expense of space.</p>
+
+<!--more-->
+
+
+<h2>Principles of Dynamic Programming</h2>
+
+<ol>
+<li>Identify a small number of subproblems</li>
+<li>Quickly and correctly solve &ldquo;larger&rdquo; subproblems, given the solutions to smaller subproblems</li>
+<li>After solving all subproblems, the final solution can be quickly computed</li>
+</ol>
+
+
+<h2>Example Problem 1: Weighted Independent Sets in Path Graphs</h2>
+
+<h3>Problem Statement</h3>
+
+<p>Path graphs are basically graphs like a linked list. The input for the Weighted Independent Sets (WIS) problem is a path graph with non-negative weights on the vertices. And the desired output would be the subset of non-adjacent vertices, also called independent set, with maximum total weight.</p>
+
+<pre><code class="python">o --- o --- o --- o --- 0
+5     2     1     3     4
+</code></pre>
+
+<h3>Subproblem</h3>
+
+<p>Let $S$ be the max-weight independent set of the path graph $G$ and $V_n$ to be the last vertex of the path. Let $G'$ be the path graph $G$ with  $V_n$ deleted</p>
+
+<ul>
+<li>Case 1: If $V_n \notin S$, then $S$ is also the max-weight IS of $G'$.</li>
+<li>Case 2: If $V_n \in S$, then $S - $V_n$ is the max-weight IS of $G'&lsquo;$, which is $G$ with  $V_{n-1}$ and $V_n$ deleted</li>
+</ul>
+
+
+<p>Hence, we know a max-weight IS $S$ must be either</p>
+
+<ul>
+<li>a max-weight IS of $G'$ or</li>
+<li>a max-weight IS of $G'&lsquo;$ + $V_n$</li>
+</ul>
+
+
+<h3>The Dynamic Programming Solution</h3>
+
+<p>Let $G_i$ be the first $i$ vertices of $G$ and we populate an array $A$ from left to right with $A[i]$ being the value of the max-weight IS of $G_i$. Let array $W$ store the weights of the vertices.</p>
+
+<pre><code class="python">A[0] = 0;
+A[1] = W[1];
+for i in range(2, n+1):
+    A[i] = max(A[i-1], A[i-2] + W[i])    
+</code></pre>
+
+<h3>Complexity Analysis</h3>
+
+<p>Time complexity is $O(n)$ since it is constant time per iteration. Space complexity is also $O(n)$ from the memoization array $A$.</p>
+
+<h2>Example Problem 2: The Knapsack Problem</h2>
+
+<h3>Problem Statement</h3>
+
+<p>The Knapsack problem mimics the situation where a thief breaks into a store with a knapsack. The knapsack can only carry certain weight so the thief needs to put in items with the most total value while stay under the knapsack&rsquo;s weight limit.</p>
+
+<p>Input: $n$ items, each with a non-negative integer value $v_i$ and a non-negative integer weight $w_i$. The weight constraint is $W$.</p>
+
+<p>Output: a subset $S$ of all the items that maximizes $\sum<em>{i \in S} v_i$ subjected to $\sum</em>{i \in S} w_i \leq W$</p>
+
+<h3>Subproblems</h3>
+
+<p>Let $S$ be the max-value solution to an knapsack with capacity $W$ and for item $n$ be the last of all the available items</p>
+
+<ul>
+<li>Case 1: If $n \notin S$, then S must also be the max-value solution to the first $(n-1)$ items</li>
+<li>Case 2: If $n \in S$, then then $S - {n}$ is the max-value solution to the first $(n-1)$ items and the knapsack with capacity of $W - w_n$</li>
+</ul>
+
+
+<p>Hence, we know a max-value solution $V_{i,x}$ must be the maximum of</p>
+
+<ul>
+<li>$V_{i-1,W}$, the max-value solution for the first $(n-1)$ items with the same capacity</li>
+<li>$V_{i-1,W-w_i} + v_i$, the sum of the max-value solution for the first $(n-1)$ items with the capacity of $W-w_i$ and value of the ith item $v_i$</li>
+</ul>
+
+
+<h3>The Dynamic Programming Solution</h3>
+
+<p>Since we are searching all the possible combination of items and capacities, we use an 2D array $A$ for memoization. Let array $w$ and $v$ store the weights and values of the items.</p>
+
+<pre><code class="python">for x in range(0, W+1):
+    A[0,x] = 0
+
+for i in range(1, n+1):
+    for x in range(0, W+1):
+        A[i, x] = max(A[i - 1, x], A[i - 1, x - w[i] + v[i])    
+</code></pre>
+
+<h3>Complexity Analysis</h3>
+
+<p>Both the time complexity and the space complexity is also $O(nW)$, since there&rsquo;re $O(nW)$ subproblems and each can be solved in constant time and space.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Detecting Community Structures in Networks]]></title>
+    <link href="http://sijunhe.github.io/blog/2016/04/05/detecting-community-structures-in-networks/"/>
+    <updated>2016-04-05T16:46:58-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2016/04/05/detecting-community-structures-in-networks</id>
+    <content type="html"><![CDATA[<p>The purpose of this post is two-folded</p>
+
+<ul>
+<li>To gain hands-on experience with graph algorithms</li>
+<li>To complete the project from Coursera: <a href="https://www.coursera.org/learn/intermediate-programming-capstone">Capstone: Analyzing Social Network Data</a></li>
+</ul>
+
+
+<!--more-->
+
+
+<h2>Problem</h2>
+
+<p>A well known property in networked systems is that network nodes are joined together in tightly knit groups. The connections within groups are significantly denser compared with connections between different groups. The <a href="https://en.wikipedia.org/wiki/Girvan%E2%80%93Newman_algorithm">Girvan-Newman algorithm</a> is an method for detecting such close knit communities, leveraging the idea of betweenness of edges. My goal here is to implement the Girvan-Newman algorithm in java, and apply it to a few datasets to observe how it performs.</p>
+
+<h2>Data</h2>
+
+<p>When it comes to implementing an algorithm from a paper, you can&rsquo;t get better datasets other than the ones used by the original authors. Therefore I picked two datasets that was from the original paper. I also applied the algorithm on a slightly larger graph(~1000 nodes) just to see how it performs on larger graphs that has no clear communities.</p>
+
+<ul>
+<li><a href="https://networkdata.ics.uci.edu/data.php?id=10">Zachary&rsquo;s Karate Club</a>: A 34 node graph of Social network of friendships between 34 members of a karate club at a US university in the 1970</li>
+<li><a href="https://networkdata.ics.uci.edu/data.php?id=5">American College Football</a>: A 114 node graph of network of American football games between Division IA colleges during regular season Fall 2000</li>
+<li><a href="https://archive.org/details/oxford-2005-facebook-matrix">UCSD Facebook Graph - 1000</a>: A scaled-down version (783 nodes) of the Facebook friendships between students at UCSD in 2005</li>
+</ul>
+
+
+<h2>Algorithm</h2>
+
+<p>The key concepts in the Girvan-Newman Algorithm is <strong>edge betweenness</strong>, which is defined as the number of shortest paths between pairs of vertices that run along it. If there&rsquo;s more than one shortest path between a pair of vertices, each path is given equal weight. The interpretation behind the edge betweenness is that communities in the network are loosely connected by a few edges, hence all the shortest paths between the communities would have go through one of these few edge, which results in high edge betweenness. The next step is to remove the edge with the highest betweenness and re-compute the betweenness for all the edges. We iterate this until a desired number of communities has already been reached or until there is no edge remain.</p>
+
+<p>The first problem I encountered was to find all the shortest paths between a pair of vertices. We could easily find one shortest path with <a href="https://en.wikipedia.org/wiki/Breadth-first_search">Bread First Search (BFS)</a>, but it would return the path immediately after it finds one, instead of finding all shortest paths. Hence, I needed to make some minor modifications to the BFS algorithm. The two key modification is as follows</p>
+
+<ul>
+<li>Allow vertices to be discovered more than once from different vertices, as long as the vertex getting discovered is one level further than the vertex from which it discovers</li>
+<li>Allow vertices to have multiple parents</li>
+<li>After finding the target node, run <a href="https://en.wikipedia.org/wiki/Depth-first_search">Depth First Search (DFS)</a> through the parents all the way to the starting vertex to return all possible shortest paths</li>
+</ul>
+
+
+<h3>Modified BFS Pseudocode</h3>
+
+<pre><code class="python">def ModifiedBFS(Node start, Node end):
+    add start to the queue
+    while (queue is not empty):
+        Node current = queue.pop 
+        set current as visited
+        for each neighbor of current:
+            if (neighbor is not in queue):
+                add neighbor to queue 
+            if (neighbor's level &gt; current's level): 
+                add Node current as a parent of Node neighbor
+
+    return all paths found from Node end to Node start using DFS
+</code></pre>
+
+<h3>Finding Number of Communities In the Network</h3>
+
+<p>There is a well-known algorithm for finding all <a href="https://en.wikipedia.org/wiki/Strongly_connected_component">Strongly Connected Components</a> in a graph. The number of Strongly Connected Components(SCC) is the number of communities in the graph. The algorithm is <a href="https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm">Tarjan&rsquo;s strongly connected components algorithm</a></p>
+
+<h3>Overall Pseudocode</h3>
+
+<pre><code class="python">def GirvanNewman():
+    while (no edge left or desired number of communities unreached):
+        calculate Betweeness of all edges
+        remove the edge with the highest edge betweenness
+        calculate the number of strongly connected component (communities)
+</code></pre>
+
+<h3>Sidenote</h3>
+
+<p>It was pointed out from the original paper that when recalculating the betweenness of all edges, only the betweenness of the edges that are affected by the removal of the edge with highest betweenness would need to get re-computed. This may improve the time complexity of the algorithm, which is the main disadvantage of the algorithm. The time complexity is (O(m<sup>2n</sup>)), where m is the number of edges and n is the number vertices. However, this could dramatically increase the space complexity. Since there is no way of knowing which edge would be removed before hand, we would need to store the shortest path between all pairs of vertices. Best case scenario, all pairs of vertices has constant shortest path, which gives (O(n<sup>2</sup>)), which is already greater than the space we needed for the adjacency list we need to store the graph. The worst case of number of shortest path between a pair of vertices would be <strong>exponential</strong>!. So I don&rsquo;t think this is a good idea, as the worst case would most certainly kill the algorithm.</p>
+
+<h2>Results</h2>
+
+<h3>Zachary&rsquo;s Karate Club</h3>
+
+<p>The graph below shows the two community separation made by the Girvan-Newman algorithm, compared with the ground-truth communities. The only misclassified node is marked green, which is node 3 in the above graph. As we can see, the algorithm performed pretty well and the result is consistent with the result from the original paper.
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post5/karate.png"></p>
+
+<h3>American College Football</h3>
+
+<p>The two graphs below shows the comparison between the communities detected based on the American football games between Division IA colleges and the ground truth conferences each college plays in. As we can see, the algorithm did a great job, which is consistent with the results from the original paper. It is worth noting that since the algorithm had a difficult detecting the &ldquo;Independent&rdquo; schools, which are the brown cluster in the middle. This is because independent schools aren&rsquo;t really a league and they play against schools in other conferences, as opposed to other independent schools.
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post5/footballTrue.png">
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post5/footballMy.png"></p>
+
+<h3>UCSD Facebook Graph</h3>
+
+<p>This is an trimmed downed version of the original 15000+ nodes graph of the Facebook friendship in UCSD in 2005. As opposed to the earlier two examples, this dataset has no obvious ground truth communities, which explains why the Girvan-Newman algorithm is struggling splitting the graph. Since there were no major communities in the graph, the algorithm could only detects the very small communities on the outside of the graph that are connected to the main graph by very few edges, as opposed to splitting the graph in major groups. A better algorithm for this situation would be the <a href="https://en.wikipedia.org/wiki/Louvain_Modularity">Louvain Modularity</a>, which produces a much more reasonable 5 community graph.</p>
+
+<p>It is also worth noting that with a moderate size graph like this (~800 nodes), the Girvan-Newman algorithm is taking about 200 seconds for each iterations with my Mac, indicating that it is not that scaleable.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post5/5Group.png">
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post5/socialModuarity.png"></p>
+
+<h2>Improvements</h2>
+
+<p>While the Girvan-Newman algorithm is indeed quite slow, the good news is that it is can be easily parallelized! The most time consuming part of the algorithm is finding the betweenness of all the edges. It has no data dependency at all and can be easily run in parallel. While I haven&rsquo;t implemented it, here&rsquo;s some pseudocode in MapReduce.
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">map</span><span class="p">():</span>
+</span><span class='line'>    <span class="n">read</span> <span class="nb">all</span> <span class="n">graph</span> <span class="n">data</span>
+</span><span class='line'>    <span class="n">find</span> <span class="n">shortest</span> <span class="n">path</span> <span class="n">between</span> <span class="n">start</span> <span class="ow">and</span> <span class="n">end</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">each</span> <span class="n">path</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">each</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">emit</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">number</span> <span class="n">of</span> <span class="n">shortest</span> <span class="n">path</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">reduce</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">values</span> <span class="n">array</span><span class="p">):</span>
+</span><span class='line'>    <span class="nb">sum</span> <span class="n">values</span> <span class="n">array</span>
+</span><span class='line'>    <span class="n">emit</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">betweenness</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Friends You Might Know]]></title>
+    <link href="http://sijunhe.github.io/blog/2016/01/19/friends-you-might-know/"/>
+    <updated>2016-01-19T15:46:36-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2016/01/19/friends-you-might-know</id>
+    <content type="html"><![CDATA[<p>This is a problem from <a href="http://web.stanford.edu/class/cs246/">CS246</a>: Mining Massive Datasets from Stanford University. The idea behind the original &ldquo;People You Might Know&rdquo; friendship recommendation algorithm is that if two people share a high number of mutual friends, they are more likely to know each other and thus the system would recommend that they connect with each other.</p>
+
+<!--more-->
+
+
+<h2>Problem Statement</h2>
+
+<p>The input here can be found <a href="https://s3-us-west-1.amazonaws.com/sijunhe-blog/data/soc-LiveJournal1Adj.txt">here</a>, which is in the form of [User][Tab][Friends]&ldquo;, where [Friends] is a comma-separated list of Users. The output will be in terms of [User][Tab][Recommendations], where [Recommendations] is a comma-separated list of users that are recommended friend.</p>
+
+<p>We could use a algorithm that for each user A, it recommends N = 10 users who are not already friends with A, but share the largest number of mutual friends in common with A.</p>
+
+<h2>Approach and Pseudocode</h2>
+
+<p>The key is that for each user, the algorithm needs to find out the users who share mutual friends with him. Then, the algorithm needs to sort the users by the number of mutual friends in descending order and to make sure not to recommend the users who are already friends with A. Clearly, this is a highly parallelizable problem since for each user the computation is entirely separated. This would make a great MapReduce problem.</p>
+
+<h4>Terminology</h4>
+
+<p>For each user A:</p>
+
+<p>Degree 1 friends: the users who A is already friends with<br/>
+Degree 2 friends: the users who shares a mutual friend with A.<br/>
+Degree 2 friends could potentially be degree 1 friends as well and we are interested in the users who are degree 2 friends with A, but not degree 1 friends.</p>
+
+<h4>Approach</h4>
+
+<p>Since we are using MapReduce, we want the reducer to have the key as A, and the value as an <a href="https://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html">Iterable</a> of degree 1 friends and degree 2 friends.</p>
+
+<p>Example input: A B,C,D</p>
+
+<p>Mapper:</p>
+
+<ul>
+<li>Computing degree 1 friends for A would be straightforward, as they would just be the users in the comma-separated friends list. The mapper would just emit the key values pairs of (A, B), (A, C) and (A, D)</li>
+<li>Computing degree 2 friends is a little trickier. Here we will use A as the key, but as the mutual friend. For example, from A&rsquo;s friends list, we know B and C both have A as a mutual friend. Therefore B is a degree 2 friend of C and vice versa. The mapper would emit (B, C), (C, B), (B, D), (D, B), (C, D) and (D, C)</li>
+</ul>
+
+
+<p>Reducer:</p>
+
+<ul>
+<li>The reducer receives the key, which is an user, and an Iterable of degree 1 and degree 2 friends of the key</li>
+<li>The reducer needs to count the number of times that a degree 2 friend pair shows up is the number of their mutual friends</li>
+<li>The reducer then needs to sort the degree two friends of the key by the number of mutual friends</li>
+<li>The reducer needs to make sure that degree 1 don&rsquo;t get recommended</li>
+</ul>
+
+
+<h4>Pseudocode</h4>
+
+<pre><code>Map: 
+
+    for each user, friendList:
+        for each friend i in friendList:
+            emit (user, (i, 1)) 
+            for each friend j in friendlist: 
+            emit (j, (i, 2))
+            emit (i, (j, 2))
+
+Reduce: 
+
+    for each user, friendDegreeList:
+
+        for each (friend, degree) in  friendDegreeList:
+            if degree == 1: hashmap.add(friend, -1)
+            else:
+                if (friend in hashmap):
+                    hashmap[friend] += 1
+                else:
+                    hashmap.add(friend, 1)
+
+        for each entry in hashmap:
+            if (value != -1): add to list
+
+        sort list
+                output top N
+</code></pre>
+
+<h2>Hadoop MapReduce Program</h2>
+
+<pre><code class="Java">package edu.stanford.cs246.friendrecommendation;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.PriorityQueue;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
+
+public class FriendRecommendation extends Configured implements Tool {
+   public static void main(String[] args) throws Exception {
+      System.out.println(Arrays.toString(args));
+      int res = ToolRunner.run(new Configuration(), new FriendRecommendation(), args);
+      System.exit(res);
+   }
+
+   @Override
+   public int run(String[] args) throws Exception {
+      System.out.println(Arrays.toString(args));
+      Job job = new Job(getConf(), "FriendRecommendation");
+      job.setJarByClass(FriendRecommendation.class);
+      job.setMapOutputKeyClass(Text.class);
+      job.setMapOutputValueClass(PairWritable.class);
+
+      job.setMapperClass(Map.class);
+      job.setReducerClass(Reduce.class);
+
+      job.setInputFormatClass(KeyValueTextInputFormat.class);
+      job.setOutputFormatClass(TextOutputFormat.class);
+
+      FileInputFormat.addInputPath(job, new Path(args[0]));
+      FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+      job.waitForCompletion(true);
+
+      return 0;
+   }
+
+   public static class Map extends Mapper&lt;Text, Text, Text, PairWritable&gt; {
+
+      @Override
+      public void map(Text key, Text value, Context context) throws IOException, InterruptedException {;
+         if (value.getLength() != 0) {
+             String[] friendsList = value.toString().split(",");
+             for (int i = 0; i &lt; friendsList.length; i ++) {
+                 //adding all degree 1 friends to keep track of the people who are already friends and don't need to be recommended
+                 context.write(key, new PairWritable(new Text(friendsList[i]), new IntWritable(1)));
+                 for (int j = i + 1; j &lt; friendsList.length; j++) {
+                     //adding all potential degree 2, which are people in the list who are both friends with the person (key)
+                     context.write(new Text(friendsList[i]), new PairWritable(new Text(friendsList[j]), new IntWritable(2)));
+                     context.write(new Text(friendsList[j]), new PairWritable(new Text(friendsList[i]), new IntWritable(2)));
+                 }
+             }
+         }   
+      }
+   }
+
+   public static class Reduce extends Reducer&lt;Text, PairWritable, Text, Text&gt; {
+      @Override
+      public void reduce(Text key, Iterable&lt;PairWritable&gt; values, Context context) throws IOException, InterruptedException {
+          Iterator&lt;PairWritable&gt; itr = values.iterator();
+          //use a hashmap to keep track of the friends of the person and the count
+          HashMap&lt;String, Integer&gt; hash = new HashMap&lt;String, Integer&gt;(); 
+          while (itr.hasNext()) {
+              PairWritable curEntry = itr.next();
+              String friendName = curEntry.getFriend();
+              // if this is a degree 1 friend, identify it with -1 and later delete it
+              if (curEntry.getDegree() == 1) hash.put(friendName, -1);
+              else {
+                  if (hash.containsKey(friendName)) {
+                      //if person already in the list
+                      if (hash.get(friendName) != -1) {
+                          //make sure that the friends pair are not degree 1 friends
+                          // if not, increase the count by 1
+                          hash.put(friendName, hash.get(friendName) + 1);
+                      }
+                  }
+                  else hash.put(friendName, 1);
+              }
+          }
+
+          // remove all degree 1 friend, sort top 10 with a top 10 heap (implemented by PriorityQueue), output 
+          PriorityQueue&lt;Entry&lt;String, Integer&gt;&gt; top10heap = new PriorityQueue&lt;Entry&lt;String, Integer&gt;&gt;(10, new Comparator&lt;Entry&lt;String, Integer&gt;&gt;() {
+
+            @Override
+            public int compare(Entry&lt;String, Integer&gt; o1,
+                    Entry&lt;String, Integer&gt; o2) {
+                return o2.getValue() - o1.getValue();
+            }
+          }); 
+
+          for (Entry&lt;String, Integer&gt; pairs: hash.entrySet()) {
+              if (!pairs.getValue().equals(-1)) top10heap.add(pairs);
+          }
+          StringBuffer output = new StringBuffer();
+          int count = 0;
+          int size = top10heap.size();
+          while (!top10heap.isEmpty()) {
+              output.append(top10heap.poll().getKey());
+              if (count &gt;= 9 || count &gt;= size-1) break;
+              count ++;
+              output.append(",");
+          }
+          context.write(key, new Text(output.toString()));
+      }
+   }
+
+
+   /*
+    * the implementation of a friend and the degree with the WritableComparable interface required as a value 
+    */
+   public static class PairWritable implements Writable {
+       private Text friend;
+       private IntWritable degree;
+
+       public PairWritable() {
+           this.friend = new Text();
+           this.degree = new IntWritable();
+       }
+
+       public PairWritable(Text friend1, IntWritable degree) {
+           this.friend = friend1;
+           this.degree = degree;
+       }
+
+       @Override
+       public void readFields(DataInput in) throws IOException {
+           this.friend.readFields(in);
+           this.degree.readFields(in);
+       }
+
+       @Override
+       public void write(DataOutput out) throws IOException {
+           friend.write(out);
+           degree.write(out);
+       }
+
+       public int getDegree() {
+           return degree.get();
+       }
+
+       public String getFriend() {
+           return friend.toString();
+       }
+   }
+
+}
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Quora Challenges - Upvotes]]></title>
+    <link href="http://sijunhe.github.io/blog/2015/11/20/quora-challenges-upvotes/"/>
+    <updated>2015-11-20T15:14:56-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2015/11/20/quora-challenges-upvotes</id>
+    <content type="html"><![CDATA[<p>Quora Challenges are basically a set of programming problems posted on the <a href="https://www.quora.com/challenges">website</a>, used as like a backdoor of recruiting. <a href="https://www.quora.com/Is-it-necessary-to-solve-a-programming-challenge-to-get-an-internship-interview-with-Quora">Rumor</a> has it that whoever can solve one of these would guarantee an interview with Quora, skipping the resume selection process.</p>
+
+<!--more-->
+
+
+<h2>Problem Statement</h2>
+
+<blockquote><p>At Quora, we have aggregate graphs that track the number of upvotes we get each day. As we looked at patterns across windows of certain sizes, we thought about ways to track trends such as non-decreasing and non-increasing subranges as efficiently as possible.</p>
+
+<p>For this problem, you are given N days of upvote count data, and a fixed window size K. For each window of K days, from left to right, find the number of non-decreasing subranges within the window minus the number of non-increasing subranges within the window.</p>
+
+<p>A window of days is defined as contiguous range of days. Thus, there are exactly N−K+1
+ windows where this metric needs to be computed. A non-decreasing subrange is defined as a contiguous range of indices [a, b], a &lt; b, where each element is at least as large as the previous element. A non-increasing subrange is similarly defined, except each element is at least as large as the next. There are up to K(K − 1) / 2 of these respective subranges within a window, so the metric is bounded by [−K(K−1) / 2, K(K − 1) / 2].</p>
+
+<blockquote><p><a href="https://www.quora.com/challenges#upvotes">Quora Challenges</a></p></blockquote></blockquote>
+
+<h2>Approach</h2>
+
+<ul>
+<li><p>The problem is asking for the number of subranges, not the longest subranges. For example, [1, 2, 3] has 3 non-decreasing ranges [1, 2], [2, 3], [1, 3]. Therefore the common approach of iterating a pointer through the window while counting subrange length until comparison condition breaks is not valid. Instead, we need to generate a list of all the subranges in a window and count the combination of them. For example, a 10 day non-decreasing subrange has 9 + 8+ 7+ 6 + 5 + 4 + 3 + 2 + 1 = 45 non-decreasing subranges.</p></li>
+<li><p>We could do a Brute Force algorithm of computing the number of subranges separately for each window and loop the algorithm through every window. But the algorithm for the subranges would be O(K) within a window since it has to touch each element in the window at least once. The entire algorithm would then be O(K(N - K + 1)) = O(KN), which is way to slow.</p></li>
+<li><p>Instead, we can compute the number of subranges for the first window and update those subranges. The update is very efficient O(1) since we are just removing an element in the back and adding an element in the front and we just need to do a constant amount of comparisons to update the front and back subranges.</p></li>
+</ul>
+
+
+<h2>Code</h2>
+
+<pre><code class="python"># This file solves the upvotes challenge on Quora Engineering Challenges
+# https://www.quora.com/challenges#upvotes
+
+# Find all Non-decreasing range in a window and append them into a list
+# parameters: start, end: starting and ending point of the window
+# return: a list containing all non-decreasing subranges in the window, subranges are in the form of [first, last]
+def findAllNonDecr(start, end):
+    output = []
+    # first = starting point of an subrange
+    # last = ending pointer of an subrange
+    first = last = start
+
+    for num in range(start + 1, end ):
+        if list[num] &gt;= list[last]:
+            last = num
+        else:
+            # append the subrange to the subrange list if the length is at least 2 days
+            if first != last:
+                output.append([first, last])
+            # reset first and last to the pointer
+            first = last = num
+
+    # if subrange continues through the last element
+    if first != last:
+        output.append([first, last])
+
+    return output
+
+# Same function as last one, but find all non-increasing range
+def findAllNonIncr(start, end):
+    output = []
+    first = last = start
+
+    for num in range(start + 1, end):
+        if list[num] &lt;= list[last]:
+            last = num
+        else:
+
+            if first != last:
+                output.append([first, last])
+
+            first = last = num
+
+    # if subrange continues through the last element
+    if first != last:
+        output.append([first, last])
+
+    return output
+
+# calculate the number of subranges within the non-Decr/Incr range, given the start and the end of the subrange
+def sumSubrange(output):
+    if (len(output) ==0): return 0
+    sum = 0
+    # find the number of subranges for each subrange in the list
+    for pair in output:
+        diff = pair[1] - pair[0] + 1
+        # The number of subrange in a N-length subrange is 1 + 2 + ... + N - 1 = (N - 1) * N/2
+        sum += (diff - 1) * diff / 2
+
+    return sum
+
+
+# move the window down the list, updating the non-decreasing range list as well as the number of non-decreasing subranges
+def moveNonDecr(start, end, output, sum):
+
+    # If there weren't any subranges from last window, do a brand new search in current window
+    if len(output) == 0:
+        newOutput = findAllNonDecr(start + 1, end + 1)
+        newSum = sumSubrange(newOutput)
+        return newOutput, newSum
+
+    firstSubrange = output[0] # first subrange of previous window
+    lastSubrange = output[-1] # last subrange of previous window
+
+    # take care of boundary condition in the back
+    if firstSubrange[0] == start:
+
+        # if the start of the window was the start of the first subrange, then the subrange will shift by one
+        sum -= (output[0][1] - output[0][0])
+        output[0][0] += 1
+
+    # # take care of boundary condition in the front
+    # if the end of the window was the end of the last subrange
+    if lastSubrange[1] == end - 1:
+
+        # if the end of the subrange continues, shift the subrange by one
+        if list[end] &gt;= list[end-1]:
+            sum += (output[-1][1] - output[-1][0] + 1)
+            output[-1][1] += 1
+
+    # if the end of the window was not the end of the last subrange, see if the last element from last window and the new element would form a new subrange
+    else:
+        if list[end] &gt;= list[end -1]:
+
+            output.append([end-1, end])
+            sum += 1
+
+    # if boundary condition in the back makes the first subrange of only length 1, delete that subrange from list
+
+    if output[0][0] == output[0][1]:
+        output.pop(0)
+
+    return output, sum
+
+# Same function as last one, but update all non-increasing range
+def moveNonIncr(start, end, output, sum):
+
+    if len(output) == 0:
+        newOutput = findAllNonIncr(start + 1, end + 1)
+        newSum = sumSubrange(newOutput)
+        return newOutput, newSum
+
+    firstSubrange = output[0] # first subrange of previous window
+    lastSubrange = output[-1] # last subrange of previous window
+
+    # take care of left edge condition
+    if firstSubrange[0] == start:
+
+        # if the start of the window was the start of the first subrange, then the subrange will shift by one
+        sum -= (output[0][1] - output[0][0])
+        output[0][0] += 1
+
+    # take care of right edge condition
+    # if the end of the window was the end of the last subrange
+    if lastSubrange[1] == end - 1:
+
+        # if the end of the subrange continues, shift the subrange by one
+        if list[end] &lt;= list[end-1]:
+            sum += (output[-1][1] - output[-1][0] + 1)
+            output[-1][1] += 1
+
+    # if the end of the window was not the end of the last subrange, try if the last two element would form a new subrange
+    else:
+        if list[end] &lt;= list[end -1]:
+
+            output.append([end-1, end])
+            sum += 1
+
+    # if that makes the subrange only 1 number, delete that subrange from list
+    if output[0][0] == output[0][1]:
+        output.pop(0)
+
+    return output, sum
+
+# input for N and K as int
+n, k = raw_input().split()
+n, k = int(n), int(k)
+
+# input for N positive Integers of upvote counts as int list
+global list
+list = raw_input().split()
+list = [int(i) for i in list]
+
+# initialize a pointer for the start and end of the size K window
+start = 0
+end = 0 + k
+outputNonDecr = findAllNonDecr(start, end)
+outputNonIncr = findAllNonIncr(start, end)
+sumNonDecr = sumSubrange(outputNonDecr)
+sumNonIncr = sumSubrange(outputNonIncr)
+print sumNonDecr - sumNonIncr
+
+while end != n:
+    outputNonDecr, sumNonDecr = moveNonDecr(start, end, outputNonDecr, sumNonDecr)
+    outputNonIncr, sumNonIncr = moveNonIncr(start, end, outputNonIncr, sumNonIncr)
+    start += 1
+    end += 1
+    print sumNonDecr - sumNonIncr
+</code></pre>
+
+<p>All 29 test cases passed!</p>
+
+<h2>Potential Areas of Improvement</h2>
+
+<ul>
+<li><p>Maybe a window can be scanned once for both non-decreasing subrange and non-increasing subrange by keeping track of more pointers. I am not certain, without giving much thought.</p></li>
+<li><p>Maybe the updating of both non-decreasing subrange and non-increasing subrange can be done simultaneously.</p></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

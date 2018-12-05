@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: basics | Blog | Sijun He]]></title>
+  <link href="http://sijunhe.github.io/blog/categories/basics/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2018-11-03T16:42:42-07:00</updated>
+  <id>http://sijunhe.github.io/</id>
+  <author>
+    <name><![CDATA[Sijun He]]></name>
+    <email><![CDATA[sijun.he@hotmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Learning Dynamic Programming]]></title>
+    <link href="http://sijunhe.github.io/blog/2016/09/26/learning-dynamic-programming/"/>
+    <updated>2016-09-26T16:50:00-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2016/09/26/learning-dynamic-programming</id>
+    <content type="html"><![CDATA[<p>Dynamic programming is a commonly-used method in a programmer&rsquo;s algorithm toolbox and one that I have yet to learn. Thus I am writing this post to document what I learned in Stanford&rsquo;s <a href="https://www.coursera.org/learn/algorithm-design-analysis-2">Design and Analysis of Algorithms</a>.</p>
+
+<p>Dynamic programming is based on the idea of solving a complex problem by breaking it down into many simpler subproblems, solving each of the subproblems just once and storing the solution. When the same subproblem occurs again, the solution can be simply looked up from storage, thus saves time at the expense of space.</p>
+
+<!--more-->
+
+
+<h2>Principles of Dynamic Programming</h2>
+
+<ol>
+<li>Identify a small number of subproblems</li>
+<li>Quickly and correctly solve &ldquo;larger&rdquo; subproblems, given the solutions to smaller subproblems</li>
+<li>After solving all subproblems, the final solution can be quickly computed</li>
+</ol>
+
+
+<h2>Example Problem 1: Weighted Independent Sets in Path Graphs</h2>
+
+<h3>Problem Statement</h3>
+
+<p>Path graphs are basically graphs like a linked list. The input for the Weighted Independent Sets (WIS) problem is a path graph with non-negative weights on the vertices. And the desired output would be the subset of non-adjacent vertices, also called independent set, with maximum total weight.</p>
+
+<pre><code class="python">o --- o --- o --- o --- 0
+5     2     1     3     4
+</code></pre>
+
+<h3>Subproblem</h3>
+
+<p>Let $S$ be the max-weight independent set of the path graph $G$ and $V_n$ to be the last vertex of the path. Let $G'$ be the path graph $G$ with  $V_n$ deleted</p>
+
+<ul>
+<li>Case 1: If $V_n \notin S$, then $S$ is also the max-weight IS of $G'$.</li>
+<li>Case 2: If $V_n \in S$, then $S - $V_n$ is the max-weight IS of $G'&lsquo;$, which is $G$ with  $V_{n-1}$ and $V_n$ deleted</li>
+</ul>
+
+
+<p>Hence, we know a max-weight IS $S$ must be either</p>
+
+<ul>
+<li>a max-weight IS of $G'$ or</li>
+<li>a max-weight IS of $G'&lsquo;$ + $V_n$</li>
+</ul>
+
+
+<h3>The Dynamic Programming Solution</h3>
+
+<p>Let $G_i$ be the first $i$ vertices of $G$ and we populate an array $A$ from left to right with $A[i]$ being the value of the max-weight IS of $G_i$. Let array $W$ store the weights of the vertices.</p>
+
+<pre><code class="python">A[0] = 0;
+A[1] = W[1];
+for i in range(2, n+1):
+    A[i] = max(A[i-1], A[i-2] + W[i])    
+</code></pre>
+
+<h3>Complexity Analysis</h3>
+
+<p>Time complexity is $O(n)$ since it is constant time per iteration. Space complexity is also $O(n)$ from the memoization array $A$.</p>
+
+<h2>Example Problem 2: The Knapsack Problem</h2>
+
+<h3>Problem Statement</h3>
+
+<p>The Knapsack problem mimics the situation where a thief breaks into a store with a knapsack. The knapsack can only carry certain weight so the thief needs to put in items with the most total value while stay under the knapsack&rsquo;s weight limit.</p>
+
+<p>Input: $n$ items, each with a non-negative integer value $v_i$ and a non-negative integer weight $w_i$. The weight constraint is $W$.</p>
+
+<p>Output: a subset $S$ of all the items that maximizes $\sum<em>{i \in S} v_i$ subjected to $\sum</em>{i \in S} w_i \leq W$</p>
+
+<h3>Subproblems</h3>
+
+<p>Let $S$ be the max-value solution to an knapsack with capacity $W$ and for item $n$ be the last of all the available items</p>
+
+<ul>
+<li>Case 1: If $n \notin S$, then S must also be the max-value solution to the first $(n-1)$ items</li>
+<li>Case 2: If $n \in S$, then then $S - {n}$ is the max-value solution to the first $(n-1)$ items and the knapsack with capacity of $W - w_n$</li>
+</ul>
+
+
+<p>Hence, we know a max-value solution $V_{i,x}$ must be the maximum of</p>
+
+<ul>
+<li>$V_{i-1,W}$, the max-value solution for the first $(n-1)$ items with the same capacity</li>
+<li>$V_{i-1,W-w_i} + v_i$, the sum of the max-value solution for the first $(n-1)$ items with the capacity of $W-w_i$ and value of the ith item $v_i$</li>
+</ul>
+
+
+<h3>The Dynamic Programming Solution</h3>
+
+<p>Since we are searching all the possible combination of items and capacities, we use an 2D array $A$ for memoization. Let array $w$ and $v$ store the weights and values of the items.</p>
+
+<pre><code class="python">for x in range(0, W+1):
+    A[0,x] = 0
+
+for i in range(1, n+1):
+    for x in range(0, W+1):
+        A[i, x] = max(A[i - 1, x], A[i - 1, x - w[i] + v[i])    
+</code></pre>
+
+<h3>Complexity Analysis</h3>
+
+<p>Both the time complexity and the space complexity is also $O(nW)$, since there&rsquo;re $O(nW)$ subproblems and each can be solved in constant time and space.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Bitwise Operation in Java]]></title>
+    <link href="http://sijunhe.github.io/blog/2016/08/16/bitwise-operation-in-java/"/>
+    <updated>2016-08-16T16:47:25-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2016/08/16/bitwise-operation-in-java</id>
+    <content type="html"><![CDATA[<p>Recently, I have been playing with <a href="https://leetcode.com/">LeetCode</a> a bit in preparation for the upcoming job hunting season and I found a class of problems related to <strong>bitwise operations</strong>. While I may never use low level bitwise operations as a data scientist, they are quite fun to work with. Plus it would be virtually impossible to solve bitwise operation problems without reading into it before hand. So here are my reading notes for bitwise operations in Java.</p>
+
+<!--more-->
+
+
+<h3>Bit Operator</h3>
+
+<ul>
+<li><h4>Bitwise AND ( &amp; )</h4>
+
+<p>The &amp; operator applies the logical AND bit by bit. If both bits are 1, it returns 1. Otherwise, return 0.
+<code>python
+0000 1100(12)
+    &amp;
+0000 1010(10)
+    =
+0000 1000 (8)
+</code></p></li>
+<li><h4>Bitwise OR ( | )</h4>
+
+<p>The | operator applies the logical inclusive OR bit by bit. If both bits are 0, it returns 0. Otherwise, return 1.
+<code>python
+0000 1100(12)
+    |
+0000 1010(10)
+    =
+0000 1110(14)
+</code></p></li>
+<li><h4>Bitwise XOR ( ^ )</h4>
+
+<p>The ^ operator applies the logical exclusive OR bit by bit. If returns 1 only if one of the bits is 1 and returns 0 otherwise.
+<code>python
+0000 1100(12)
+    ^
+0000 1010(10)
+    =
+0000 0110 (6)
+</code></p></li>
+<li><h4>Bitwise Complement ( ~ )</h4>
+
+<p>The ~ operator applies the logical NOT bit by bit. It &ldquo;flips&rdquo; each bit. The complement operator also follows the formula (\sim x = - x - 1 ), if the negatives are stored as <a href="https://en.wikipedia.org/wiki/Two%27s_complement">Two&rsquo;s Complement</a>.
+<code>python
+~  0000 1100(12)   
+      =
+  1111 0011 = 0000 1100 + 1 = (-13)
+</code></p></li>
+</ul>
+
+
+<h3>Bit Shift</h3>
+
+<ul>
+<li><h4>Left Shift ( &lt;&lt; )</h4>
+
+<p>The &lt;&lt; operator shifts the current bit pattern to the left and pads the empty bits on the right with 0. For each bit shifted to the left, it is equivalent to multiplying the original number by 2. To put into formula, ( x &lt;&lt; y = x * 2<sup>y</sup>)
+<code>python
+0000 1100(12)
+   &lt;&lt; 1
+0001 1000(24)
+</code></p></li>
+<li><h4>Right Shift ( >> )</h4>
+
+The >> operator shifts the current bit pattern to the right and pads the empty bits on the left with the most significant bit, which is the sign bit. This allows the operator to preserve the sign of the number. For each bit shifted to the right, it is equivalent to divide the original number by 2. To put into formula, ( x >> y = \frac{x}{2<sup>y</sup>})
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="mo">0000</span> <span class="mi">1100</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">blockquote</span><span class="o">&gt;&lt;</span><span class="n">blockquote</span><span class="o">&gt;&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="mi">1</span>
+</span><span class='line'><span class="mo">0000</span> <span class="mo">0110</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;&lt;/</span><span class="n">blockquote</span><span class="o">&gt;&lt;/</span><span class="n">blockquote</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="mi">1111</span> <span class="mo">0100</span><span class="p">(</span><span class="o">-</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">blockquote</span><span class="o">&gt;&lt;</span><span class="n">blockquote</span><span class="o">&gt;&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="mi">1</span>
+</span><span class='line'><span class="mi">1111</span> <span class="mi">1010</span><span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></p></blockquote></blockquote></li>
+<li><h4>Zero Fill Right Shift ( >>> )</h4>
+
+The >>> operator behaves very similar to the >> operator. However, instead of padding with the most significant bit, it pads with 0. Hence, this operator is not sign-preserving. If the original number is positive, it is still equivalent to divide the original number by 2 for each bit shifted. But it doesn&rsquo;t work for negative numbers.
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="mo">0000</span> <span class="mi">1100</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">blockquote</span><span class="o">&gt;&lt;</span><span class="n">blockquote</span><span class="o">&gt;&lt;</span><span class="n">blockquote</span><span class="o">&gt;&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="mi">1</span>
+</span><span class='line'><span class="mo">0000</span> <span class="mo">0110</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;&lt;/</span><span class="n">blockquote</span><span class="o">&gt;&lt;/</span><span class="n">blockquote</span><span class="o">&gt;&lt;/</span><span class="n">blockquote</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="mi">1111</span> <span class="mo">0100</span><span class="p">(</span><span class="o">-</span><span class="mi">12</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">blockquote</span><span class="o">&gt;&lt;</span><span class="n">blockquote</span><span class="o">&gt;&lt;</span><span class="n">blockquote</span><span class="o">&gt;&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="mi">1</span>
+</span><span class='line'><span class="mo">0111</span> <span class="mi">1010</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></p></blockquote></blockquote></blockquote></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[The Stack and The Heap]]></title>
+    <link href="http://sijunhe.github.io/blog/2016/07/05/the-stack-and-the-heap/"/>
+    <updated>2016-07-05T16:47:13-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2016/07/05/the-stack-and-the-heap</id>
+    <content type="html"><![CDATA[<p>As a self-taught programmer, my biggest weakness has always been in the computer systems area, since I never had the luxury of taking a series of foundational systems courses like the <a href="https://web.stanford.edu/class/cs107/" title="CS107">CS107</a> - <a href="http://web.stanford.edu/class/cs110/" title="CS110">CS110</a> - <a href="http://cs140.stanford.edu/" title="CS140">CS140</a> series at Stanford. While I don&rsquo;t find them indispensable in pursuing my interest of data science yet, it is always to catch up on things that I don&rsquo;t know. So here are some reading notes for the comparison between the Stack and the Heap in RAM.</p>
+
+<!--more-->
+
+
+<h3>The Stack</h3>
+
+<ul>
+<li>A region of your computer&rsquo;s memory that stores temporary variables created by each function</li>
+<li>Freeing memory is easy since it&rsquo;s LIFO, just need to adjust one pointer</li>
+<li>Very fast and efficient access since the Stack is managed by the CPU</li>
+<li>The size is limited</li>
+<li>When a function exits, <strong>all</strong> variables defined pushed on the Stack by that function is freed</li>
+<li>Variables in the Stack can only be accessed locally, unless specified by the keyword <strong>static</strong> in C</li>
+</ul>
+
+
+<h3>The Heap</h3>
+
+<ul>
+<li>A region of your computer&rsquo;s memory that is not managed automatically</li>
+<li>Slower access since it&rsquo;s not as tightly managed by the CPU as the Stack</li>
+<li>The size is unlimited</li>
+<li>Need to manually allocate and free memory, like <strong>malloc()</strong> and <strong>free()</strong> in C. Failing to do so will result in memory leak</li>
+<li>Variables available globally</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

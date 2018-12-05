@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ml-basics | Blog | Sijun He]]></title>
+  <link href="http://sijunhe.github.io/blog/categories/ml-basics/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2018-11-03T16:42:42-07:00</updated>
+  <id>http://sijunhe.github.io/</id>
+  <author>
+    <name><![CDATA[Sijun He]]></name>
+    <email><![CDATA[sijun.he@hotmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Conditional Random Field]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/10/04/conditional-random-field/"/>
+    <updated>2018-10-04T23:26:45-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/10/04/conditional-random-field</id>
+    <content type="html"><![CDATA[<p>Conditional Random Field (CRF) is a <a href="https://en.wikipedia.org/wiki/Graphical_model">probabilistic graphical model</a> that excels at modeling and labeling sequence data with wide applications in NLP, Computer Vision or even biological sequence modeling. In ICML 2011, it received &ldquo;Test-of-Time&rdquo; award for best 10-year paper, as time and hindsight proved it to be a seminal machine learning model. It is a shame that I didn&rsquo;t know much about CRF till now but better late than never!</p>
+
+<p>Reading summaries of the following paper:</p>
+
+<ul>
+<li>Original paper: <a href="https://dl.acm.org/citation.cfm?id=655813">Conditional Random Fields: Probabilistic Models for Segmenting and Labeling Sequence Data</a></li>
+<li>Tutorial from original author of CRF: <a href="https://people.cs.umass.edu/~mccallum/papers/crf-tutorial.pdf">Intro to Conditional Random Fields</a></li>
+<li>Technique for confidence estimation for entities: <a href="https://dl.acm.org/citation.cfm?id=1614012">Confidence estimation for information extraction</a></li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post19/crf.png" alt="CRF" /></p>
+
+<!--more-->
+
+
+<h1>1. Hidden Markov Model (HMM)</h1>
+
+<p>Hidden Markov Model (HMM) models a sequence of observations $X = \{x_t \}_{t=1}^T$ by assuming that there is an underlying sequence of states (also called <strong>hidden</strong> states) $Y = \{y_t \}_{t=1}^T$ drawn from a finite state $S$. HMM is powerful because it models many variables that are interdependent sequentially. Some typical tasks for HMM is modeling time-series data where observations close in time are related, or modeling natural languages where words close together are interdependent.</p>
+
+<p>In order to model the joint distribution $p(Y, X)$ tractably, HMM makes two strong independence assumptions:</p>
+
+<ul>
+<li><strong>Markov property</strong>: each state $y_t$ depends only on its immediate predecessor $y_{t-1}$ and independent of all its ancestors $y_{t-2}, \cdots y_{1}$.</li>
+<li><strong>Output independence</strong>: each observation $x_t$ depends only on the current state $y_t$</li>
+</ul>
+
+
+<p>With these assumptions, wen can model the joint probability of a state sequence $Y$ and an observation sequence $X$ as</p>
+
+<p>$$p(Y, X) = \prod_{t=1}^T p(y_t|y_{t-1}) p(x_t|y_t)\tag{1}$$</p>
+
+<p>where the initial state distribution $p(y_1)$ is written as $p(y_1|y_0)$.</p>
+
+<h1>2. Generative vs Discriminative Models</h1>
+
+<p><strong>Generative models</strong> learn a model of the joint probability $p(y,x)$ of the inputs $x$ and labels $y$. HMM is an generative model. Modeling the joint distribution is often difficult since it requires modeling the distribution $p(x)$, which can include complex dependencies. A solution is to use <strong>discriminative models</strong> to directly model the conditional distribution $p(y|x)$. With this approach, dependencies among the input variables $x$ do not need to be explicitly represented, affording the use of rich, global features of the input.</p>
+
+<p>An interesting read about this topic is <a href="https://ai.stanford.edu/~ang/papers/nips01-discriminativegenerative.pdf">On Discriminative &amp; Generative Classifiers: A comparison of logistic regression and naive Bayes</a> from the famous Prof. Andrew Ng back when he was a graduate student. A generative model and a discriminative model can form a <strong>Generative-Discriminative pair</strong> if they are in the same hypothesis space. For example,</p>
+
+<ul>
+<li>if $p(x|y)$ is Gaussian and $p(y)$ is multinomial, then <a href="https://en.wikipedia.org/wiki/Linear_discriminant_analysis">Linear Discriminant Analysis</a> and Logistic Regression models the same hypothesis space</li>
+<li>if $p(x|y)$ is Gaussian and $p(y)$ is binary, then <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Gaussian_naive_Bayes">Gaussian Naive Bayes</a> has the same model form as Logistic Regression</li>
+<li>There is a discriminative analog to HMM, and it&rsquo;s the <strong>linear-chain Conditional Random Field (CRF)</strong>.</li>
+</ul>
+
+
+<h1>3. Linear-Chain Conditional Random Field</h1>
+
+<h2>From HMM to CRF</h2>
+
+<p>To motivate the comparison between HMM and CRF, we can re-write the Eq. (1) in a different form</p>
+
+<p>$$p(Y, X) = \frac{1}{Z} \prod_{t=1}^T \text{exp} \left\{ \sum_{k = 1}^K \lambda_k f_k\left( y_t, y_{t-1}, x_t\right) \right\}\tag{2}$$</p>
+
+<p>The $K$ feature function $f_k\left( y_t, y_{t-1}, x_t\right)$ are a general form that takes into account of all state transitions probabilities and state-observation probabilities. There is one feature function $f_{ij}( y, y', x) = \boldsymbol{1}_{y =i} \boldsymbol{1}_{y' =j}$ for each state transition pair $(i,j)$ and one feature function $f_{io}( y, y', x) = \boldsymbol{1}_{y=i} \boldsymbol{1}_{x=0}$ for each state-observation pair $(i,o)$. Z is a normalization constant for the probability to sum to 1.</p>
+
+<p>To turn the above into a linear-chain CRF, we need to write the conditional distribution</p>
+
+<p>$$
+\begin{align}
+p(Y|X) &amp;= \frac{p(Y, X)}{\sum_Y p(Y, X)} \\
+&amp;= \frac{\prod_{t=1}^T \text{exp} \left\{ \sum_{k = 1}^K \lambda_k f_k\left( y_t, y_{t-1}, x_t\right) \right\} }{\sum_{y'} \prod_{t=1}^T \text{exp} \left\{ \sum_{k = 1}^K \lambda_k f_k\left( y'_t, y'_{t-1}, x_t\right) \right\}} \\
+&amp;= \frac{1}{Z(X)} \prod_{t=1}^T \text{exp} \left\{ \sum_{k = 1}^K \lambda_k f_k\left( y_t, y_{t-1}, x_t\right) \right\}
+\end{align} \tag{3}
+$$</p>
+
+<h2>Parameter Estimation</h2>
+
+<p>Just like most other machine learning models, the parameter is estimated via Maximum Likelihood Estimation (MLE). The objective is to find the parameter that maximize the <strong>conditional log likelihood</strong> $l(\theta)$</p>
+
+<p>$$
+\begin{align}
+l(\theta) &amp;= \sum_{i=1}^N \ \text{log} p(y^{(i)} | x^{(i)}) \\
+&amp;= \sum_{i=1}^N \sum_{t=1}^T \sum_{k=1}^K \lambda_k f_k\left( y_t^{(i)}, y_{t-1}^{(i)}, x_t^{(i)}\right) - \sum_{i=1}^N  \text{log} Z(x^{(i)})
+\end{align} \tag{4}
+$$</p>
+
+<p>The objective function $(\theta)$ cannot be maximized in closed form, so numerical optimization is needed. The partial derivative of Eq. (4) is</p>
+
+<p>$$\frac{\partial l(\theta)}{\partial \lambda_k} = \sum_{i=1}^N \sum_{t=1}^T f_k\left( y_t^{(i)}, y_{t-1}^{(i)}, x_t^{(i)}\right) - \sum_{i=1}^N \sum_{t=1}^T \sum_{y'_{t-1}, y'_{t}} f_k\left( y'_{t}, y'_{t-1}, x_t^{(i)}\right) p(y'_{t}, y'_{t-1}| x_t^{(i)}) \tag{5}$$</p>
+
+<p>which has the form of (observed counts of $f_k$) - (expected counts of $f_k$). To compute the gradient, inference is required to compute all the marginal edge distributions $p(y'_{t}, y'_{t-1}| x_t^{(i)})$. Since the quantities depend on $x^{(i)}$, we need to run inference once for each training instance every time the likelihood is computed.</p>
+
+<h2>Inference</h2>
+
+<p>Before we go over the typical inference tasks for CRF, let&rsquo;s define a shorthand for the weight on the transition from state $i$ to state $j$ when the current observation is $x$.</p>
+
+<p>$$
+\begin{align}
+\Psi_t(j,i,x) &amp;= p(y_{t} = j | y_{t-1} = i) \cdot p(x_{t} = x |y_{t} = j) \\
+&amp;= \left[ \delta_{t}(i) \ \text{exp} \left( \sum_{k = 1}^K \lambda_k f_k\left( j, i, x_{t+1}\right) \right) \right]
+\end{align} \tag{6}
+$$</p>
+
+<h4>Most probable state sequences</h4>
+
+<p>The most needed inference task for CRF is to find the most likely series of states $Y^{*} = \text{argmax}_{Y} \ p(Y|X)$, given the observations. This can be computed by the <a href="https://en.wikipedia.org/wiki/Viterbi_algorithm">Viterbi recursion</a>. The Viterbi algorithm stores the probability of the most likely path at time $t$ that accounts for the first $t$ observations and ends in state $j$.</p>
+
+<p>$$\delta_{t}(j) = \text{max}_{i \in S} \ \delta_{t-1}(i) \cdot \Psi_t(j,i,x) \tag{7}$$</p>
+
+<p>The recursive formula terminates in $p^{*} = \text{argmax}_{i \in S} \ \delta_{T}(i)$. We can backtrack through the dynamic programming table to find the mostly probably state sequences.</p>
+
+<h4>Probability of an observed sequence</h4>
+
+<p>We can use Eq. (3) to compute the likelihood of an observed sequence $p(Y|X)$. While the numerator is easy to compute, the denominator $Z(X)$ is very difficult to compute since it contains an exponential number of terms. Luckily, there is another dynamic programming algorithms called <a href="https://en.wikipedia.org/wiki/Forward%E2%80%93backward_algorithm">forward-backward</a> to compute it efficiently.</p>
+
+<p>The idea behind forward-backward is to compute and store two sets of variables, each of which is a vector with size as the number of states. The forward variables $\alpha_t(j) = p(x_1, \cdots, x_t, y_t = j)$ stores the probability of all the paths through the first $t$ observations and ends in state $j$. The backward variables $\beta_t(i) = p(x_t, \cdots, x_T, y_t = i)$ is the exact reverse and stores the probability of all the paths through the last $T-t$ observations with the <em>t</em>-th state as $i$</p>
+
+<p>$$\alpha_t(j) = \sum_{i \in S} \Psi_{t}(j, i, x_t) \alpha_{t-1}(i)\tag{8}$$
+$$\beta_t(i) = \sum_{j \in S} \Psi_{t+1}(j, i, x_t) \beta_{t+1}(j)\tag{9}$$</p>
+
+<p>The initialization for the forward-backward is $\alpha_1{j} = \Psi_{t}(j, y_0, x_1)$ and $\beta_T(i) = 1$. After the dynamic programming table is filled, we can compute $Z(X)$ as</p>
+
+<p>$$Z(x) = \sum_{i \in S} \alpha_T(i)\tag{10}$$</p>
+
+<p>Forward-backward algorithm is also used to compute all the marginal edge distributions $p(y_{t}, y_{t-1}| x_t)$ in Eq. (5) that is needed for computing the gradient.</p>
+
+<p>$$p(y_{t}, y_{t-1}| x_t) = \alpha_{t-1}(y_{t-1}) \Psi_t(y_{t},y_{t-1},x_t) \beta_t(y_t)$$</p>
+
+<h4>Confidence in predicted labeling over a specific segment</h4>
+
+<p>Sometimes in task like Named Entity Recognition (NER), we are interested in the model&rsquo;s confidence in its predicted labeling over a segment of input to estimate the probability that a field is extracted correctly. This marginal probability $p(y_t, y_{t+1}, \cdots, y_{t+k}|X)$ can be computed using constrained forward-backward algorithm, introduced by <a href="https://dl.acm.org/citation.cfm?id=1614012">Culotta and McCallum</a>.</p>
+
+<p>The algorithm is an extension to the forward-backward we described above, but with added constraints such that each path must conforms to some sub-path of constraints $C = \{ y_t, y_{t+1}, \cdots\}$. $y_t$ can either be a <em>positive</em> constraint (sequence must pass through $y_t$) or a <em>negative</em> constraint (sequence must not pass through $y_t$). In the context of NER, the constraints $C$ corresponds to an extracted field. The positive constraints specify the tokens labeled inside the field, and the negative field specify the field boundary.</p>
+
+<p>The constraints is a simple trick to shut off the probability of all paths that don&rsquo;t conform to the constraints. The calculation of the forward variables in Eq. (8) can be modified slightly to factor in the constraints</p>
+
+<p>$$\alpha'_t(j) =
+\begin{cases}
+\sum_{i \in S} \Psi_{t}(j, i, x_t) \alpha_{t-1}(i),  &amp; \text{if} \ j \ \text{conforms to} \ y_{t} \\
+0, &amp; \text{otherwise}
+\end{cases}$$</p>
+
+<p>For time steps not constrained by $C$, Eq. (8) is used instead. Similar to Eq. (10), we calculate the probability of the set of all paths that conform to $C$ as $Z'(X) = \sum_{i \in S} \alpha'_T(i)$. The marginal probability can be computed by replacing $Z(X)$ with $Z'(X)$ in Eq. (3).</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Case-control Sampling In Imbalanced Datasets]]></title>
+    <link href="http://sijunhe.github.io/blog/2017/03/25/case-sampling-in-imbalanced-datasets/"/>
+    <updated>2017-03-25T21:37:28-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2017/03/25/case-sampling-in-imbalanced-datasets</id>
+    <content type="html"><![CDATA[<p>This problem was briefly introduced in <a href="http://statweb.stanford.edu/~tibs/stat315a.html">STATS315A Applied Modern Statistics: Learning</a> by the renowned Professor <a href="https://web.stanford.edu/~hastie/">Trevor Hastie</a>. Given that the imbalanced dataset problem is ubiquitous in data science, such as modeling click through rate or anomaly detection, I think the case-sampling trick was one of the most practical tricks I have learned in this class.</p>
+
+<!--more-->
+
+
+<h3>Case-Control Sampling Use Case</h3>
+
+<p>The concept of case-control sampling originated in epidemiology, where a prospective study is often costly in time and money so a retrospective study is choose instead. Let&rsquo;s take an example of studying a disease with 1% prevalence. The prospective study would be collecting data on a large group of people for a period of time. However, getting 1000 cases means following a group of 100,000 people, which is impractical. The retrospective study would be sampling cases and controls at different rates to form a dataset. Often cases are rare so they are all taken. Up to a few times of controls are taken as well.</p>
+
+<h3>Intercept Transformation</h3>
+
+<p>However, the case-control sample has a much greater prevalence. Assuming we are modeling with logistic regression, we still have the correct regression coefficients $\beta$, but the intercept term $\beta_0$ is incorrect. We can correct the estimated intercept by the transformation (shameless stolen from lecture slide 4 of STATS315A)
+$$\hat{\beta}^\ast_0 = \hat{\beta}_0 + \text{log}\frac{\pi}{1-\pi} - \text{log}\frac{\pi^\ast}{1-\pi^\ast}$$
+A more detailed proof can be found with <a href="http://www.ams.org/mathscinet-getitem?mr=0345332">Separate Sample Logistic Discrimination(Anderson et al. 1972)</a></p>
+
+<h3>Diminishing return on coefficients variance</h3>
+
+<p>Sampling more negatives/controls does give us more data, which reduces the variance of the coefficients. However, since the number of positives/cases is fixed in the dataset, beyond some point, the variance in the coefficients mainly comes from the positives/cases. Sampling only more negatives/controls has a diminishing return effect, as shown by the following plot (shameless stolen from lecture slide 4 of STATS315A).</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post8/variance_control%3Acase_ratio.png" alt="png" /></p>
+
+<h3>Extension to Modern Data Science Application</h3>
+
+<p>The idea of case-control sampling can be easily extend to modern data science application. When modeling click through rate, very often there is 1 positives (click-through) in more than 10000 data points (impression), which gives a control/case ratio of greater than 10000. With the same diminishing return effect as described in last paragraph, the large number of negatives doesn&rsquo;t offer much other than wasting computing powers. By appling the case-control sampling method, We can undersample the negatives by taking 10-15 negatives per positives and achieve a similar performance as using the full dataset, but much faster computation.</p>
+
+<p>See <a href="https://arxiv.org/pdf/1306.3706.pdf">Local Case-Control Sampling: Efficient Subsampling in Imbalanced Data Sets(Fithian et al. 2014)</a> for more advanced subsampling techniques that is consistent even when the model is misspecified.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Linear Regression and the KNN]]></title>
+    <link href="http://sijunhe.github.io/blog/2017/02/08/linear-regression-and-the-knn/"/>
+    <updated>2017-02-08T17:09:38-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2017/02/08/linear-regression-and-the-knn</id>
+    <content type="html"><![CDATA[<p>This was an homework problem in <a href="http://statweb.stanford.edu/~tibs/stat315a.html">STATS315A Applied Modern Statistics: Learning</a> at Stanford and I thought it is worth sharing. It runs a simulation to compare KNN and linear regression in terms of their performance as a classifier, in the presence of an increasing number of noise variables.</p>
+
+<!--more-->
+
+
+<h2>Model</h2>
+
+<p>We have a binary response variable $Y$, which takes value ${0,1}$. The feautre variable $X$ is in $\mathcal{R}^{2 + k}$, of which 2 are the true features and the rest $k$ are noise features. The model used to simulate the data is a <a href="https://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model">Gaussian Mixture</a>. First we generate 6 location vectors $m_{k}$ in $\mathcal{R}^{2}$ from a bivariate Gaussian $N[(1,0)^{T}, \boldsymbol{I}]$ with $Y = 1$ and 6 location vectors from $N[(0,1)^{T}, \boldsymbol{I}]$ with $Y = 0$. To simulate $n$ observations from each class, we picked an location vector $m_k$ with a probaility of $1/6$ and then generate one observation from $N[m_k, \boldsymbol{I}/5]$.</p>
+
+<h2>Data Simulation</h2>
+
+<pre><code class="r">set.seed(1)
+library(MASS)
+library(mvtnorm)
+library(class)
+# generate the location vectors with multivariate gaussian
+class_0_loc_vec &lt;- mvrnorm(n = 6, c(0,1), diag(2))
+class_1_loc_vec &lt;- mvrnorm(n = 6, c(1,0), diag(2))
+class_loc_vec &lt;- rbind(class_0_loc_vec, class_1_loc_vec)
+
+# function to generate sample points from the gaussian mixture
+sample_points &lt;- function(centroid, N, sigma2) {
+  # function to generate a sample point, given a location vector
+  simulate_points &lt;- function(centroidNum) {
+    return(mvrnorm(n=1, centroid[centroidNum,], sigma2 * diag(2)))
+  }
+  # randomly choose from the 6 location vectors from class 0
+  random_centrod_0 &lt;- sample(1:6, N/2, replace=T)
+  X_0 &lt;- sapply(random_centrod_0, simulate_points)
+  # randomly choose from the 6 location vectors from class 1
+  random_centrod_1 &lt;- sample(7:12, N/2, replace=T)
+  X_1 &lt;- sapply(random_centrod_1, simulate_points)
+  return(rbind(t(X_0), t(X_1)))
+}
+
+# generate a training set of 200 and a test set of 20k, half and half for class 0 and 1
+xtrain &lt;- sample_points(class_loc_vec, 300, 0.2)
+ytrain &lt;- rbind(matrix(0, 150, 1), matrix(1, 150, 1))
+xtest &lt;- sample_points(class_loc_vec, 20000, 0.2)
+ytest &lt;- rbind(matrix(0, 10000, 1), matrix(1, 10000, 1))
+</code></pre>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post7/plot1.jpeg" alt="png" /></p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post7/plot2.jpeg" alt="png" /></p>
+
+<h2>Bayes Clasifier</h2>
+
+<p>Given that we know the underlyign model, we can compute the Bayes Classifier
+$$\hat{Y}(x) = \text{argmax}_Y(Pr(Y|X=x))$$
+In our case, we can find the closest location vector to an observation and assign the observation to its class.</p>
+
+<pre><code class="r"># bayes classifier
+bayes_classifier &lt;- function(centroid, X, sigma) {
+  # due to equal covariance, we only need to find closest centroid and assign it to its class
+  findClosestCentroid &lt;- function(index) {
+    evaluate_density &lt;- function(ccentroid_index, index) {
+      return(dmvnorm(X[index,], centroid[ccentroid_index,], sigma = sigma^2 * diag(2)))
+    }
+    densities &lt;- sapply(1:12, evaluate_density, index = index)
+    return(which.max(densities))
+  }
+  n &lt;- dim(X)[1]
+  assigned_centroids &lt;- sapply(1:n, findClosestCentroid)
+  y_pred &lt;- sapply(assigned_centroids, function(x){if (x &lt; 7) return(0) else return(1)})
+  return(y_pred)
+}
+</code></pre>
+
+<h2>Function to Add Noise</h2>
+
+<p>We adds up to $K$ noise features to the training data, drawing each noise observations from the uniform normal distribution $N(0,1)$</p>
+
+<pre><code class="r"># function to add noise
+add_noise &lt;- function(data, noise, sigma.noise) {
+  noise &lt;- mvrnorm(n = dim(data)[1], rep(0, noise), sigma.noise^2 * diag(noise))
+  data_noise &lt;- cbind(data, noise)
+  return(data_noise)
+}
+</code></pre>
+
+<h2>Function to Evaluate Accuracy and Plot</h2>
+
+<pre><code class="r"># function to evaluate knn error with a vector of k
+evaluate_knn_vec &lt;- function(xtrain, xtest, ytrain, ytest, k_vec) {
+  evaluate_knn &lt;- function(k) {
+    knn_pred = knn(train = xtrain, test = xtest, k = k, cl = ytrain)
+    return(1-sum(knn_pred == ytest)/length(ytest))
+  }
+  knn_test_error = sapply(k_vec, evaluate_knn)
+  return(knn_test_error)
+}
+# function to evaluate least squares classifiers test errors
+evaluate_ls &lt;- function(xtrain, xtest, ytrain, ytest) {
+  xtrain &lt;- cbind(xtrain, matrix(1, dim(xtrain)[1], 1))
+  xtest &lt;- cbind(xtest, matrix(1, dim(xtest)[1], 1))
+  beta &lt;- solve(t(xtrain) %*% xtrain) %*% t(xtrain) %*% ytrain
+  y_pred_numeric &lt;- xtest %*% beta
+  y_pred &lt;- sapply(y_pred_numeric, function(x){if (x &lt; 0.5) return(0) else return(1)})
+  return(1 - sum(y_pred == ytest)/length(ytest))
+}
+# function to evaluate bayes classifiers test errors
+evaluate_bayes &lt;- function(centroid, X, Y,sigma) {
+  y_pred &lt;- bayes_classifier(centroid, X, sigma)
+  return(1-sum(y_pred == Y)/length(Y))
+}
+# function to compute all errors with added noise, color argument is for plotting on the same figure
+compute_plot_errors &lt;- function(noise, sigma.noise, color) {
+  xtrain &lt;- add_noise(xtrain, noise, sigma.noise)
+  xtest &lt;- add_noise(xtest, noise, sigma.noise)
+  k &lt;- c(1, 3, 5, 7, 9, 11, 13, 15)
+  knn_error &lt;- evaluate_knn_vec(xtrain, xtest, ytrain, ytest, k)
+  ls_error &lt;- evaluate_ls(xtrain, xtest, ytrain, ytest)
+  if (noise == 1) {
+    plot(k, knn_error, type = "b", pch = 16,ylim = c(0, 0.3), col = color, xlab = "k/DoF", ylab = "Test Error")
+  }
+  else {
+    points(k, knn_error, type = "b", pch = 16,ylim = c(0, 0.3), col = color)
+  }
+  points(3+noise, ls_error, pch = 18)
+  abline(h=bayes_error, col="brown")
+}
+</code></pre>
+
+<h2>Simulate Performance for $K = 1 \cdots 10$</h2>
+
+<pre><code class="r">colors = palette(rainbow(10))
+for (noise in 1:10) {
+  compute_plot_errors(noise, 1, colors[noise])
+}
+x &lt;- 1:10
+legend_names &lt;- c(paste("Noise", x), "Least Squares","Bayes Error")
+legend("bottom",legend_names,fill=c(colors, "black", "brown"),ncol=4, cex = 0.9)
+</code></pre>
+
+<h2>Results</h2>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post7/plot3.jpeg" alt="png" /></p>
+
+<p>Overall, the test error of KNN decreases as $k$ increases, no matter how many noise parameters there are The test error of KNN generally increases significantly as the number of noise parameters increases, while the test error of least squares stays at about the same level. This shows that the KNN is more susceptible to high noise due to its flexiblity. The least squares is more rigid and is less affected by the noise. KNN overperforms the least squares when the noise-to-signal ratio is low and underperforms the least squares when the noise-to-signal ratio is high.</p>
+]]></content>
+  </entry>
+  
+</feed>

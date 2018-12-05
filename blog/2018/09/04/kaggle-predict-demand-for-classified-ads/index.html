@@ -1,0 +1,240 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Predicting Classified Ads Demand - Blog | Sijun He</title>
+	<meta name="author" content="Sijun He">
+
+	
+	<meta name="description" content="Predicting Classified Ads Demand After three competitions, I felt I was ready to push for my first Gold Medal. Along with my four teammates, we took &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Blog | Sijun He" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://sijunhe.github.io/blog/2018/09/04/kaggle-predict-demand-for-classified-ads/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='https://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!--- MathJax Configuration -->
+	<script type="text/x-mathjax-config">
+  		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML">
+	</script>
+	<!-- <script type="text/javascript" async
+	  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+	</script> -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-69112205-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><img src= 'https://s3-us-west-1.amazonaws.com/sijunhe-blog/images/name_white.png' height: 150px width: 150px >
+<nav id="main-nav">
+<section class="aboutme">
+  <h3>
+    Sijun's Data Science Odyssey
+  </h3>
+</section>
+
+<ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/blog/categories">Categories</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+</ul></nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:sijun.he@hotmail.com" title="Email">Email</a>
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/sijunhe" title="GitHub">GitHub</a>
+		
+		
+		
+		
+			<a class="linkedin" href="http://www.linkedin.com/in/sijunhe48" title="LinkedIn">LinkedIn</a>
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Predicting Classified Ads Demand</h1>
+	<div class="entry-content" itemprop="articleBody"><p>After three competitions, I felt I was ready to push for my first Gold Medal. Along with my four teammates, we took on the challenge of predicting demand for classified ads. We fought tooth and nail till the last moment and were in the Gold zone on the public leaderboard. While we ended up losing the Gold Metal narrowly by 1 spot, it was overall a great learning experience. I look forward to making progress toward a real gold medal in the future.</p>
+
+<p><strong>TL;DR A failed attempt to push for my first Gold Metal on Kaggle. My team ranked top 1% but missed the Gold Metal narrowly by 1 spot!</strong></p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/avito_rank.png" alt="avito" /></p>
+
+<!--more-->
+
+
+<h2>1. The Competition</h2>
+
+<p>The <a href="https://www.kaggle.com/c/avito-demand-prediction">Avito Demand Prediction Challenge</a> is sponsored by <a href="https://www.avito.ru/rossiya">Avito</a>, Russia’s largest classified advertisements website. The task is to predict demand for an online advertisement based on its full description (title, description, images, etc.), its context (geographically where it was posted, similar ads already posted) and historical demand for similar ads in similar contexts.</p>
+
+<h2>2. Our Solution</h2>
+
+<p>My teammates and I have put together a <a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/60059#350998">write-up</a> on the Kaggle discussion forum.</p>
+
+<p>An interesting characteristics of this competition is the Cross-Validation (CV) performance is very consistent with Leaderboard (LB) Performance. Therefore, all top teams ended up doing crazy stacking &ldquo;towers&rdquo; (from 3-level to even 6-level towers!). All of my time in the later stage of the competition is spent on the stacking tower below.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post17/stacking_tower.png" alt="stacking" /></p>
+
+<h2>3. Learning From Top Solutions</h2>
+
+<h3><a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59880">1st place solution</a></h3>
+
+<p>Below is the architecture of Neural Network from the 1st place winner. The architecture is quite similar to <a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59917">what we end up using</a>.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post17/1st_solution.jpg" alt="1st-place" /></p>
+
+<p><strong>What separates them from the rest of the crowd is that they found a &ldquo;magic&rdquo; feature from the unlabeled part of the dataset</strong> (something I have been trying so hard throughout the competition but couldn&rsquo;t accomplish).</p>
+
+<blockquote><p>I’ve designed 3 nn models trained on active data to predict log1p(price), renewed and log1p(total_duration). These models had 2 rnn branches for title and description and also used category embeddings. The difference between actual log1p(price) and predicted one was an extremely important feature.                                   &ndash; <a href="https://www.kaggle.com/gdanschin">Georgiy Danshchin</a></p></blockquote>
+
+<p>A well-deserved win!</p>
+
+<h3><a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59871">2nd place solution</a></h3>
+
+<p>Their best single model was a Neural Network at 0.2163 on public leaderboard (a big better than ours was at 0.2181). Some characteristics as follows:</p>
+
+<ul>
+<li>target encoded features for categorical features and their second and third order interactions</li>
+<li>cyclic LR, Nadam optimizer</li>
+<li>plenty of BNs, big dropouts</li>
+</ul>
+
+
+<p>A whopping 6-level stack! And 10-fold Cross-Validation! They must have a lot of compute resource.</p>
+
+<h3><a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59885">3rd place solution</a></h3>
+
+<p>The 3rd place winner is lead by the famous <a href="https://www.kaggle.com/kazanova">KazAnova</a>. They have a very interesting time-series ensemble in addition to normal ensembles:</p>
+
+<blockquote><p>The second ensemble used a time-series schema. The test data begins a number of days past the final day included in the training data. We tried to replicate this in our internal validation. To do so, we trained on the first six days of training and used days ten through thirteen as validation. This meant days six through nine were excluded, mimicking the gap between train and test.Then, to generate predictions for the test data, we trained on the entire training set.</p>
+
+<p>In order to generate likelihoods of categorical features for this approach, we always applied a gap of 4 days. For example to estimate likelihoods for day four of the training data, we use the average of target for day zero. To estimate likelihoods for day five, we used likelihoods of (day0+day1)/2. We decided on a gap of four days for stability, as it gave similar CV and LB performance.</p></blockquote>
+
+<p>I remember trying something like this for the <a href="https://www.kaggle.com/c/talkingdata-adtracking-fraud-detection">TalkingData AdTracking Fraud Detection Challenge</a> but it wasn&rsquo;t particularly strong. I am happy that somebody can pull this off.</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    Sijun He
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'sijunhe';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sijunhe.github.io/blog/2018/09/04/kaggle-predict-demand-for-classified-ads/';
+        var disqus_url = 'http://sijunhe.github.io/blog/2018/09/04/kaggle-predict-demand-for-classified-ads/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+</body>
+</html>

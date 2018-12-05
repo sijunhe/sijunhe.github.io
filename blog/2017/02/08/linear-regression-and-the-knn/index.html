@@ -1,0 +1,424 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Linear Regression and the KNN - Blog | Sijun He</title>
+	<meta name="author" content="Sijun He">
+
+	
+	<meta name="description" content="Linear Regression and the KNN This was an homework problem in STATS315A Applied Modern Statistics: Learning at Stanford and I thought it is worth &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Blog | Sijun He" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://sijunhe.github.io/blog/2017/02/08/linear-regression-and-the-knn/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='https://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!--- MathJax Configuration -->
+	<script type="text/x-mathjax-config">
+  		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML">
+	</script>
+	<!-- <script type="text/javascript" async
+	  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+	</script> -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-69112205-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><img src= 'https://s3-us-west-1.amazonaws.com/sijunhe-blog/images/name_white.png' height: 150px width: 150px >
+<nav id="main-nav">
+<section class="aboutme">
+  <h3>
+    Sijun's Data Science Odyssey
+  </h3>
+</section>
+
+<ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/blog/categories">Categories</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+</ul></nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:sijun.he@hotmail.com" title="Email">Email</a>
+		
+		
+		
+		
+		
+			<a class="github" href="https://github.com/sijunhe" title="GitHub">GitHub</a>
+		
+		
+		
+		
+			<a class="linkedin" href="http://www.linkedin.com/in/sijunhe48" title="LinkedIn">LinkedIn</a>
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Linear Regression and the KNN</h1>
+	<div class="entry-content" itemprop="articleBody"><p>This was an homework problem in <a href="http://statweb.stanford.edu/~tibs/stat315a.html">STATS315A Applied Modern Statistics: Learning</a> at Stanford and I thought it is worth sharing. It runs a simulation to compare KNN and linear regression in terms of their performance as a classifier, in the presence of an increasing number of noise variables.</p>
+
+<!--more-->
+
+
+<h2>Model</h2>
+
+<p>We have a binary response variable $Y$, which takes value ${0,1}$. The feautre variable $X$ is in $\mathcal{R}^{2 + k}$, of which 2 are the true features and the rest $k$ are noise features. The model used to simulate the data is a <a href="https://en.wikipedia.org/wiki/Mixture_model#Gaussian_mixture_model">Gaussian Mixture</a>. First we generate 6 location vectors $m_{k}$ in $\mathcal{R}^{2}$ from a bivariate Gaussian $N[(1,0)^{T}, \boldsymbol{I}]$ with $Y = 1$ and 6 location vectors from $N[(0,1)^{T}, \boldsymbol{I}]$ with $Y = 0$. To simulate $n$ observations from each class, we picked an location vector $m_k$ with a probaility of $1/6$ and then generate one observation from $N[m_k, \boldsymbol{I}/5]$.</p>
+
+<h2>Data Simulation</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='r'><span class='line'><span class="kp">set.seed</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
+</span><span class='line'><span class="kn">library</span><span class="p">(</span>MASS<span class="p">)</span>
+</span><span class='line'><span class="kn">library</span><span class="p">(</span>mvtnorm<span class="p">)</span>
+</span><span class='line'><span class="kn">library</span><span class="p">(</span><span class="kp">class</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># generate the location vectors with multivariate gaussian</span>
+</span><span class='line'>class_0_loc_vec <span class="o">&lt;-</span> mvrnorm<span class="p">(</span>n <span class="o">=</span> <span class="m">6</span><span class="p">,</span> <span class="kt">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">),</span> <span class="kp">diag</span><span class="p">(</span><span class="m">2</span><span class="p">))</span>
+</span><span class='line'>class_1_loc_vec <span class="o">&lt;-</span> mvrnorm<span class="p">(</span>n <span class="o">=</span> <span class="m">6</span><span class="p">,</span> <span class="kt">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> <span class="kp">diag</span><span class="p">(</span><span class="m">2</span><span class="p">))</span>
+</span><span class='line'>class_loc_vec <span class="o">&lt;-</span> <span class="kp">rbind</span><span class="p">(</span>class_0_loc_vec<span class="p">,</span> class_1_loc_vec<span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># function to generate sample points from the gaussian mixture</span>
+</span><span class='line'>sample_points <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>centroid<span class="p">,</span> N<span class="p">,</span> sigma2<span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1"># function to generate a sample point, given a location vector</span>
+</span><span class='line'>  simulate_points <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>centroidNum<span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kr">return</span><span class="p">(</span>mvrnorm<span class="p">(</span>n<span class="o">=</span><span class="m">1</span><span class="p">,</span> centroid<span class="p">[</span>centroidNum<span class="p">,],</span> sigma2 <span class="o">*</span> <span class="kp">diag</span><span class="p">(</span><span class="m">2</span><span class="p">)))</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="c1"># randomly choose from the 6 location vectors from class 0</span>
+</span><span class='line'>  random_centrod_0 <span class="o">&lt;-</span> <span class="kp">sample</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">6</span><span class="p">,</span> N<span class="o">/</span><span class="m">2</span><span class="p">,</span> replace<span class="o">=</span><span class="bp">T</span><span class="p">)</span>
+</span><span class='line'>  X_0 <span class="o">&lt;-</span> <span class="kp">sapply</span><span class="p">(</span>random_centrod_0<span class="p">,</span> simulate_points<span class="p">)</span>
+</span><span class='line'>  <span class="c1"># randomly choose from the 6 location vectors from class 1</span>
+</span><span class='line'>  random_centrod_1 <span class="o">&lt;-</span> <span class="kp">sample</span><span class="p">(</span><span class="m">7</span><span class="o">:</span><span class="m">12</span><span class="p">,</span> N<span class="o">/</span><span class="m">2</span><span class="p">,</span> replace<span class="o">=</span><span class="bp">T</span><span class="p">)</span>
+</span><span class='line'>  X_1 <span class="o">&lt;-</span> <span class="kp">sapply</span><span class="p">(</span>random_centrod_1<span class="p">,</span> simulate_points<span class="p">)</span>
+</span><span class='line'>  <span class="kr">return</span><span class="p">(</span><span class="kp">rbind</span><span class="p">(</span><span class="kp">t</span><span class="p">(</span>X_0<span class="p">),</span> <span class="kp">t</span><span class="p">(</span>X_1<span class="p">)))</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># generate a training set of 200 and a test set of 20k, half and half for class 0 and 1</span>
+</span><span class='line'>xtrain <span class="o">&lt;-</span> sample_points<span class="p">(</span>class_loc_vec<span class="p">,</span> <span class="m">300</span><span class="p">,</span> <span class="m">0.2</span><span class="p">)</span>
+</span><span class='line'>ytrain <span class="o">&lt;-</span> <span class="kp">rbind</span><span class="p">(</span><span class="kt">matrix</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">150</span><span class="p">,</span> <span class="m">1</span><span class="p">),</span> <span class="kt">matrix</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">150</span><span class="p">,</span> <span class="m">1</span><span class="p">))</span>
+</span><span class='line'>xtest <span class="o">&lt;-</span> sample_points<span class="p">(</span>class_loc_vec<span class="p">,</span> <span class="m">20000</span><span class="p">,</span> <span class="m">0.2</span><span class="p">)</span>
+</span><span class='line'>ytest <span class="o">&lt;-</span> <span class="kp">rbind</span><span class="p">(</span><span class="kt">matrix</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">10000</span><span class="p">,</span> <span class="m">1</span><span class="p">),</span> <span class="kt">matrix</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">10000</span><span class="p">,</span> <span class="m">1</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post7/plot1.jpeg" alt="png" /></p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post7/plot2.jpeg" alt="png" /></p>
+
+<h2>Bayes Clasifier</h2>
+
+<p>Given that we know the underlyign model, we can compute the Bayes Classifier
+$$\hat{Y}(x) = \text{argmax}_Y(Pr(Y|X=x))$$
+In our case, we can find the closest location vector to an observation and assign the observation to its class.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='r'><span class='line'><span class="c1"># bayes classifier</span>
+</span><span class='line'>bayes_classifier <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>centroid<span class="p">,</span> X<span class="p">,</span> sigma<span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1"># due to equal covariance, we only need to find closest centroid and assign it to its class</span>
+</span><span class='line'>  findClosestCentroid <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>index<span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    evaluate_density <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>ccentroid_index<span class="p">,</span> index<span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="kr">return</span><span class="p">(</span>dmvnorm<span class="p">(</span>X<span class="p">[</span>index<span class="p">,],</span> centroid<span class="p">[</span>ccentroid_index<span class="p">,],</span> sigma <span class="o">=</span> sigma<span class="o">^</span><span class="m">2</span> <span class="o">*</span> <span class="kp">diag</span><span class="p">(</span><span class="m">2</span><span class="p">)))</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    densities <span class="o">&lt;-</span> <span class="kp">sapply</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">12</span><span class="p">,</span> evaluate_density<span class="p">,</span> index <span class="o">=</span> index<span class="p">)</span>
+</span><span class='line'>    <span class="kr">return</span><span class="p">(</span><span class="kp">which.max</span><span class="p">(</span>densities<span class="p">))</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  n <span class="o">&lt;-</span> <span class="kp">dim</span><span class="p">(</span>X<span class="p">)[</span><span class="m">1</span><span class="p">]</span>
+</span><span class='line'>  assigned_centroids <span class="o">&lt;-</span> <span class="kp">sapply</span><span class="p">(</span><span class="m">1</span><span class="o">:</span>n<span class="p">,</span> findClosestCentroid<span class="p">)</span>
+</span><span class='line'>  y_pred <span class="o">&lt;-</span> <span class="kp">sapply</span><span class="p">(</span>assigned_centroids<span class="p">,</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">){</span><span class="kr">if</span> <span class="p">(</span>x <span class="o">&lt;</span> <span class="m">7</span><span class="p">)</span> <span class="kr">return</span><span class="p">(</span><span class="m">0</span><span class="p">)</span> <span class="kr">else</span> <span class="kr">return</span><span class="p">(</span><span class="m">1</span><span class="p">)})</span>
+</span><span class='line'>  <span class="kr">return</span><span class="p">(</span>y_pred<span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Function to Add Noise</h2>
+
+<p>We adds up to $K$ noise features to the training data, drawing each noise observations from the uniform normal distribution $N(0,1)$</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='r'><span class='line'><span class="c1"># function to add noise</span>
+</span><span class='line'>add_noise <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>data<span class="p">,</span> noise<span class="p">,</span> sigma.noise<span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  noise <span class="o">&lt;-</span> mvrnorm<span class="p">(</span>n <span class="o">=</span> <span class="kp">dim</span><span class="p">(</span>data<span class="p">)[</span><span class="m">1</span><span class="p">],</span> <span class="kp">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> noise<span class="p">),</span> sigma.noise<span class="o">^</span><span class="m">2</span> <span class="o">*</span> <span class="kp">diag</span><span class="p">(</span>noise<span class="p">))</span>
+</span><span class='line'>  data_noise <span class="o">&lt;-</span> <span class="kp">cbind</span><span class="p">(</span>data<span class="p">,</span> noise<span class="p">)</span>
+</span><span class='line'>  <span class="kr">return</span><span class="p">(</span>data_noise<span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Function to Evaluate Accuracy and Plot</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class='r'><span class='line'><span class="c1"># function to evaluate knn error with a vector of k</span>
+</span><span class='line'>evaluate_knn_vec <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>xtrain<span class="p">,</span> xtest<span class="p">,</span> ytrain<span class="p">,</span> ytest<span class="p">,</span> k_vec<span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  evaluate_knn <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>k<span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    knn_pred <span class="o">=</span> knn<span class="p">(</span>train <span class="o">=</span> xtrain<span class="p">,</span> test <span class="o">=</span> xtest<span class="p">,</span> k <span class="o">=</span> k<span class="p">,</span> cl <span class="o">=</span> ytrain<span class="p">)</span>
+</span><span class='line'>    <span class="kr">return</span><span class="p">(</span><span class="m">1</span><span class="o">-</span><span class="kp">sum</span><span class="p">(</span>knn_pred <span class="o">==</span> ytest<span class="p">)</span><span class="o">/</span><span class="kp">length</span><span class="p">(</span>ytest<span class="p">))</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  knn_test_error <span class="o">=</span> <span class="kp">sapply</span><span class="p">(</span>k_vec<span class="p">,</span> evaluate_knn<span class="p">)</span>
+</span><span class='line'>  <span class="kr">return</span><span class="p">(</span>knn_test_error<span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="c1"># function to evaluate least squares classifiers test errors</span>
+</span><span class='line'>evaluate_ls <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>xtrain<span class="p">,</span> xtest<span class="p">,</span> ytrain<span class="p">,</span> ytest<span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  xtrain <span class="o">&lt;-</span> <span class="kp">cbind</span><span class="p">(</span>xtrain<span class="p">,</span> <span class="kt">matrix</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="kp">dim</span><span class="p">(</span>xtrain<span class="p">)[</span><span class="m">1</span><span class="p">],</span> <span class="m">1</span><span class="p">))</span>
+</span><span class='line'>  xtest <span class="o">&lt;-</span> <span class="kp">cbind</span><span class="p">(</span>xtest<span class="p">,</span> <span class="kt">matrix</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="kp">dim</span><span class="p">(</span>xtest<span class="p">)[</span><span class="m">1</span><span class="p">],</span> <span class="m">1</span><span class="p">))</span>
+</span><span class='line'>  beta <span class="o">&lt;-</span> <span class="kp">solve</span><span class="p">(</span><span class="kp">t</span><span class="p">(</span>xtrain<span class="p">)</span> <span class="o">%*%</span> xtrain<span class="p">)</span> <span class="o">%*%</span> <span class="kp">t</span><span class="p">(</span>xtrain<span class="p">)</span> <span class="o">%*%</span> ytrain
+</span><span class='line'>  y_pred_numeric <span class="o">&lt;-</span> xtest <span class="o">%*%</span> <span class="kp">beta</span>
+</span><span class='line'>  y_pred <span class="o">&lt;-</span> <span class="kp">sapply</span><span class="p">(</span>y_pred_numeric<span class="p">,</span> <span class="kr">function</span><span class="p">(</span>x<span class="p">){</span><span class="kr">if</span> <span class="p">(</span>x <span class="o">&lt;</span> <span class="m">0.5</span><span class="p">)</span> <span class="kr">return</span><span class="p">(</span><span class="m">0</span><span class="p">)</span> <span class="kr">else</span> <span class="kr">return</span><span class="p">(</span><span class="m">1</span><span class="p">)})</span>
+</span><span class='line'>  <span class="kr">return</span><span class="p">(</span><span class="m">1</span> <span class="o">-</span> <span class="kp">sum</span><span class="p">(</span>y_pred <span class="o">==</span> ytest<span class="p">)</span><span class="o">/</span><span class="kp">length</span><span class="p">(</span>ytest<span class="p">))</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="c1"># function to evaluate bayes classifiers test errors</span>
+</span><span class='line'>evaluate_bayes <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>centroid<span class="p">,</span> X<span class="p">,</span> Y<span class="p">,</span>sigma<span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  y_pred <span class="o">&lt;-</span> bayes_classifier<span class="p">(</span>centroid<span class="p">,</span> X<span class="p">,</span> sigma<span class="p">)</span>
+</span><span class='line'>  <span class="kr">return</span><span class="p">(</span><span class="m">1</span><span class="o">-</span><span class="kp">sum</span><span class="p">(</span>y_pred <span class="o">==</span> Y<span class="p">)</span><span class="o">/</span><span class="kp">length</span><span class="p">(</span>Y<span class="p">))</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="c1"># function to compute all errors with added noise, color argument is for plotting on the same figure</span>
+</span><span class='line'>compute_plot_errors <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>noise<span class="p">,</span> sigma.noise<span class="p">,</span> color<span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  xtrain <span class="o">&lt;-</span> add_noise<span class="p">(</span>xtrain<span class="p">,</span> noise<span class="p">,</span> sigma.noise<span class="p">)</span>
+</span><span class='line'>  xtest <span class="o">&lt;-</span> add_noise<span class="p">(</span>xtest<span class="p">,</span> noise<span class="p">,</span> sigma.noise<span class="p">)</span>
+</span><span class='line'>  k <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">7</span><span class="p">,</span> <span class="m">9</span><span class="p">,</span> <span class="m">11</span><span class="p">,</span> <span class="m">13</span><span class="p">,</span> <span class="m">15</span><span class="p">)</span>
+</span><span class='line'>  knn_error <span class="o">&lt;-</span> evaluate_knn_vec<span class="p">(</span>xtrain<span class="p">,</span> xtest<span class="p">,</span> ytrain<span class="p">,</span> ytest<span class="p">,</span> k<span class="p">)</span>
+</span><span class='line'>  ls_error <span class="o">&lt;-</span> evaluate_ls<span class="p">(</span>xtrain<span class="p">,</span> xtest<span class="p">,</span> ytrain<span class="p">,</span> ytest<span class="p">)</span>
+</span><span class='line'>  <span class="kr">if</span> <span class="p">(</span>noise <span class="o">==</span> <span class="m">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    plot<span class="p">(</span>k<span class="p">,</span> knn_error<span class="p">,</span> type <span class="o">=</span> <span class="s">&quot;b&quot;</span><span class="p">,</span> pch <span class="o">=</span> <span class="m">16</span><span class="p">,</span>ylim <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0.3</span><span class="p">),</span> col <span class="o">=</span> color<span class="p">,</span> xlab <span class="o">=</span> <span class="s">&quot;k/DoF&quot;</span><span class="p">,</span> ylab <span class="o">=</span> <span class="s">&quot;Test Error&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="kr">else</span> <span class="p">{</span>
+</span><span class='line'>    points<span class="p">(</span>k<span class="p">,</span> knn_error<span class="p">,</span> type <span class="o">=</span> <span class="s">&quot;b&quot;</span><span class="p">,</span> pch <span class="o">=</span> <span class="m">16</span><span class="p">,</span>ylim <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0.3</span><span class="p">),</span> col <span class="o">=</span> color<span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  points<span class="p">(</span><span class="m">3</span><span class="o">+</span>noise<span class="p">,</span> ls_error<span class="p">,</span> pch <span class="o">=</span> <span class="m">18</span><span class="p">)</span>
+</span><span class='line'>  abline<span class="p">(</span>h<span class="o">=</span>bayes_error<span class="p">,</span> col<span class="o">=</span><span class="s">&quot;brown&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Simulate Performance for $K = 1 \cdots 10$</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='r'><span class='line'>colors <span class="o">=</span> palette<span class="p">(</span>rainbow<span class="p">(</span><span class="m">10</span><span class="p">))</span>
+</span><span class='line'><span class="kr">for</span> <span class="p">(</span>noise <span class="kr">in</span> <span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  compute_plot_errors<span class="p">(</span>noise<span class="p">,</span> <span class="m">1</span><span class="p">,</span> colors<span class="p">[</span>noise<span class="p">])</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>x <span class="o">&lt;-</span> <span class="m">1</span><span class="o">:</span><span class="m">10</span>
+</span><span class='line'>legend_names <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span><span class="kp">paste</span><span class="p">(</span><span class="s">&quot;Noise&quot;</span><span class="p">,</span> x<span class="p">),</span> <span class="s">&quot;Least Squares&quot;</span><span class="p">,</span><span class="s">&quot;Bayes Error&quot;</span><span class="p">)</span>
+</span><span class='line'>legend<span class="p">(</span><span class="s">&quot;bottom&quot;</span><span class="p">,</span>legend_names<span class="p">,</span>fill<span class="o">=</span><span class="kt">c</span><span class="p">(</span>colors<span class="p">,</span> <span class="s">&quot;black&quot;</span><span class="p">,</span> <span class="s">&quot;brown&quot;</span><span class="p">),</span>ncol<span class="o">=</span><span class="m">4</span><span class="p">,</span> cex <span class="o">=</span> <span class="m">0.9</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Results</h2>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post7/plot3.jpeg" alt="png" /></p>
+
+<p>Overall, the test error of KNN decreases as $k$ increases, no matter how many noise parameters there are The test error of KNN generally increases significantly as the number of noise parameters increases, while the test error of least squares stays at about the same level. This shows that the KNN is more susceptible to high noise due to its flexiblity. The least squares is more rigid and is less affected by the noise. KNN overperforms the least squares when the noise-to-signal ratio is low and underperforms the least squares when the noise-to-signal ratio is high.</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2018
+
+    Sijun He
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'sijunhe';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sijunhe.github.io/blog/2017/02/08/linear-regression-and-the-knn/';
+        var disqus_url = 'http://sijunhe.github.io/blog/2017/02/08/linear-regression-and-the-knn/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+</body>
+</html>
