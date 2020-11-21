@@ -1,0 +1,239 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>The 1986 Backpropagation Paper - Blog | Sijun He</title>
+	<meta name="author" content="Sijun He">
+
+	
+	<meta name="description" content="The 1986 Backpropagation Paper Deep learning is without doubt the hottest topic in both the academia and the industry at the moment, as it enables &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Blog | Sijun He" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://sijunhe.github.io/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='https://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!--- MathJax Configuration -->
+	<script type="text/x-mathjax-config">
+  		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML">
+	</script>
+	<!-- <script type="text/javascript" async
+	  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+	</script> -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-69112205-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><img src= 'https://s3-us-west-1.amazonaws.com/sijunhe-blog/images/name_white.png' height: 150px width: 150px >
+<nav id="main-nav">
+<section class="aboutme">
+  <h3>
+    Sijun's Machine Learning Odyssey
+  </h3>
+</section>
+
+<ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/blog/categories">Categories</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+</ul></nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/sijunhe" title="Twitter">Twitter</a>
+		
+		
+		
+		
+		
+			<a class="linkedin" href="http://www.linkedin.com/in/sijunhe48" title="LinkedIn">LinkedIn</a>
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">The 1986 Backpropagation Paper</h1>
+	<div class="entry-content" itemprop="articleBody"><p>Deep learning is without doubt the hottest topic in both the academia and the industry at the moment, as it enables machines to recognize objects, translate speech or even play chess at human or super-human level. The workhorse behind the training of every neural network is backpropagation, where the weights of connections between neurons get adjusted to minimize the difference between the output of the neural network and the desired target. The idea of backpropagation came around in 1960 - 1970, but it wasn&rsquo;t until 1986 when it was formally introduced as the learning procedure to train neural networks. This is my reading notes of the famous 1986 paper in Nature <a href="https://www.iro.umontreal.ca/~vincentp/ift3395/lectures/backprop_old.pdf">Learning Representations by Back-propagating Errors</a> by Rumelhart, Hinton and Williams.</p>
+
+<!--more-->
+
+
+<h3>Intro</h3>
+
+<ul>
+<li>The aim is to find a synaptic modification rule that will allow an arbitrarily connected neural network to develop an internal structure for a particular task domain</li>
+<li>The learning rules are simple if the input units are directly connected to the output units, but becomes more interesting when hidden units whose states are not specificed by the task are introduced</li>
+<li>The learning rule must decide what these hidden units represent in order to achieve the desired input-output behavior</li>
+</ul>
+
+
+<h3>Feed Forward</h3>
+
+<ul>
+<li>Layered network with a layer of input units at the bottom, any number of hidden layers and a layer of output units at the top</li>
+<li>Connection within a layer or from higher to lower layers are forbidden, but connections may skip hidden layer</li>
+<li>The total input $x_j$ to unit $j$ is a linear function of the outputs $y_i$ of the units connected to $j$ with the weights
+$$x_j = \sum_i y_i w_{ji}$$</li>
+<li>The output of each neuron is an non-linear function of its total input, here the paper uses the logistic function
+$$y_j = \frac{1}{1 + e^{-x_j}}$$</li>
+<li>The total error in the performance is measured as squared loss summed over all the input-output pairs and output units
+$$E = \frac{1}{2} \sum_c \sum_j (y_{j,c}-d_{j,c})^2$$
+
+<h3>Backpropagation</h3></li>
+<li>To minimize $E$ by gradient descent, we need to compute the partial derivative of $E$ with respect to each weight in the network, which is the sum of the partial derivatives for each of the input-output cases</li>
+<li>The partial derivative is computed with the forward pass (feed forward) and the backward pass (backpropagation), which propagates derivatives from the top layer back to the bottom layer</li>
+<li>Compute $\partial E/\partial y$, the partial derivative of $E$ to the output of the output units
+$$\frac{\partial E}{\partial y_j} = y_j - d_j$$</li>
+<li>Apply the chain rule to get $\partial E/\partial x_j$, the partial derivative of $E$ to the input of the output units, which represents <strong>how a change in the total input $x$ will affect the error</strong>
+$$\frac{\partial E}{\partial x_j} = \frac{\partial E}{\partial y_j}\frac{\partial y_j}{\partial x_j} = \frac{\partial E}{\partial y_j} y_j(1-y_j)$$</li>
+<li>The total input $x$ is a linear function of the states of the lower level units and the weights of the connection. We can compute <strong>how the error will be affected by a change in the weights</strong>
+$$\frac{\partial E}{\partial W_{ji}} = \frac{\partial E}{\partial x_j} \frac{\partial x_j}{\partial W_{ji}} = \frac{\partial E}{\partial x_j} y_i$$</li>
+<li>The contribution of the output of unit $i$ to $\partial E/\partial y_i$, resulting from the effect of $i$ on $j$ is
+$$\frac{\partial E}{\partial x_j} \frac{\partial x_j}{\partial y_i} = \frac{\partial E}{\partial x_j} W_{ji}$$</li>
+<li>Taking into account of all the connections from unit $i$, we can get the <strong>contribution of error from unit $i$</strong>
+$$\frac{\partial E}{\partial y_i} = \sum_j \frac{\partial E}{\partial x_j} W_{ji}$$</li>
+</ul>
+
+
+<h3>Gradient Descent</h3>
+
+<ul>
+<li>The paper brieftly stated that the gradient descent is not as efficient as methods using second derivative (<strong>Note</strong>: methods with Jacobian like Newton Method), but is much simpler and parallelizable</li>
+<li>The paper also mentioned the initiation of weights and suggested starting with small random weights to break summary (<strong>Note</strong>: this is still true in 2017, as we use <a href="http://andyljones.tumblr.com/post/110998971763/an-explanation-of-xavier-initialization">xavier initiation</a>)</li>
+<li>The paper stated that the drawback of the learning procedure is that the error-surface may contain local minima so that gradient descend may not find the global minimum (<strong>Note</strong>: For almost 2 decades later, this was thought to be the case but the 2014 paper <a href="https://arxiv.org/abs/1406.2572">Identifying and attacking the saddle point problem in high-dimensional non-convex optimization</a> proved that the problem is actually saddle points instead of local minima <a href="http://andyljones.tumblr.com/post/110998971763/an-explanation-of-xavier-initialization">xavier initiation</a>)</li>
+</ul>
+
+
+<h3>Comments</h3>
+
+<ul>
+<li>Although I did not learn anything new with this paper, it was definitely fun seeing how influencial this paper was and how much of it has turned into &ldquo;deep learning basics&rdquo; in 2017, while they were cutting edge in 1986</li>
+<li>It is particularly interesting to see the intuitive observations made by the authors like small random initiation and local minima get their theoretical proofs decades later</li>
+</ul>
+
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2020
+
+    Sijun He
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'sijunhe';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sijunhe.github.io/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper/';
+        var disqus_url = 'http://sijunhe.github.io/blog/2017/03/27/reading-notes-the-1986-backpropagation-paper/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+</body>
+</html>

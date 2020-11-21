@@ -1,0 +1,225 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Wide & Deep Learning for Recommendation Systems - Blog | Sijun He</title>
+	<meta name="author" content="Sijun He">
+
+	
+	<meta name="description" content="Wide & Deep Learning for Recommendation Systems Recently I started working on the applications of text representations in Recommendations. Since I &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Blog | Sijun He" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://sijunhe.github.io/blog/2020/08/17/reading-notes-wide-deep/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='https://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!--- MathJax Configuration -->
+	<script type="text/x-mathjax-config">
+  		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML">
+	</script>
+	<!-- <script type="text/javascript" async
+	  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+	</script> -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-69112205-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><img src= 'https://s3-us-west-1.amazonaws.com/sijunhe-blog/images/name_white.png' height: 150px width: 150px >
+<nav id="main-nav">
+<section class="aboutme">
+  <h3>
+    Sijun's Machine Learning Odyssey
+  </h3>
+</section>
+
+<ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/blog/categories">Categories</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+</ul></nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/sijunhe" title="Twitter">Twitter</a>
+		
+		
+		
+		
+		
+			<a class="linkedin" href="http://www.linkedin.com/in/sijunhe48" title="LinkedIn">LinkedIn</a>
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Wide & Deep Learning for Recommendation Systems</h1>
+	<div class="entry-content" itemprop="articleBody"><p>Recently I started working on the applications of text representations in Recommendations. Since I don&rsquo;t have much background in RecSys other than the few lectures I took in graduate school, I will read some classic RecSys paper. Starting with <a href="https://arxiv.org/abs/1606.07792">Wide &amp; Deep Learning for Recommender Systems</a>, the de facto standard baseline for industry recommender systems!</p>
+
+<p><img src="https://sijunhe-blog.s3-us-west-1.amazonaws.com/plots/post25/wide_deep_model.png" alt="wide_and_deep_model" /></p>
+
+<!--more-->
+
+
+<h2>Wide &amp; Deep Learning for Recommender Systems</h2>
+
+<ul>
+<li><em>Memorization</em> learns the frequent co-occurence of items and feature and exploits the correlation in the training data</li>
+<li><em>Generalization</em> explores new feature combinations that have never or rarely occured in the past via transitivity of correlation</li>
+<li>Memorization requires in recommendations that are more directly relevant to user history, while generalization tends to improve the diversity of the recommended items <span style="color:blue"> [Sijun] this dichotomy sounds like explore/exploit </span></li>
+<li>Memorization through cross-product transformation requires manually feature engineering and do not generalize to unseen feature pairs</li>
+<li>Embedding-based models can generalize to previously unseen feature pairs by learning a low-dimensional dense embedding for query and item. However, it is difficult to learn effective representation when the query-item is sparse and high-rank, such as users with specific preferences or niche itmes with a narrow appeal. In this case, linear models with cross-product features are far more efficient. <span style="color:blue"> [Sijun] this is an interesting point-of-view on embeddings in RecSys. I think this is more about matrix factorization than word2vec. Coming from NLP, I rarely think about if niche words are over-generalized. </span></li>
+</ul>
+
+
+<h3>Wide &amp; Deep Learning</h3>
+
+<p><img src="https://sijunhe-blog.s3-us-west-1.amazonaws.com/plots/post25/wide_deep_model.png" alt="wide_and_deep_model" /></p>
+
+<ul>
+<li>Wide component is a GLM $y=\textbf{w}^{T}\textbf{x}+b$. One of the most important features is the cross-product transformation, defined as $\theta_{k}(\textbf{x}) = \prod_{i=1}^{d} x_{i}^{c_{ki}} \ \ \ c_{ki} \in {0, 1}$</li>
+<li>Deep component is a feed-forward NN where sparse, high-dimensional categorical features are first converted into a embedding. The embedding are initialized randomly and trainable</li>
+<li>The wide and deep compoent are combined at the output layer, which is then fed to a logistici loss function for joint training</li>
+<li>The wide component is optimized by FTRL with L1 regularization while the deep part is optimized by AdaGrad. <span style="color:blue"> [Sijun]: The FTRL algorithm was originally designed to train Google-scale GLMs. It induces sparsity, which is needed in the wide part of the model, as most of the cross-product features are not meaningful. The deep part of the model is trained with AdaGrad, which is an regular adapative optimizer for NNs </span></li>
+</ul>
+
+
+<h3>System Implementation</h3>
+
+<h4>Data</h4>
+
+<ul>
+<li>Build vocabulary, which maps cateogrical feature to integer IDs during data generation. Categorical features are requried to have a minimal number of occurences to be included.</li>
+<li>Continuous features are normlalized to [0, 1] and divided into <em>n</em> quantiles. <span style="color:blue"> [Sijun]: I hypothesize they normalize to ensure equal feature scale and use quantization to reduce the noise in real-value features. They kept the quantized feature as a continuous feature instead of categorical feature to account for the ordinal nature. </span></li>
+</ul>
+
+
+<h4>Model Training</h4>
+
+<p><img src="https://sijunhe-blog.s3-us-west-1.amazonaws.com/plots/post25/deep_and_wide_structure.png" alt="wide_and_deep_structure" />
+- 32-dimensional vector is learned for each categorical feature. All embeddings along with dense features are concatenated and fed into a MLP with ReLu activation <span style="color:blue"> [Sijun]: I wonder if the dense features are under-utilized compared with the categorical features that are represented by embeddings </span></p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2020
+
+    Sijun He
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'sijunhe';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sijunhe.github.io/blog/2020/08/17/reading-notes-wide-deep/';
+        var disqus_url = 'http://sijunhe.github.io/blog/2020/08/17/reading-notes-wide-deep/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+</body>
+</html>

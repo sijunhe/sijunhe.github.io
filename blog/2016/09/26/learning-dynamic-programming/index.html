@@ -1,0 +1,297 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Learning Dynamic Programming - Blog | Sijun He</title>
+	<meta name="author" content="Sijun He">
+
+	
+	<meta name="description" content="Learning Dynamic Programming Dynamic programming is a commonly-used method in a programmer&rsquo;s algorithm toolbox and one that I have yet to &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Blog | Sijun He" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://sijunhe.github.io/blog/2016/09/26/learning-dynamic-programming/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='https://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!--- MathJax Configuration -->
+	<script type="text/x-mathjax-config">
+  		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML">
+	</script>
+	<!-- <script type="text/javascript" async
+	  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+	</script> -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-69112205-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><img src= 'https://s3-us-west-1.amazonaws.com/sijunhe-blog/images/name_white.png' height: 150px width: 150px >
+<nav id="main-nav">
+<section class="aboutme">
+  <h3>
+    Sijun's Machine Learning Odyssey
+  </h3>
+</section>
+
+<ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/blog/categories">Categories</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+</ul></nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/sijunhe" title="Twitter">Twitter</a>
+		
+		
+		
+		
+		
+			<a class="linkedin" href="http://www.linkedin.com/in/sijunhe48" title="LinkedIn">LinkedIn</a>
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Learning Dynamic Programming</h1>
+	<div class="entry-content" itemprop="articleBody"><p>Dynamic programming is a commonly-used method in a programmer&rsquo;s algorithm toolbox and one that I have yet to learn. Thus I am writing this post to document what I learned in Stanford&rsquo;s <a href="https://www.coursera.org/learn/algorithm-design-analysis-2">Design and Analysis of Algorithms</a>.</p>
+
+<p>Dynamic programming is based on the idea of solving a complex problem by breaking it down into many simpler subproblems, solving each of the subproblems just once and storing the solution. When the same subproblem occurs again, the solution can be simply looked up from storage, thus saves time at the expense of space.</p>
+
+<!--more-->
+
+
+<h2>Principles of Dynamic Programming</h2>
+
+<ol>
+<li>Identify a small number of subproblems</li>
+<li>Quickly and correctly solve &ldquo;larger&rdquo; subproblems, given the solutions to smaller subproblems</li>
+<li>After solving all subproblems, the final solution can be quickly computed</li>
+</ol>
+
+
+<h2>Example Problem 1: Weighted Independent Sets in Path Graphs</h2>
+
+<h3>Problem Statement</h3>
+
+<p>Path graphs are basically graphs like a linked list. The input for the Weighted Independent Sets (WIS) problem is a path graph with non-negative weights on the vertices. And the desired output would be the subset of non-adjacent vertices, also called independent set, with maximum total weight.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">o</span> <span class="o">---</span> <span class="n">o</span> <span class="o">---</span> <span class="n">o</span> <span class="o">---</span> <span class="n">o</span> <span class="o">---</span> <span class="mi">0</span>
+</span><span class='line'><span class="mi">5</span>     <span class="mi">2</span>     <span class="mi">1</span>     <span class="mi">3</span>     <span class="mi">4</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Subproblem</h3>
+
+<p>Let $S$ be the max-weight independent set of the path graph $G$ and $V_n$ to be the last vertex of the path. Let $G'$ be the path graph $G$ with  $V_n$ deleted</p>
+
+<ul>
+<li>Case 1: If $V_n \notin S$, then $S$ is also the max-weight IS of $G'$.</li>
+<li>Case 2: If $V_n \in S$, then $S - $V_n$ is the max-weight IS of $G'&lsquo;$, which is $G$ with  $V_{n-1}$ and $V_n$ deleted</li>
+</ul>
+
+
+<p>Hence, we know a max-weight IS $S$ must be either</p>
+
+<ul>
+<li>a max-weight IS of $G'$ or</li>
+<li>a max-weight IS of $G'&lsquo;$ + $V_n$</li>
+</ul>
+
+
+<h3>The Dynamic Programming Solution</h3>
+
+<p>Let $G_i$ be the first $i$ vertices of $G$ and we populate an array $A$ from left to right with $A[i]$ being the value of the max-weight IS of $G_i$. Let array $W$ store the weights of the vertices.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">W</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+</span><span class='line'><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">W</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Complexity Analysis</h3>
+
+<p>Time complexity is $O(n)$ since it is constant time per iteration. Space complexity is also $O(n)$ from the memoization array $A$.</p>
+
+<h2>Example Problem 2: The Knapsack Problem</h2>
+
+<h3>Problem Statement</h3>
+
+<p>The Knapsack problem mimics the situation where a thief breaks into a store with a knapsack. The knapsack can only carry certain weight so the thief needs to put in items with the most total value while stay under the knapsack&rsquo;s weight limit.</p>
+
+<p>Input: $n$ items, each with a non-negative integer value $v_i$ and a non-negative integer weight $w_i$. The weight constraint is $W$.</p>
+
+<p>Output: a subset $S$ of all the items that maximizes $\sum<em>{i \in S} v_i$ subjected to $\sum</em>{i \in S} w_i \leq W$</p>
+
+<h3>Subproblems</h3>
+
+<p>Let $S$ be the max-value solution to an knapsack with capacity $W$ and for item $n$ be the last of all the available items</p>
+
+<ul>
+<li>Case 1: If $n \notin S$, then S must also be the max-value solution to the first $(n-1)$ items</li>
+<li>Case 2: If $n \in S$, then then $S - {n}$ is the max-value solution to the first $(n-1)$ items and the knapsack with capacity of $W - w_n$</li>
+</ul>
+
+
+<p>Hence, we know a max-value solution $V_{i,x}$ must be the maximum of</p>
+
+<ul>
+<li>$V_{i-1,W}$, the max-value solution for the first $(n-1)$ items with the same capacity</li>
+<li>$V_{i-1,W-w_i} + v_i$, the sum of the max-value solution for the first $(n-1)$ items with the capacity of $W-w_i$ and value of the ith item $v_i$</li>
+</ul>
+
+
+<h3>The Dynamic Programming Solution</h3>
+
+<p>Since we are searching all the possible combination of items and capacities, we use an 2D array $A$ for memoization. Let array $w$ and $v$ store the weights and values of the items.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">W</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">W</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">x</span> <span class="o">-</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Complexity Analysis</h3>
+
+<p>Both the time complexity and the space complexity is also $O(nW)$, since there&rsquo;re $O(nW)$ subproblems and each can be solved in constant time and space.</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2020
+
+    Sijun He
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'sijunhe';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sijunhe.github.io/blog/2016/09/26/learning-dynamic-programming/';
+        var disqus_url = 'http://sijunhe.github.io/blog/2016/09/26/learning-dynamic-programming/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+</body>
+</html>

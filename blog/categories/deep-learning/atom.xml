@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: deep-learning | Blog | Sijun He]]></title>
+  <link href="http://sijunhe.github.io/blog/categories/deep-learning/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2020-11-20T17:42:34-08:00</updated>
+  <id>http://sijunhe.github.io/</id>
+  <author>
+    <name><![CDATA[Sijun He]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Building Content Representations at Twitter with Self-Supervised Learning]]></title>
+    <link href="http://sijunhe.github.io/blog/2020/11/19/content-representations-odsc/"/>
+    <updated>2020-11-19T01:29:29-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2020/11/19/content-representations-odsc</id>
+    <content type="html"><![CDATA[<p>For the last few quarters, I have been working at the intersection of Recommendations and NLP, thinking about ways to  represent textual information for Twitter&rsquo;s recommendation products. Recently, my colleague Kenny Leung and I gave a talk at <a href="https://odsc.com/speakers/building-content-embedding-with-self-supervised-learning/">ODSC 2020</a> about our experience building and serving self-supervised content representations for recommendations on Twitter.</p>
+
+<p>The slides for the talk can be found <a href="https://sijunhe-blog.s3-us-west-1.amazonaws.com/files/ODSC_West_2020_Content_Representations.pdf">here</a>.</p>
+
+<p><img src="https://sijunhe-blog.s3-us-west-1.amazonaws.com/plots/post26/self_supervised_learning.png" alt="self-supervised-training" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Wide & Deep Learning for Recommendation Systems]]></title>
+    <link href="http://sijunhe.github.io/blog/2020/08/17/reading-notes-wide-deep/"/>
+    <updated>2020-08-17T16:23:29-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2020/08/17/reading-notes-wide-deep</id>
+    <content type="html"><![CDATA[<p>Recently I started working on the applications of text representations in Recommendations. Since I don&rsquo;t have much background in RecSys other than the few lectures I took in graduate school, I will read some classic RecSys paper. Starting with <a href="https://arxiv.org/abs/1606.07792">Wide &amp; Deep Learning for Recommender Systems</a>, the de facto standard baseline for industry recommender systems!</p>
+
+<p><img src="https://sijunhe-blog.s3-us-west-1.amazonaws.com/plots/post25/wide_deep_model.png" alt="wide_and_deep_model" /></p>
+
+<!--more-->
+
+
+<h2>Wide &amp; Deep Learning for Recommender Systems</h2>
+
+<ul>
+<li><em>Memorization</em> learns the frequent co-occurence of items and feature and exploits the correlation in the training data</li>
+<li><em>Generalization</em> explores new feature combinations that have never or rarely occured in the past via transitivity of correlation</li>
+<li>Memorization requires in recommendations that are more directly relevant to user history, while generalization tends to improve the diversity of the recommended items <span style="color:blue"> [Sijun] this dichotomy sounds like explore/exploit </span></li>
+<li>Memorization through cross-product transformation requires manually feature engineering and do not generalize to unseen feature pairs</li>
+<li>Embedding-based models can generalize to previously unseen feature pairs by learning a low-dimensional dense embedding for query and item. However, it is difficult to learn effective representation when the query-item is sparse and high-rank, such as users with specific preferences or niche itmes with a narrow appeal. In this case, linear models with cross-product features are far more efficient. <span style="color:blue"> [Sijun] this is an interesting point-of-view on embeddings in RecSys. I think this is more about matrix factorization than word2vec. Coming from NLP, I rarely think about if niche words are over-generalized. </span></li>
+</ul>
+
+
+<h3>Wide &amp; Deep Learning</h3>
+
+<p><img src="https://sijunhe-blog.s3-us-west-1.amazonaws.com/plots/post25/wide_deep_model.png" alt="wide_and_deep_model" /></p>
+
+<ul>
+<li>Wide component is a GLM $y=\textbf{w}^{T}\textbf{x}+b$. One of the most important features is the cross-product transformation, defined as $\theta_{k}(\textbf{x}) = \prod_{i=1}^{d} x_{i}^{c_{ki}} \ \ \ c_{ki} \in {0, 1}$</li>
+<li>Deep component is a feed-forward NN where sparse, high-dimensional categorical features are first converted into a embedding. The embedding are initialized randomly and trainable</li>
+<li>The wide and deep compoent are combined at the output layer, which is then fed to a logistici loss function for joint training</li>
+<li>The wide component is optimized by FTRL with L1 regularization while the deep part is optimized by AdaGrad. <span style="color:blue"> [Sijun]: The FTRL algorithm was originally designed to train Google-scale GLMs. It induces sparsity, which is needed in the wide part of the model, as most of the cross-product features are not meaningful. The deep part of the model is trained with AdaGrad, which is an regular adapative optimizer for NNs </span></li>
+</ul>
+
+
+<h3>System Implementation</h3>
+
+<h4>Data</h4>
+
+<ul>
+<li>Build vocabulary, which maps cateogrical feature to integer IDs during data generation. Categorical features are requried to have a minimal number of occurences to be included.</li>
+<li>Continuous features are normlalized to [0, 1] and divided into <em>n</em> quantiles. <span style="color:blue"> [Sijun]: I hypothesize they normalize to ensure equal feature scale and use quantization to reduce the noise in real-value features. They kept the quantized feature as a continuous feature instead of categorical feature to account for the ordinal nature. </span></li>
+</ul>
+
+
+<h4>Model Training</h4>
+
+<p><img src="https://sijunhe-blog.s3-us-west-1.amazonaws.com/plots/post25/deep_and_wide_structure.png" alt="wide_and_deep_structure" />
+- 32-dimensional vector is learned for each categorical feature. All embeddings along with dense features are concatenated and fed into a MLP with ReLu activation <span style="color:blue"> [Sijun]: I wonder if the dense features are under-utilized compared with the categorical features that are represented by embeddings </span></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Scaling NER at Twitter]]></title>
+    <link href="http://sijunhe.github.io/blog/2019/12/13/scaling-ner-at-twitter/"/>
+    <updated>2019-12-13T01:29:29-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2019/12/13/scaling-ner-at-twitter</id>
+    <content type="html"><![CDATA[<p>I recently celebrated my first work anniversary at <a href="https://cortex.twitter.com/en.html">Twitter Cortex</a>. Looking back, I had tremendous growth as a ML modeler and engineer, working on the Named Entity Recognition (NER) systems at Twitter. I was fortunate to have the opportunity to share what I learned at <a href="https://conferences.oreilly.com/artificial-intelligence/ai-ca-2019/public/schedule/detail/76804">O'Reilly AI San Jose 2019</a> and <a href="https://odsc.com/speakers/named-entity-recognition-at-scale-with-deep-learning/">ODSC West 2019</a>, where I gave an overview of NER as well as the modeling and engineering challenges we faced running such model at Twitter scale.</p>
+
+<p>The slides for the talks can be found <a href="https://sijunhe-blog.s3-us-west-1.amazonaws.com/files/ODSC_West_NER_Slides.pdf">here</a>.</p>
+
+<p><img src="https://sijunhe-blog.s3-us-west-1.amazonaws.com/plots/post24/ner.png" alt="ner" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Resolving Gendered Pronouns]]></title>
+    <link href="http://sijunhe.github.io/blog/2019/04/23/resolving-gendered-pronouns/"/>
+    <updated>2019-04-23T02:53:27-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2019/04/23/resolving-gendered-pronouns</id>
+    <content type="html"><![CDATA[<p>With the goal to learning PyTorch and getting more hands-on experience with transfer learning via <a href="https://sijunhe.github.io/blog/2019/01/20/transfer-learning-in-nlp/">pre-trained language models</a>, I took part in the <a href="https://www.kaggle.com/c/gendered-pronoun-resolution">Gendered Pronoun Resolution Competition</a> on Kaggle. The learning alone was quite worth it. And <strong>I placed 30th solo out of 800+ teams with limited time invested</strong>.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/pronoun_resolution.png" alt="gpr" /></p>
+
+<!--more-->
+
+
+<h2>Intro</h2>
+
+<p>I entered the <a href="https://www.kaggle.com/c/gendered-pronoun-resolution">Gendered Pronoun Resolution Competition</a> on Kaggle with two goals in mind:</p>
+
+<ol>
+<li><strong>Learn PyTorch</strong>: PyTorch has been giving Tensorflow a run for its run since its 1.0 launch. With many popular packages like <a href="https://github.com/huggingface">Hugging Face</a>, <a href="https://github.com/fastai/fastai">fast.ai</a>, <a href="">allennlp</a> built on top of it, PyTorch is becoming the standard in Machine Learning research.</li>
+<li><strong>Get experience with Language Model Finetuning</strong>: transfer learning with pre-trained langauge models like BERT has been very popular in the NLP community and I haven&rsquo;t had much experience using them in a project.</li>
+</ol>
+
+
+<h2>Model</h2>
+
+<p>I used the edge probing model architecture from this <a href="https://openreview.net/forum?id=SJzSgnRcKX">ICLR 2019 paper</a>. I experimented with OpenAI GPT, ELMo, BERT base and large as the pre-trained encoders.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post23/gpr_model.png" alt="gpr_model" /></p>
+
+<ul>
+<li><strong>Input Tokens</strong>: the respective tokenizer of the pre-trained language model were used</li>
+<li><strong>Span Representation</strong>: extracting span representation with<a href="https://allenai.github.io/allennlp-docs/api/allennlp.modules.span_extractors.html">allennlp.modules.span_extractors</a>. I experimented with both <a href="https://allenai.github.io/allennlp-docs/api/allennlp.modules.span_extractors.html#allennlp.modules.span_extractors.endpoint_span_extractor.EndpointSpanExtractor">EndpointSpanExtractor</a> and <a href="https://allenai.github.io/allennlp-docs/api/allennlp.modules.span_extractors.html#allennlp.modules.span_extractors.self_attentive_span_extractor.SelfAttentiveSpanExtractor">SelfAttentiveSpanExtractor</a> but there doesn&rsquo;t seem to be much of a difference.</li>
+<li><strong>MLP</strong>: very simple 1-layer MLP from the size of the concatenated span representation to the number of classes(3). A dropout of 0.1 is applied, as suggest from the BERT paper.</li>
+</ul>
+
+
+<h2>Results &amp; Analysis</h2>
+
+<p>In order to properly benchmark the performance of the fine-tuned pre-trained language models, I built two baseline models without transfer learning.</p>
+
+<ul>
+<li><strong>Baseline with random initialization</strong>: Replace the pre-trained encoder in the edge probing model with a word embedding and a Bidirectional LSTM. The word embedding is initialized randomly and trainable</li>
+<li><strong>Baseline with Glove</strong>: Same model as the <strong>Baseline with random initialization</strong>, except using <a href="https://nlp.stanford.edu/projects/glove/">Glove</a> to initialize the word embeddings</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th> pre-trained LM      </th>
+<th style="text-align:center;"> log-loss </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> Baseline-Random Init</td>
+<td style="text-align:center;"> 0.7647   </td>
+</tr>
+<tr>
+<td> Baseline-Glove      </td>
+<td style="text-align:center;"> 0.7328   </td>
+</tr>
+<tr>
+<td> ELMo                </td>
+<td style="text-align:center;"> 0.6612   </td>
+</tr>
+<tr>
+<td> OpenAI GPT          </td>
+<td style="text-align:center;"> 0.6170   </td>
+</tr>
+<tr>
+<td> Bert-base-cased     </td>
+<td style="text-align:center;"> 0.4310   </td>
+</tr>
+<tr>
+<td> Bert-base-uncased   </td>
+<td style="text-align:center;"> 0.4221   </td>
+</tr>
+<tr>
+<td> Bert-large-cased    </td>
+<td style="text-align:center;"> 0.3592   </td>
+</tr>
+<tr>
+<td> Bert-large-uncased  </td>
+<td style="text-align:center;"> 0.3530   </td>
+</tr>
+</tbody>
+</table>
+
+
+<p>As expected, the performance improves as we add transfer learning or increase the size and complexity of the pre-trained encoder. I was very surprised by the strong performance of the BERT models. Even the BERT base models significantly outperform ELMo and GPT.</p>
+
+<p>My final submission was a ensemble of BERT large models fine-tuned on the GAP dataset. It scores around 0.33 on the public test set and 0.26 on the private test set.</p>
+
+<h2>Learning From Top Solutions</h2>
+
+<p>Things that I should have considered:</p>
+
+<ul>
+<li><strong>Truncation</strong>: most of the top solutions involved truncating the text to a certain length. I didn&rsquo;t do it since I was worried that a mention will get truncated. This normally wouldn&rsquo;t matter but it did for this competition due to the size of BERT large. Without truncation, I was only able to run a batch size of 2 when fine-tuning BERT large on my 1080-Ti, which was very unstable and 20% of the models failed to learn.</li>
+<li><strong>Augmentation</strong>: one of the challenges of the competition was the small size of the training data. <a href="https://www.kaggle.com/c/gendered-pronoun-resolution/discussion/90334">7th place solution</a> involved data augmentation by replacing the A and B names with a sets of placeholder names. This gave an improvement of 0.02.</li>
+<li><strong>Intermediate layers of BERT</strong>: A few solutions mentioned mentioned using intermediate layers. The <a href="https://www.kaggle.com/c/gendered-pronoun-resolution/discussion/90424">3rd place solution</a> used -5th and -6th layer of BERT and the <a href="https://www.kaggle.com/c/gendered-pronoun-resolution/discussion/90483">11th place solution</a> concatenates last 8 layers of BERT. The reasoning behind this is that the last layer of BERT is too close to the masked LM objective and intermediate layers might offer better generalizations. I actually have a parameter in my model configuration that specified which layer to fine-tune with but I didn&rsquo;t find a big difference when I experimented with -1 and -2.</li>
+<li><strong>BertAdam Optimizer</strong>: I didn&rsquo;t experiment with the <a href="https://github.com/huggingface/pytorch-pretrained-BERT/blob/694e2117f33d752ae89542e70b84533c52cb9142/README.md#bertadam">BertAdam</a> optimizer that comes with the pre-trained BERT package in PyTorch and used vanilla Adam instead. The biggest challenge I faced for this competition was the unstable training due to small batch size and some solution mentioned that the warm-up portion of the BertAdam helped stabilizing the training.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Flagging Insincere Questions on Quora]]></title>
+    <link href="http://sijunhe.github.io/blog/2019/02/19/kaggle-quora-insincere-question/"/>
+    <updated>2019-02-19T22:54:15-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2019/02/19/kaggle-quora-insincere-question</id>
+    <content type="html"><![CDATA[<p><strong>All credit to my teammates, my team placed 22nd out of 4037 in the <a href="https://www.kaggle.com/c/quora-insincere-questions-classification">Quora Insincere Questions Classification</a></strong>. The key challenge is to weed out insincere questions on Quora, while keeping the training and inference time below the 4 GPU-hour limit.</p>
+
+<p>I deserve no credit on this one, as my contribution was trivial. My attempts on the Character Embeddings never paid off as the gain in performance wasn&rsquo;t worth the slow-down in training. Please refer to the <a href="https://www.kaggle.com/c/quora-insincere-questions-classification/discussion/80514">nice write-up</a> and the <a href="https://www.kaggle.com/ryches/22nd-place-solution-6-models-pos-tagging/">kernel</a> by Ryan Chesler for our solution.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/kaggle-quora.png" alt="quora" /></p>
+
+<!--more-->
+
+]]></content>
+  </entry>
+  
+</feed>

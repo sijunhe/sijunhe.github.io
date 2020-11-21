@@ -1,1 +1,587 @@
-My Octopress Page is coming soon &hellip;
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Blog | Sijun He</title>
+	<meta name="author" content="Sijun He">
+
+	
+	<meta name="description" content="deep-learning, nlp, rec-sys Building Content Representations at Twitter With Self-Supervised Learning For the last few quarters, I have been working &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Blog | Sijun He" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://sijunhe.github.io/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='https://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!--- MathJax Configuration -->
+	<script type="text/x-mathjax-config">
+  		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML">
+	</script>
+	<!-- <script type="text/javascript" async
+	  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+	</script> -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-69112205-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><img src= 'https://s3-us-west-1.amazonaws.com/sijunhe-blog/images/name_white.png' height: 150px width: 150px >
+<nav id="main-nav">
+<section class="aboutme">
+  <h3>
+    Sijun's Machine Learning Odyssey
+  </h3>
+</section>
+
+<ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/blog/categories">Categories</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+</ul></nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/sijunhe" title="Twitter">Twitter</a>
+		
+		
+		
+		
+		
+			<a class="linkedin" href="http://www.linkedin.com/in/sijunhe48" title="LinkedIn">LinkedIn</a>
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner">
+<div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2020-11-19T01:29:29-08:00" data-updated="true" itemprop="datePublished"></time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/deep-learning/'>deep-learning</a>, <a class='category' href='/blog/categories/nlp/'>nlp</a>, <a class='category' href='/blog/categories/rec-sys/'>rec-sys</a>
+
+
+</div>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2020/11/19/content-representations-odsc/" itemprop="url">Building Content Representations at Twitter With Self-Supervised Learning</a></h1>
+	<h2 class="subtitle" itemprop="name"></h2>
+	<div class="entry-content" itemprop="articleBody">
+		<p>For the last few quarters, I have been working at the intersection of Recommendations and NLP, thinking about ways to  represent textual information for Twitter&rsquo;s recommendation products. Recently, my colleague Kenny Leung and I gave a talk at <a href="https://odsc.com/speakers/building-content-embedding-with-self-supervised-learning/">ODSC 2020</a> about our experience building and serving self-supervised content representations for recommendations on Twitter.</p>
+
+<p>The slides for the talk can be found <a href="https://sijunhe-blog.s3-us-west-1.amazonaws.com/files/ODSC_West_2020_Content_Representations.pdf">here</a>.</p>
+
+<p><img src="https://sijunhe-blog.s3-us-west-1.amazonaws.com/plots/post26/self_supervised_learning.png" alt="self-supervised-training" /></p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2020-08-17T16:23:29-07:00" data-updated="true" itemprop="datePublished"></time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/deep-learning/'>deep-learning</a>, <a class='category' href='/blog/categories/reading-notes/'>reading-notes</a>, <a class='category' href='/blog/categories/rec-sys/'>rec-sys</a>
+
+
+</div>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2020/08/17/reading-notes-wide-deep/" itemprop="url">Wide & Deep Learning for Recommendation Systems</a></h1>
+	<h2 class="subtitle" itemprop="name">Reading Notes on Classic RecSys Papers I</h2>
+	<div class="entry-content" itemprop="articleBody">
+		<p>Recently I started working on the applications of text representations in Recommendations. Since I don&rsquo;t have much background in RecSys other than the few lectures I took in graduate school, I will read some classic RecSys paper. Starting with <a href="https://arxiv.org/abs/1606.07792">Wide &amp; Deep Learning for Recommender Systems</a>, the de facto standard baseline for industry recommender systems!</p>
+
+<p><img src="https://sijunhe-blog.s3-us-west-1.amazonaws.com/plots/post25/wide_deep_model.png" alt="wide_and_deep_model" /></p>
+
+
+		
+		<a href="/blog/2020/08/17/reading-notes-wide-deep/" class="more-link">Read on &rarr;</a>
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2019-12-13T01:29:29-08:00" data-updated="true" itemprop="datePublished"></time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/deep-learning/'>deep-learning</a>, <a class='category' href='/blog/categories/nlp/'>nlp</a>
+
+
+</div>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2019/12/13/scaling-ner-at-twitter/" itemprop="url">Scaling NER at Twitter</a></h1>
+	<h2 class="subtitle" itemprop="name"></h2>
+	<div class="entry-content" itemprop="articleBody">
+		<p>I recently celebrated my first work anniversary at <a href="https://cortex.twitter.com/en.html">Twitter Cortex</a>. Looking back, I had tremendous growth as a ML modeler and engineer, working on the Named Entity Recognition (NER) systems at Twitter. I was fortunate to have the opportunity to share what I learned at <a href="https://conferences.oreilly.com/artificial-intelligence/ai-ca-2019/public/schedule/detail/76804">O'Reilly AI San Jose 2019</a> and <a href="https://odsc.com/speakers/named-entity-recognition-at-scale-with-deep-learning/">ODSC West 2019</a>, where I gave an overview of NER as well as the modeling and engineering challenges we faced running such model at Twitter scale.</p>
+
+<p>The slides for the talks can be found <a href="https://sijunhe-blog.s3-us-west-1.amazonaws.com/files/ODSC_West_NER_Slides.pdf">here</a>.</p>
+
+<p><img src="https://sijunhe-blog.s3-us-west-1.amazonaws.com/plots/post24/ner.png" alt="ner" /></p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2019-04-23T02:53:27-07:00" data-updated="true" itemprop="datePublished"></time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/deep-learning/'>deep-learning</a>, <a class='category' href='/blog/categories/kaggle/'>kaggle</a>, <a class='category' href='/blog/categories/nlp/'>nlp</a>
+
+
+</div>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2019/04/23/resolving-gendered-pronouns/" itemprop="url">Resolving Gendered Pronouns</a></h1>
+	<h2 class="subtitle" itemprop="name">Learning from the Gendered Pronoun Resolution Challenge</h2>
+	<div class="entry-content" itemprop="articleBody">
+		<p>With the goal to learning PyTorch and getting more hands-on experience with transfer learning via <a href="https://sijunhe.github.io/blog/2019/01/20/transfer-learning-in-nlp/">pre-trained language models</a>, I took part in the <a href="https://www.kaggle.com/c/gendered-pronoun-resolution">Gendered Pronoun Resolution Competition</a> on Kaggle. The learning alone was quite worth it. And <strong>I placed 30th solo out of 800+ teams with limited time invested</strong>.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/pronoun_resolution.png" alt="gpr" /></p>
+
+
+		
+		<a href="/blog/2019/04/23/resolving-gendered-pronouns/" class="more-link">Read on &rarr;</a>
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2019-02-19T22:54:15-08:00" data-updated="true" itemprop="datePublished"></time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/deep-learning/'>deep-learning</a>, <a class='category' href='/blog/categories/kaggle/'>kaggle</a>, <a class='category' href='/blog/categories/nlp/'>nlp</a>
+
+
+</div>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2019/02/19/kaggle-quora-insincere-question/" itemprop="url">Flagging Insincere Questions on Quora</a></h1>
+	<h2 class="subtitle" itemprop="name">Yet another text classification competition</h2>
+	<div class="entry-content" itemprop="articleBody">
+		<p><strong>All credit to my teammates, my team placed 22nd out of 4037 in the <a href="https://www.kaggle.com/c/quora-insincere-questions-classification">Quora Insincere Questions Classification</a></strong>. The key challenge is to weed out insincere questions on Quora, while keeping the training and inference time below the 4 GPU-hour limit.</p>
+
+<p>I deserve no credit on this one, as my contribution was trivial. My attempts on the Character Embeddings never paid off as the gain in performance wasn&rsquo;t worth the slow-down in training. Please refer to the <a href="https://www.kaggle.com/c/quora-insincere-questions-classification/discussion/80514">nice write-up</a> and the <a href="https://www.kaggle.com/ryches/22nd-place-solution-6-models-pos-tagging/">kernel</a> by Ryan Chesler for our solution.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/kaggle-quora.png" alt="quora" /></p>
+
+
+		
+		<a href="/blog/2019/02/19/kaggle-quora-insincere-question/" class="more-link">Read on &rarr;</a>
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2019-01-20T22:13:08-08:00" data-updated="true" itemprop="datePublished"></time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/deep-learning/'>deep-learning</a>, <a class='category' href='/blog/categories/nlp/'>nlp</a>, <a class='category' href='/blog/categories/reading-notes/'>reading-notes</a>
+
+
+</div>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2019/01/20/transfer-learning-in-nlp/" itemprop="url">Transfer Learning in NLP</a></h1>
+	<h2 class="subtitle" itemprop="name"></h2>
+	<div class="entry-content" itemprop="articleBody">
+		<p>Reading notes of major advances in NLP Transfer learning published in 2018:</p>
+
+<ul>
+<li><strong>ELMo from Allen NLP</strong>:  <a href="https://allennlp.org/elmo">Deep Contextualized Word Representations</a></li>
+<li><strong>ULMFiT from fast.ai</strong>: <a href="https://arxiv.org/abs/1801.06146">Universal Language Model Fine-tuning for Text Classification</a></li>
+<li><strong>Transformer from OpenAI</strong>: <a href="https://s3-us-west-2.amazonaws.com/openai-assets/research-covers/language-unsupervised/language_understanding_paper.pdf">Improving Language Understanding by Generative Pre-Training</a></li>
+<li><strong>BERT from Google</strong>: <a href="https://arxiv.org/abs/1810.04805">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a></li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post22/bert_compare.png" alt="compare" /></p>
+
+
+		
+		<a href="/blog/2019/01/20/transfer-learning-in-nlp/" class="more-link">Read on &rarr;</a>
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2018-12-05T15:29:22-08:00" data-updated="true" itemprop="datePublished"></time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/deep-learning/'>deep-learning</a>, <a class='category' href='/blog/categories/nlp/'>nlp</a>, <a class='category' href='/blog/categories/reading-notes/'>reading-notes</a>
+
+
+</div>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2018/12/05/transformer/" itemprop="url">The Transformer</a></h1>
+	<h2 class="subtitle" itemprop="name">A new paradigm of neural networks based entirely on Attention </h2>
+	<div class="entry-content" itemprop="articleBody">
+		<p>RNNs have been the state-of-the-art approach in modeling sequences. They align the symbol positions of the input and output sequences and generate a sequence of hidden states $h_t$ as a function of previous hidden state $h_{t-1}$ and the input for position $t$. This inherently sequential nature precludes parallelization .</p>
+
+<p>In the paper <a href="https://arxiv.org/pdf/1706.03762.pdf">Attention Is All You Need</a>, Google researchers proposed the <strong>Transformer</strong> model architecture that eschews recurrence and instead relies entirely on an attention mechanism to draw global dependencies between input and output. While it achieves state-of-the-art performances on Machine Translation, its application is much broader.</p>
+
+<p>P.S. the <a href="http://jalammar.github.io/illustrated-transformer/">blog post</a> by Jay Alammar has awesome illustration explaining the Transformer. the <a href="http://nlp.seas.harvard.edu/2018/04/03/attention.html">blog post</a> on Harvard NLP also provides a working notebook type of explanation with some implementation.</p>
+
+
+		
+		<a href="/blog/2018/12/05/transformer/" class="more-link">Read on &rarr;</a>
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2018-11-03T16:00:20-07:00" data-updated="true" itemprop="datePublished"></time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/miscellaneous/'>miscellaneous</a>
+
+
+</div>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2018/11/03/hello-twitter/" itemprop="url">Hello, Twitter!</a></h1>
+	<h2 class="subtitle" itemprop="name"></h2>
+	<div class="entry-content" itemprop="articleBody">
+		<p>This week I joined the flock as a Machine Learning Engineer at <a href="https://cortex.twitter.com/en.html">Twitter Cortex</a>, where I will be developing and deploying state-of-the-art Deep Learning and NLP models to automate content understanding. Super excited to see what the future holds!</p>
+
+<p align="center">
+  <img style="display:inline" src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post20/twitter-logo.png" width="150" />
+  <img style="display:inline" src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post20/cortex-logo.png" width="150" />
+</p>
+
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2018-10-04T23:26:45-07:00" data-updated="true" itemprop="datePublished"></time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/ml-basics/'>ml-basics</a>, <a class='category' href='/blog/categories/nlp/'>nlp</a>
+
+
+</div>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2018/10/04/conditional-random-field/" itemprop="url">Conditional Random Field</a></h1>
+	<h2 class="subtitle" itemprop="name">Probabilistic Models for Segmenting and Labeling Sequence Data</h2>
+	<div class="entry-content" itemprop="articleBody">
+		<p>Conditional Random Field (CRF) is a <a href="https://en.wikipedia.org/wiki/Graphical_model">probabilistic graphical model</a> that excels at modeling and labeling sequence data with wide applications in NLP, Computer Vision or even biological sequence modeling. In ICML 2011, it received &ldquo;Test-of-Time&rdquo; award for best 10-year paper, as time and hindsight proved it to be a seminal machine learning model. It is a shame that I didn&rsquo;t know much about CRF till now but better late than never!</p>
+
+<p>Reading summaries of the following paper:</p>
+
+<ul>
+<li>Original paper: <a href="https://dl.acm.org/citation.cfm?id=655813">Conditional Random Fields: Probabilistic Models for Segmenting and Labeling Sequence Data</a></li>
+<li>Tutorial from original author of CRF: <a href="https://people.cs.umass.edu/~mccallum/papers/crf-tutorial.pdf">Intro to Conditional Random Fields</a></li>
+<li>Technique for confidence estimation for entities: <a href="https://dl.acm.org/citation.cfm?id=1614012">Confidence estimation for information extraction</a></li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post19/crf.png" alt="CRF" /></p>
+
+
+		
+		<a href="/blog/2018/10/04/conditional-random-field/" class="more-link">Read on &rarr;</a>
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2018-09-12T22:23:31-07:00" data-updated="true" itemprop="datePublished"></time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/deep-learning/'>deep-learning</a>, <a class='category' href='/blog/categories/nlp/'>nlp</a>
+
+
+</div>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2018/09/12/word-embeddings/" itemprop="url">Word Embeddings</a></h1>
+	<h2 class="subtitle" itemprop="name">From word2vec and GloVe to fastText</h2>
+	<div class="entry-content" itemprop="articleBody">
+		<p>Reading summaries about widely-used embeddings:</p>
+
+<ul>
+<li><strong>word2vec</strong>: <a href="https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf">Distributed Representations of Words and Phrases and their Compositionality</a></li>
+<li><strong>word2vec</strong>: <a href="https://arxiv.org/pdf/1301.3781.pdf">Efficient Estimation of Word Representations in Vector Space</a></li>
+<li><strong>GloVe</strong>: <a href="https://nlp.stanford.edu/pubs/glove.pdf">Global Vectors for Word Representation</a></li>
+<li><strong>fastText</strong>: <a href="https://arxiv.org/pdf/1607.04606.pdf">Enriching Word Vectors with Subword Information</a></li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post18/embedding_illustration.png" alt="illustration" /></p>
+
+
+		
+		<a href="/blog/2018/09/12/word-embeddings/" class="more-link">Read on &rarr;</a>
+	</div>
+
+</article>
+
+</div>
+<nav id="pagenavi">
+    
+    
+        <a href="2" class="next">Next</a>
+    
+    <div class="center"><a href="/blog/archives">Blog Archives</a></div>
+</nav></div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2020
+
+    Sijun He
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'sijunhe';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+</body>
+</html>

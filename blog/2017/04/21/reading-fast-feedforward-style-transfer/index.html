@@ -1,0 +1,271 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Fast (Feedforward) Style Transfer - Blog | Sijun He</title>
+	<meta name="author" content="Sijun He">
+
+	
+	<meta name="description" content="Fast (Feedforward) Style Transfer Perceptual Losses for Real-Time Style Transfer and Super-Resolution is the second paper in my reading series for &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Blog | Sijun He" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='https://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!--- MathJax Configuration -->
+	<script type="text/x-mathjax-config">
+  		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML">
+	</script>
+	<!-- <script type="text/javascript" async
+	  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+	</script> -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-69112205-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><img src= 'https://s3-us-west-1.amazonaws.com/sijunhe-blog/images/name_white.png' height: 150px width: 150px >
+<nav id="main-nav">
+<section class="aboutme">
+  <h3>
+    Sijun's Machine Learning Odyssey
+  </h3>
+</section>
+
+<ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/blog/categories">Categories</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+</ul></nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/sijunhe" title="Twitter">Twitter</a>
+		
+		
+		
+		
+		
+			<a class="linkedin" href="http://www.linkedin.com/in/sijunhe48" title="LinkedIn">LinkedIn</a>
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Fast (Feedforward) Style Transfer</h1>
+	<div class="entry-content" itemprop="articleBody"><p><a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16.pdf">Perceptual Losses for Real-Time Style Transfer and Super-Resolution</a> is the second paper in my reading series for Neural Style Transfer, where Johnson et al. built on the work of Gatys et al. and used feedforward networks to stylize image order of magnitudes faster than the previous optimization approach.</p>
+
+<!--more-->
+
+
+<h3>Intro</h3>
+
+<p>Two common approach for image transformation, where an input image is transformed into an output image:</p>
+
+<ul>
+<li>feed-forward CNN using <strong>per-pixel loss</strong> between the output and ground-truth image</li>
+<li>generate image by defining and optimizing <strong>perceptual loss</strong> based on high-level features extracted from pretrained networks</li>
+</ul>
+
+
+<p>The paper combined the benefits of both approaches and proposed a system that</p>
+
+<ul>
+<li>train feed-forward network using use perceptual loss functions that depend on high-level features from a pretrained loss network</li>
+<li>allow the feed-forward network to learn a artistic style during training and can stylize images in <strong>real-time</strong> at test time</li>
+</ul>
+
+
+<h3>Method</h3>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/fast_neural_style_system.png" alt="fast_neural_style_system" />
+The system consists of two components:</p>
+
+<ul>
+<li><strong>image transformation network $f_W$</strong>: a deep residual CNN parameterized by $W$ and transforms input images $x$ into output images $\hat{y} = f_W(x)$</li>
+<li><strong>loss network $\phi$</strong>: used to define several loss functions $l_1, \cdots, l_k$. Each loss function computes a scalar loss value $l_i(\hat{y}, y_i)$ that measures the difference between the output image $\hat{y}$ and a target image $y_i$.</li>
+</ul>
+
+
+<p>The network is trained using SGD to minimize a loss functions of
+$$W^{\ast}  = \text{argmin}_W \ \textbf{E}_{x, \{y_i\} } \left[ \sum_{i} \lambda_i l_i (f_W(x), y_i)\right]$$</p>
+
+<ul>
+<li>Inspired from the optimziation approach from Gatys et al. and others, the author use a pretrained network $\phi$ as a fixed loss network to define the loss functions.</li>
+<li>The loss network $\phi$ is used to define a <strong>feature reconstruction loss $l_{feat}^{\phi}$</strong> and <strong>style reconstruction loss $l_{style}^{\phi}$</strong> that measure differences in <strong>content</strong> and <strong>style</strong> between images.</li>
+<li>For each input image $x$, there is a <strong>content target $y_c$</strong> and a <strong>style target $y_s$</strong></li>
+<li>For <strong>style transfer</strong>, the content target $y_c$ is the input image $x$ and the style target $y_s$ is the designated style image. One network is trained for each style target.</li>
+</ul>
+
+
+<h3>Image Transformation Network</h3>
+
+<p>The image transformation network is a Deep Residual Network. More detail can be found in the <a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16Supplementary.pdf">supplementary notes</a> of the paper.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/deep_residual_network_architecture.png" alt="deep_residual_network_architecture" /></p>
+
+<h3>Loss Network</h3>
+
+<p>Johnson et al. defined the feature reconstruction loss and the style reconstruction loss in the same way as Gatys et al., though with a different notation. Let $\phi_{j}(x)$ be the $j$-th layer activations of the loss network for image $x$ with a shape $C_j \times H_j \times W_j$.</p>
+
+<h4>Feature Reconstruction Loss</h4>
+
+<ul>
+<li>Euclidean distance between feautre representations
+$$l_{feat}^{\phi, j}(\hat{y},y) = \frac{1}{C_j H_j W_j} ||\phi_j(\hat{y}) - \phi_j(y)||^2_2$$</li>
+<li><strong>Minimizing  $l_{feat}^{\phi}$ would reserve the image content and overall spatial structure, but not the color, texture or exacte shape</strong></li>
+</ul>
+
+
+<h4>Style Reconstruction Loss</h4>
+
+<ul>
+<li>Squared Frobenius norm of the distance between the <strong>Gram matrices</strong> between the output and target image</li>
+<li>Gram matrix $G_j^\phi(x)$ is a $C_j \times C_j$ whose elements are the inner product between the two channels $c$ and $c'$ of activations
+$$G_j^\phi(x)_{c,c'} = \frac{1}{C_j H_j W_j} \sum_{h=1}^{H_j} \sum_{w=1}^{W_j} \phi_j(x)_{h,w,c} \phi_j(x)_{h,w,c'}$$
+$$l_{style}^{\phi, j}(\hat{y},y) = ||G^\phi_j(\hat{y}) - G^\phi_j(y)||^2_F$$</li>
+<li><strong>Minimizing  $l_{style}^{\phi}$ would reserve the stylistic features, but not its spatial structure</strong></li>
+</ul>
+
+
+<h4>Total Variation Regularization</h4>
+
+<p>Other than the $l_{feat}^{\phi}$ and $l_{style}^{\phi}$, Johnson et al. also defined a loss function $l_{TV}(\hat{y})$ to encourage spatial smoothness in the output image $\hat{y}$.</p>
+
+<h3>Experiments and Training Details</h3>
+
+<ul>
+<li>The goal of style transfer is to generate an image $\hat{y}$ that combines the content of the content target $y_c$ with the style of the style target $y_s$.</li>
+<li>Gatsy et al. formulate the problem as a optimization problem. An image $\hat{y}$ is generated by solving the problem
+$$\hat{y} = \text{argmin}_y \ \lambda_c l_{feat}^{\phi, j}(y, y_c) + \lambda_s l_{style}^{\phi, j}(y, y_s) + \lambda_{TV} l_{TV}(y)$$</li>
+<li>However, the method is slow since satifactory results takes about 500 iterations and each iterations requires a forward and a backward pass</li>
+<li>The result from the style transfer network is <strong>qualitatively similar to Gatsy et al&rsquo;s method</strong>, but can be run in real time during test time</li>
+<li>Even though the style transfer network is trained on $256 \times 256$ images, they also <strong>perform satisfactorily in higher resolution</strong> of $512 \times 512$ and $1024 \times 1024$, achieving a performance comparable to 50-100 iterations of Gatsy et al&rsquo;s method</li>
+</ul>
+
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2020
+
+    Sijun He
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'sijunhe';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer/';
+        var disqus_url = 'http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+</body>
+</html>

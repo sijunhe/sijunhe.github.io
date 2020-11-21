@@ -1,0 +1,280 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Resolving Gendered Pronouns - Blog | Sijun He</title>
+	<meta name="author" content="Sijun He">
+
+	
+	<meta name="description" content="Resolving Gendered Pronouns With the goal to learning PyTorch and getting more hands-on experience with transfer learning via pre-trained language &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Blog | Sijun He" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://sijunhe.github.io/blog/2019/04/23/resolving-gendered-pronouns/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='https://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!--- MathJax Configuration -->
+	<script type="text/x-mathjax-config">
+  		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML">
+	</script>
+	<!-- <script type="text/javascript" async
+	  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+	</script> -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-69112205-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><img src= 'https://s3-us-west-1.amazonaws.com/sijunhe-blog/images/name_white.png' height: 150px width: 150px >
+<nav id="main-nav">
+<section class="aboutme">
+  <h3>
+    Sijun's Machine Learning Odyssey
+  </h3>
+</section>
+
+<ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/blog/categories">Categories</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+</ul></nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/sijunhe" title="Twitter">Twitter</a>
+		
+		
+		
+		
+		
+			<a class="linkedin" href="http://www.linkedin.com/in/sijunhe48" title="LinkedIn">LinkedIn</a>
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Resolving Gendered Pronouns</h1>
+	<div class="entry-content" itemprop="articleBody"><p>With the goal to learning PyTorch and getting more hands-on experience with transfer learning via <a href="https://sijunhe.github.io/blog/2019/01/20/transfer-learning-in-nlp/">pre-trained language models</a>, I took part in the <a href="https://www.kaggle.com/c/gendered-pronoun-resolution">Gendered Pronoun Resolution Competition</a> on Kaggle. The learning alone was quite worth it. And <strong>I placed 30th solo out of 800+ teams with limited time invested</strong>.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/pronoun_resolution.png" alt="gpr" /></p>
+
+<!--more-->
+
+
+<h2>Intro</h2>
+
+<p>I entered the <a href="https://www.kaggle.com/c/gendered-pronoun-resolution">Gendered Pronoun Resolution Competition</a> on Kaggle with two goals in mind:</p>
+
+<ol>
+<li><strong>Learn PyTorch</strong>: PyTorch has been giving Tensorflow a run for its run since its 1.0 launch. With many popular packages like <a href="https://github.com/huggingface">Hugging Face</a>, <a href="https://github.com/fastai/fastai">fast.ai</a>, <a href="">allennlp</a> built on top of it, PyTorch is becoming the standard in Machine Learning research.</li>
+<li><strong>Get experience with Language Model Finetuning</strong>: transfer learning with pre-trained langauge models like BERT has been very popular in the NLP community and I haven&rsquo;t had much experience using them in a project.</li>
+</ol>
+
+
+<h2>Model</h2>
+
+<p>I used the edge probing model architecture from this <a href="https://openreview.net/forum?id=SJzSgnRcKX">ICLR 2019 paper</a>. I experimented with OpenAI GPT, ELMo, BERT base and large as the pre-trained encoders.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post23/gpr_model.png" alt="gpr_model" /></p>
+
+<ul>
+<li><strong>Input Tokens</strong>: the respective tokenizer of the pre-trained language model were used</li>
+<li><strong>Span Representation</strong>: extracting span representation with<a href="https://allenai.github.io/allennlp-docs/api/allennlp.modules.span_extractors.html">allennlp.modules.span_extractors</a>. I experimented with both <a href="https://allenai.github.io/allennlp-docs/api/allennlp.modules.span_extractors.html#allennlp.modules.span_extractors.endpoint_span_extractor.EndpointSpanExtractor">EndpointSpanExtractor</a> and <a href="https://allenai.github.io/allennlp-docs/api/allennlp.modules.span_extractors.html#allennlp.modules.span_extractors.self_attentive_span_extractor.SelfAttentiveSpanExtractor">SelfAttentiveSpanExtractor</a> but there doesn&rsquo;t seem to be much of a difference.</li>
+<li><strong>MLP</strong>: very simple 1-layer MLP from the size of the concatenated span representation to the number of classes(3). A dropout of 0.1 is applied, as suggest from the BERT paper.</li>
+</ul>
+
+
+<h2>Results &amp; Analysis</h2>
+
+<p>In order to properly benchmark the performance of the fine-tuned pre-trained language models, I built two baseline models without transfer learning.</p>
+
+<ul>
+<li><strong>Baseline with random initialization</strong>: Replace the pre-trained encoder in the edge probing model with a word embedding and a Bidirectional LSTM. The word embedding is initialized randomly and trainable</li>
+<li><strong>Baseline with Glove</strong>: Same model as the <strong>Baseline with random initialization</strong>, except using <a href="https://nlp.stanford.edu/projects/glove/">Glove</a> to initialize the word embeddings</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th> pre-trained LM      </th>
+<th style="text-align:center;"> log-loss </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> Baseline-Random Init</td>
+<td style="text-align:center;"> 0.7647   </td>
+</tr>
+<tr>
+<td> Baseline-Glove      </td>
+<td style="text-align:center;"> 0.7328   </td>
+</tr>
+<tr>
+<td> ELMo                </td>
+<td style="text-align:center;"> 0.6612   </td>
+</tr>
+<tr>
+<td> OpenAI GPT          </td>
+<td style="text-align:center;"> 0.6170   </td>
+</tr>
+<tr>
+<td> Bert-base-cased     </td>
+<td style="text-align:center;"> 0.4310   </td>
+</tr>
+<tr>
+<td> Bert-base-uncased   </td>
+<td style="text-align:center;"> 0.4221   </td>
+</tr>
+<tr>
+<td> Bert-large-cased    </td>
+<td style="text-align:center;"> 0.3592   </td>
+</tr>
+<tr>
+<td> Bert-large-uncased  </td>
+<td style="text-align:center;"> 0.3530   </td>
+</tr>
+</tbody>
+</table>
+
+
+<p>As expected, the performance improves as we add transfer learning or increase the size and complexity of the pre-trained encoder. I was very surprised by the strong performance of the BERT models. Even the BERT base models significantly outperform ELMo and GPT.</p>
+
+<p>My final submission was a ensemble of BERT large models fine-tuned on the GAP dataset. It scores around 0.33 on the public test set and 0.26 on the private test set.</p>
+
+<h2>Learning From Top Solutions</h2>
+
+<p>Things that I should have considered:</p>
+
+<ul>
+<li><strong>Truncation</strong>: most of the top solutions involved truncating the text to a certain length. I didn&rsquo;t do it since I was worried that a mention will get truncated. This normally wouldn&rsquo;t matter but it did for this competition due to the size of BERT large. Without truncation, I was only able to run a batch size of 2 when fine-tuning BERT large on my 1080-Ti, which was very unstable and 20% of the models failed to learn.</li>
+<li><strong>Augmentation</strong>: one of the challenges of the competition was the small size of the training data. <a href="https://www.kaggle.com/c/gendered-pronoun-resolution/discussion/90334">7th place solution</a> involved data augmentation by replacing the A and B names with a sets of placeholder names. This gave an improvement of 0.02.</li>
+<li><strong>Intermediate layers of BERT</strong>: A few solutions mentioned mentioned using intermediate layers. The <a href="https://www.kaggle.com/c/gendered-pronoun-resolution/discussion/90424">3rd place solution</a> used -5th and -6th layer of BERT and the <a href="https://www.kaggle.com/c/gendered-pronoun-resolution/discussion/90483">11th place solution</a> concatenates last 8 layers of BERT. The reasoning behind this is that the last layer of BERT is too close to the masked LM objective and intermediate layers might offer better generalizations. I actually have a parameter in my model configuration that specified which layer to fine-tune with but I didn&rsquo;t find a big difference when I experimented with -1 and -2.</li>
+<li><strong>BertAdam Optimizer</strong>: I didn&rsquo;t experiment with the <a href="https://github.com/huggingface/pytorch-pretrained-BERT/blob/694e2117f33d752ae89542e70b84533c52cb9142/README.md#bertadam">BertAdam</a> optimizer that comes with the pre-trained BERT package in PyTorch and used vanilla Adam instead. The biggest challenge I faced for this competition was the unstable training due to small batch size and some solution mentioned that the warm-up portion of the BertAdam helped stabilizing the training.</li>
+</ul>
+
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2020
+
+    Sijun He
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'sijunhe';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sijunhe.github.io/blog/2019/04/23/resolving-gendered-pronouns/';
+        var disqus_url = 'http://sijunhe.github.io/blog/2019/04/23/resolving-gendered-pronouns/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,2454 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Blog | Sijun He]]></title>
+  <link href="http://sijunhe.github.io/atom.xml" rel="self"/>
+  <link href="http://sijunhe.github.io/"/>
+  <updated>2020-11-20T17:42:34-08:00</updated>
+  <id>http://sijunhe.github.io/</id>
+  <author>
+    <name><![CDATA[Sijun He]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Building Content Representations at Twitter with Self-Supervised Learning]]></title>
+    <link href="http://sijunhe.github.io/blog/2020/11/19/content-representations-odsc/"/>
+    <updated>2020-11-19T01:29:29-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2020/11/19/content-representations-odsc</id>
+    <content type="html"><![CDATA[<p>For the last few quarters, I have been working at the intersection of Recommendations and NLP, thinking about ways to  represent textual information for Twitter&rsquo;s recommendation products. Recently, my colleague Kenny Leung and I gave a talk at <a href="https://odsc.com/speakers/building-content-embedding-with-self-supervised-learning/">ODSC 2020</a> about our experience building and serving self-supervised content representations for recommendations on Twitter.</p>
+
+<p>The slides for the talk can be found <a href="https://sijunhe-blog.s3-us-west-1.amazonaws.com/files/ODSC_West_2020_Content_Representations.pdf">here</a>.</p>
+
+<p><img src="https://sijunhe-blog.s3-us-west-1.amazonaws.com/plots/post26/self_supervised_learning.png" alt="self-supervised-training" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Wide & Deep Learning for Recommendation Systems]]></title>
+    <link href="http://sijunhe.github.io/blog/2020/08/17/reading-notes-wide-deep/"/>
+    <updated>2020-08-17T16:23:29-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2020/08/17/reading-notes-wide-deep</id>
+    <content type="html"><![CDATA[<p>Recently I started working on the applications of text representations in Recommendations. Since I don&rsquo;t have much background in RecSys other than the few lectures I took in graduate school, I will read some classic RecSys paper. Starting with <a href="https://arxiv.org/abs/1606.07792">Wide &amp; Deep Learning for Recommender Systems</a>, the de facto standard baseline for industry recommender systems!</p>
+
+<p><img src="https://sijunhe-blog.s3-us-west-1.amazonaws.com/plots/post25/wide_deep_model.png" alt="wide_and_deep_model" /></p>
+
+<!--more-->
+
+
+<h2>Wide &amp; Deep Learning for Recommender Systems</h2>
+
+<ul>
+<li><em>Memorization</em> learns the frequent co-occurence of items and feature and exploits the correlation in the training data</li>
+<li><em>Generalization</em> explores new feature combinations that have never or rarely occured in the past via transitivity of correlation</li>
+<li>Memorization requires in recommendations that are more directly relevant to user history, while generalization tends to improve the diversity of the recommended items <span style="color:blue"> [Sijun] this dichotomy sounds like explore/exploit </span></li>
+<li>Memorization through cross-product transformation requires manually feature engineering and do not generalize to unseen feature pairs</li>
+<li>Embedding-based models can generalize to previously unseen feature pairs by learning a low-dimensional dense embedding for query and item. However, it is difficult to learn effective representation when the query-item is sparse and high-rank, such as users with specific preferences or niche itmes with a narrow appeal. In this case, linear models with cross-product features are far more efficient. <span style="color:blue"> [Sijun] this is an interesting point-of-view on embeddings in RecSys. I think this is more about matrix factorization than word2vec. Coming from NLP, I rarely think about if niche words are over-generalized. </span></li>
+</ul>
+
+
+<h3>Wide &amp; Deep Learning</h3>
+
+<p><img src="https://sijunhe-blog.s3-us-west-1.amazonaws.com/plots/post25/wide_deep_model.png" alt="wide_and_deep_model" /></p>
+
+<ul>
+<li>Wide component is a GLM $y=\textbf{w}^{T}\textbf{x}+b$. One of the most important features is the cross-product transformation, defined as $\theta_{k}(\textbf{x}) = \prod_{i=1}^{d} x_{i}^{c_{ki}} \ \ \ c_{ki} \in {0, 1}$</li>
+<li>Deep component is a feed-forward NN where sparse, high-dimensional categorical features are first converted into a embedding. The embedding are initialized randomly and trainable</li>
+<li>The wide and deep compoent are combined at the output layer, which is then fed to a logistici loss function for joint training</li>
+<li>The wide component is optimized by FTRL with L1 regularization while the deep part is optimized by AdaGrad. <span style="color:blue"> [Sijun]: The FTRL algorithm was originally designed to train Google-scale GLMs. It induces sparsity, which is needed in the wide part of the model, as most of the cross-product features are not meaningful. The deep part of the model is trained with AdaGrad, which is an regular adapative optimizer for NNs </span></li>
+</ul>
+
+
+<h3>System Implementation</h3>
+
+<h4>Data</h4>
+
+<ul>
+<li>Build vocabulary, which maps cateogrical feature to integer IDs during data generation. Categorical features are requried to have a minimal number of occurences to be included.</li>
+<li>Continuous features are normlalized to [0, 1] and divided into <em>n</em> quantiles. <span style="color:blue"> [Sijun]: I hypothesize they normalize to ensure equal feature scale and use quantization to reduce the noise in real-value features. They kept the quantized feature as a continuous feature instead of categorical feature to account for the ordinal nature. </span></li>
+</ul>
+
+
+<h4>Model Training</h4>
+
+<p><img src="https://sijunhe-blog.s3-us-west-1.amazonaws.com/plots/post25/deep_and_wide_structure.png" alt="wide_and_deep_structure" />
+- 32-dimensional vector is learned for each categorical feature. All embeddings along with dense features are concatenated and fed into a MLP with ReLu activation <span style="color:blue"> [Sijun]: I wonder if the dense features are under-utilized compared with the categorical features that are represented by embeddings </span></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Scaling NER at Twitter]]></title>
+    <link href="http://sijunhe.github.io/blog/2019/12/13/scaling-ner-at-twitter/"/>
+    <updated>2019-12-13T01:29:29-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2019/12/13/scaling-ner-at-twitter</id>
+    <content type="html"><![CDATA[<p>I recently celebrated my first work anniversary at <a href="https://cortex.twitter.com/en.html">Twitter Cortex</a>. Looking back, I had tremendous growth as a ML modeler and engineer, working on the Named Entity Recognition (NER) systems at Twitter. I was fortunate to have the opportunity to share what I learned at <a href="https://conferences.oreilly.com/artificial-intelligence/ai-ca-2019/public/schedule/detail/76804">O'Reilly AI San Jose 2019</a> and <a href="https://odsc.com/speakers/named-entity-recognition-at-scale-with-deep-learning/">ODSC West 2019</a>, where I gave an overview of NER as well as the modeling and engineering challenges we faced running such model at Twitter scale.</p>
+
+<p>The slides for the talks can be found <a href="https://sijunhe-blog.s3-us-west-1.amazonaws.com/files/ODSC_West_NER_Slides.pdf">here</a>.</p>
+
+<p><img src="https://sijunhe-blog.s3-us-west-1.amazonaws.com/plots/post24/ner.png" alt="ner" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Resolving Gendered Pronouns]]></title>
+    <link href="http://sijunhe.github.io/blog/2019/04/23/resolving-gendered-pronouns/"/>
+    <updated>2019-04-23T02:53:27-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2019/04/23/resolving-gendered-pronouns</id>
+    <content type="html"><![CDATA[<p>With the goal to learning PyTorch and getting more hands-on experience with transfer learning via <a href="https://sijunhe.github.io/blog/2019/01/20/transfer-learning-in-nlp/">pre-trained language models</a>, I took part in the <a href="https://www.kaggle.com/c/gendered-pronoun-resolution">Gendered Pronoun Resolution Competition</a> on Kaggle. The learning alone was quite worth it. And <strong>I placed 30th solo out of 800+ teams with limited time invested</strong>.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/pronoun_resolution.png" alt="gpr" /></p>
+
+<!--more-->
+
+
+<h2>Intro</h2>
+
+<p>I entered the <a href="https://www.kaggle.com/c/gendered-pronoun-resolution">Gendered Pronoun Resolution Competition</a> on Kaggle with two goals in mind:</p>
+
+<ol>
+<li><strong>Learn PyTorch</strong>: PyTorch has been giving Tensorflow a run for its run since its 1.0 launch. With many popular packages like <a href="https://github.com/huggingface">Hugging Face</a>, <a href="https://github.com/fastai/fastai">fast.ai</a>, <a href="">allennlp</a> built on top of it, PyTorch is becoming the standard in Machine Learning research.</li>
+<li><strong>Get experience with Language Model Finetuning</strong>: transfer learning with pre-trained langauge models like BERT has been very popular in the NLP community and I haven&rsquo;t had much experience using them in a project.</li>
+</ol>
+
+
+<h2>Model</h2>
+
+<p>I used the edge probing model architecture from this <a href="https://openreview.net/forum?id=SJzSgnRcKX">ICLR 2019 paper</a>. I experimented with OpenAI GPT, ELMo, BERT base and large as the pre-trained encoders.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post23/gpr_model.png" alt="gpr_model" /></p>
+
+<ul>
+<li><strong>Input Tokens</strong>: the respective tokenizer of the pre-trained language model were used</li>
+<li><strong>Span Representation</strong>: extracting span representation with<a href="https://allenai.github.io/allennlp-docs/api/allennlp.modules.span_extractors.html">allennlp.modules.span_extractors</a>. I experimented with both <a href="https://allenai.github.io/allennlp-docs/api/allennlp.modules.span_extractors.html#allennlp.modules.span_extractors.endpoint_span_extractor.EndpointSpanExtractor">EndpointSpanExtractor</a> and <a href="https://allenai.github.io/allennlp-docs/api/allennlp.modules.span_extractors.html#allennlp.modules.span_extractors.self_attentive_span_extractor.SelfAttentiveSpanExtractor">SelfAttentiveSpanExtractor</a> but there doesn&rsquo;t seem to be much of a difference.</li>
+<li><strong>MLP</strong>: very simple 1-layer MLP from the size of the concatenated span representation to the number of classes(3). A dropout of 0.1 is applied, as suggest from the BERT paper.</li>
+</ul>
+
+
+<h2>Results &amp; Analysis</h2>
+
+<p>In order to properly benchmark the performance of the fine-tuned pre-trained language models, I built two baseline models without transfer learning.</p>
+
+<ul>
+<li><strong>Baseline with random initialization</strong>: Replace the pre-trained encoder in the edge probing model with a word embedding and a Bidirectional LSTM. The word embedding is initialized randomly and trainable</li>
+<li><strong>Baseline with Glove</strong>: Same model as the <strong>Baseline with random initialization</strong>, except using <a href="https://nlp.stanford.edu/projects/glove/">Glove</a> to initialize the word embeddings</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th> pre-trained LM      </th>
+<th style="text-align:center;"> log-loss </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> Baseline-Random Init</td>
+<td style="text-align:center;"> 0.7647   </td>
+</tr>
+<tr>
+<td> Baseline-Glove      </td>
+<td style="text-align:center;"> 0.7328   </td>
+</tr>
+<tr>
+<td> ELMo                </td>
+<td style="text-align:center;"> 0.6612   </td>
+</tr>
+<tr>
+<td> OpenAI GPT          </td>
+<td style="text-align:center;"> 0.6170   </td>
+</tr>
+<tr>
+<td> Bert-base-cased     </td>
+<td style="text-align:center;"> 0.4310   </td>
+</tr>
+<tr>
+<td> Bert-base-uncased   </td>
+<td style="text-align:center;"> 0.4221   </td>
+</tr>
+<tr>
+<td> Bert-large-cased    </td>
+<td style="text-align:center;"> 0.3592   </td>
+</tr>
+<tr>
+<td> Bert-large-uncased  </td>
+<td style="text-align:center;"> 0.3530   </td>
+</tr>
+</tbody>
+</table>
+
+
+<p>As expected, the performance improves as we add transfer learning or increase the size and complexity of the pre-trained encoder. I was very surprised by the strong performance of the BERT models. Even the BERT base models significantly outperform ELMo and GPT.</p>
+
+<p>My final submission was a ensemble of BERT large models fine-tuned on the GAP dataset. It scores around 0.33 on the public test set and 0.26 on the private test set.</p>
+
+<h2>Learning From Top Solutions</h2>
+
+<p>Things that I should have considered:</p>
+
+<ul>
+<li><strong>Truncation</strong>: most of the top solutions involved truncating the text to a certain length. I didn&rsquo;t do it since I was worried that a mention will get truncated. This normally wouldn&rsquo;t matter but it did for this competition due to the size of BERT large. Without truncation, I was only able to run a batch size of 2 when fine-tuning BERT large on my 1080-Ti, which was very unstable and 20% of the models failed to learn.</li>
+<li><strong>Augmentation</strong>: one of the challenges of the competition was the small size of the training data. <a href="https://www.kaggle.com/c/gendered-pronoun-resolution/discussion/90334">7th place solution</a> involved data augmentation by replacing the A and B names with a sets of placeholder names. This gave an improvement of 0.02.</li>
+<li><strong>Intermediate layers of BERT</strong>: A few solutions mentioned mentioned using intermediate layers. The <a href="https://www.kaggle.com/c/gendered-pronoun-resolution/discussion/90424">3rd place solution</a> used -5th and -6th layer of BERT and the <a href="https://www.kaggle.com/c/gendered-pronoun-resolution/discussion/90483">11th place solution</a> concatenates last 8 layers of BERT. The reasoning behind this is that the last layer of BERT is too close to the masked LM objective and intermediate layers might offer better generalizations. I actually have a parameter in my model configuration that specified which layer to fine-tune with but I didn&rsquo;t find a big difference when I experimented with -1 and -2.</li>
+<li><strong>BertAdam Optimizer</strong>: I didn&rsquo;t experiment with the <a href="https://github.com/huggingface/pytorch-pretrained-BERT/blob/694e2117f33d752ae89542e70b84533c52cb9142/README.md#bertadam">BertAdam</a> optimizer that comes with the pre-trained BERT package in PyTorch and used vanilla Adam instead. The biggest challenge I faced for this competition was the unstable training due to small batch size and some solution mentioned that the warm-up portion of the BertAdam helped stabilizing the training.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Flagging Insincere Questions on Quora]]></title>
+    <link href="http://sijunhe.github.io/blog/2019/02/19/kaggle-quora-insincere-question/"/>
+    <updated>2019-02-19T22:54:15-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2019/02/19/kaggle-quora-insincere-question</id>
+    <content type="html"><![CDATA[<p><strong>All credit to my teammates, my team placed 22nd out of 4037 in the <a href="https://www.kaggle.com/c/quora-insincere-questions-classification">Quora Insincere Questions Classification</a></strong>. The key challenge is to weed out insincere questions on Quora, while keeping the training and inference time below the 4 GPU-hour limit.</p>
+
+<p>I deserve no credit on this one, as my contribution was trivial. My attempts on the Character Embeddings never paid off as the gain in performance wasn&rsquo;t worth the slow-down in training. Please refer to the <a href="https://www.kaggle.com/c/quora-insincere-questions-classification/discussion/80514">nice write-up</a> and the <a href="https://www.kaggle.com/ryches/22nd-place-solution-6-models-pos-tagging/">kernel</a> by Ryan Chesler for our solution.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/kaggle-quora.png" alt="quora" /></p>
+
+<!--more-->
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Transfer Learning in NLP]]></title>
+    <link href="http://sijunhe.github.io/blog/2019/01/20/transfer-learning-in-nlp/"/>
+    <updated>2019-01-20T22:13:08-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2019/01/20/transfer-learning-in-nlp</id>
+    <content type="html"><![CDATA[<p>Reading notes of major advances in NLP Transfer learning published in 2018:</p>
+
+<ul>
+<li><strong>ELMo from Allen NLP</strong>:  <a href="https://allennlp.org/elmo">Deep Contextualized Word Representations</a></li>
+<li><strong>ULMFiT from fast.ai</strong>: <a href="https://arxiv.org/abs/1801.06146">Universal Language Model Fine-tuning for Text Classification</a></li>
+<li><strong>Transformer from OpenAI</strong>: <a href="https://s3-us-west-2.amazonaws.com/openai-assets/research-covers/language-unsupervised/language_understanding_paper.pdf">Improving Language Understanding by Generative Pre-Training</a></li>
+<li><strong>BERT from Google</strong>: <a href="https://arxiv.org/abs/1810.04805">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a></li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post22/bert_compare.png" alt="compare" /></p>
+
+<!--more-->
+
+
+<h2>Feature-Based Approaches</h2>
+
+<h3>Word Embedding</h3>
+
+<p>Pre-trained <a href="https://sijunhe.github.io/blog/2018/09/12/word-embeddings/">word embeddings</a> is the most widely-adopted transfer learning method in NLP. Since the introduction of word2vec in 2013, the standard way of doing NLP projects is to use pre-trained word embeddings to initialize the first layer of a neural network, the rest of which is then trained on data of a particular task.</p>
+
+<p>As it evolves from word2vec to GloVe to sub-word embeddings fasText, word embeddings have been immensely influential. However, they have their limitations, such as</p>
+
+<ul>
+<li>they only incorporate previous knowledge in the first layer of the model while the rest of the network needs to be trained from scratch.</li>
+<li>they only have a single context independent representation for each word and can&rsquo;t address polysemy.</li>
+</ul>
+
+
+<h3>ELMo: Contextualized Embeddings from Language Models</h3>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post22/elmo.jpg" alt="openai_gpt" /></p>
+
+<p>ELMo address the polysemy limitation by introducing a deep contexualized word representation (ElMo) that improves the state of the art across a range of language understanding problems. ELMo word representations are functions of the entire input sentence, computed on top of two-layer biLMs.</p>
+
+<p>The state-of-the-art bidirectional neural language models compute a token representation $\textbf{x}_{k}^{LM}$ then pass it through $L$ layers of forward LSTMs. At each position $k$, the $j$-th LSTM layer outputs a context-dependent representations $\textbf{h}_{k,j}^{LM}$, where each representation is a concatenation of the forward and backward representation$[ \overrightarrow{\textbf{h}}_{k,j}^{LM}, \overleftarrow{\textbf{h}}_{k,j}^{LM}]$.</p>
+
+<p>ELMo is a task specific combination of the intermediate layer representations in the biLM. For each token $t_k$, a $L$-layer biLM computes a set of $2L + 1$, where $\textbf{h}_{k,0}^{LM}$ is the token layer representation $x_k^{LM}$. For inclusion in a downstream model, ELMo collapses all layers into a single vector with task specific weighting:</p>
+
+<p>$$\textbf{ELMo}_k^{task} = \gamma^{task} \sum_{j=0}^L s^{task}_j \textbf{h}_{k,j}^{LM}$$</p>
+
+<p>Most supervised NLP models form a <strong>context-independent</strong> token representations $\textbf{x}_k$ for each token position using pre-trained word embedding and optionally character-based representations. Then the model forms a context-sensitive representations $\textbf{h}_{k}$ with RNNs, CNNs or feed forward networks.</p>
+
+<p>To add ELMo to the supervised model, the authors</p>
+
+<ul>
+<li>Freeze the weights of the biLM, run the biLM and record all of the layer presentations for each word</li>
+<li>Replace $\textbf{x}_k$ with $\left[\textbf{x}_k; \textbf{ELMo}_k^{task}\right]$ and pass them into the task RNN</li>
+<li>Let the end task model learn a linear combination of these representations</li>
+</ul>
+
+
+<p>For some tasks, the authors observe further improvement by introducing another set of output specific linear weights and replacing $\textbf{h}_k$ with $\left[\textbf{h}_k; \textbf{ELMo}_k^{task}\right]$. The authors also found it beneficial to add a moderate amount of dropout to ELMo and in some cases to regularize the ELMo weights by adding L2 loss, which forces the ELMo weights to stay close to an average of all biLM layers.</p>
+
+<h1>Fine-tuning Approaches</h1>
+
+<h2>Universal Language Model Fine-tuning (ULMFiT)</h2>
+
+<p>Instead of using a pre-trained Language Model as contextualized word embedding, Howard and Ruder proposed ULMFiT, a method to fine-tune Language Models pre-trained on a large general-domain corpus to any downstream target task.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post22/ulmfit.png" alt="ulmfit" /></p>
+
+<p>As shown in the figure above, ULMFit consists of three stages of training</p>
+
+<ol>
+<li><strong>General-domain LM pretraining</strong>: A LM is trained on a
+large general-domain corpus to capture general properties of language. While this stage is the most expensive, it only needs to be performed once and there are many pre-trained LM available for download.</li>
+<li><strong>Target task LM fine-tuning</strong>: The data of the target task
+will likely come from a different distribution. Thus we fine-tune the LM on data of the target task without the label.</li>
+<li><strong>Target task classifier fine-tuning</strong>: The LM is augmented by 2 linear blocks to form a classifier, which is then fine-tuned on the labeled target task dataset.</li>
+</ol>
+
+
+<p>The paper also introduced quite a few fine-tuning tricks that the authors empirically found it to work well.</p>
+
+<ul>
+<li><strong>Discriminative fine-tuning</strong>: tune each layer with different learning rate.</li>
+<li><strong>Slanted triangular learning rates</strong>: a learning rate schedule similar to the <a href="https://arxiv.org/abs/1506.01186">cyclic learning rates</a>, but with a short increase and a long decay period</li>
+<li><strong>Gradual unfreezing</strong>: gradually unfreeze the model starting from the last layer. First unfreeze the layer layer and fine-tune all un-frozen layers for one epoch. Then unfreeze the next lower  and repeat till we fine-tune all layers until convergence.</li>
+</ul>
+
+
+<h2>OpenAI GPT: adding Transformers to LM</h2>
+
+<p>Five months after ULMFiT, OpenAI provided an incremental improvement on the fine-tuning concept by upgrading the previous state-of-the-art AWD-LSTM Language model to a Transformer-based LM. The LM is a multi-layer <a href="https://sijunhe.github.io/blog/2018/12/05/transformer/">Transformer</a> decoder, which applies a multi-headed self-attention operation over the input context tokens followed by position-wise feedforward layers to produce an output.</p>
+
+<p>$$h_0 = UW_e + W_p$$
+$$h_l = \text{transformer_block}(h_{l-1}) \forall i \in [1, n]$$
+$$P(u) = \text{softmax}(h_{n}W_e^T)$$</p>
+
+<p>where $U = (u_{-k}, \cdots, u_{-1})$ is the context vector of tokens, $W_e$ is the token embedding matrix and $W_p$ is the position embedding matrix.</p>
+
+<p>To fine-tune the LM for a supervised task, an linear block is added to the above LM. The final transformer block&rsquo;s activation $h_l^m$ is connected into an added linear output layer with parameters $W_y$ to predict $y$.</p>
+
+<p>$$P(y|X) = \text{softmax}(h_{l}^mW_y)$$</p>
+
+<p>The authors also found that including language modeling as an auxiliary object to the fine-tuning helped learning by improving generalization of the supervised model and accelerating convergence. The overall objective is $L_{total} = L_{supervised} + \lambda \cdot L_{LM}$</p>
+
+<h4>Fine-Tuning</h4>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post22/openai_transformer.png" alt="openai_gpt" /></p>
+
+<p>Some tasks like question answering or textual entailment requires structured inputs. The authors used a traversal-style where structured inputs are converted into a ordered sequence that directly fit into the pre-trained LM. These input transformations allow us to avoid making extensive changes to the architecture across tasks.</p>
+
+<h2>BERT: Let&rsquo;s make it bidirectional</h2>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post22/bert_compare.png" alt="compare" /></p>
+
+<p>A major limitation in OpenAI GPT is that the transformer decoder architecture are unidirectional, where every token can only attend to previous tokens in the self-attention layers of the Transformer. This is sub-optimal for task that requires incorporating context from both directions. Devlin et al. from Google proposed Bidirectional Encoder Representations from Transformers (BERT) to address the unidirectional constraints.</p>
+
+<h4>Masked LM</h4>
+
+<p>Standard conditional language models can only be trained left-to-right or right-to-left since bidirectional conditioning would allow each word to indirectly &ldquo;see itself&rdquo; in a multi-layered context. Devlin et al. proposed masked LM, where some percentage (15%) of the input tokens are masked at random and the LM is trained to predict those masked tokens.</p>
+
+<h4>Next Sentence Prediction</h4>
+
+<p>In order to train a model that understands sentence relationships, the authors added a binary next sentence prediction task to the pre-training. It&rsquo;s found that adding the task is very beneficial to both QA and NLI tasks.</p>
+
+<h4>Fine-Tuning</h4>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post22/bert_finetuning.png" alt="finetuning_bert" /></p>
+
+<p>Same with the OpenAI GPT, BERT requires converting each task to be represented by a Transformer encoder architecture. A <em>[CLS]</em> token is added to the start of all input sentence. For sentence-level classification task, the final hidden state for the <em>[CLS]</em> token is connected into a linear layer and a softmax layer. For token-level task like NER, the final hidden state for each token $T_i$ is passed through a linear layer and a softmax layer for class probabilities.</p>
+
+<h4>Feature-based Approach</h4>
+
+<p>The feature-based approach like ELMo, where fixed features are extracted from the pre-trained model, has certain advantages. BERT can be used the exactly same way as ELMo, while not sacrificing much performance. On  CoNLL-2003 NER, concatenating the token representations from the top four hidden layers of the pre-trained Transformer as an input to the LSTM, is only -0.3 F1 compared with fine-tuning the entire model. This approach is still +0.4 F1 compared with ELMo.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[The Transformer]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/12/05/transformer/"/>
+    <updated>2018-12-05T15:29:22-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/12/05/transformer</id>
+    <content type="html"><![CDATA[<p>RNNs have been the state-of-the-art approach in modeling sequences. They align the symbol positions of the input and output sequences and generate a sequence of hidden states $h_t$ as a function of previous hidden state $h_{t-1}$ and the input for position $t$. This inherently sequential nature precludes parallelization .</p>
+
+<p>In the paper <a href="https://arxiv.org/pdf/1706.03762.pdf">Attention Is All You Need</a>, Google researchers proposed the <strong>Transformer</strong> model architecture that eschews recurrence and instead relies entirely on an attention mechanism to draw global dependencies between input and output. While it achieves state-of-the-art performances on Machine Translation, its application is much broader.</p>
+
+<p>P.S. the <a href="http://jalammar.github.io/illustrated-transformer/">blog post</a> by Jay Alammar has awesome illustration explaining the Transformer. the <a href="http://nlp.seas.harvard.edu/2018/04/03/attention.html">blog post</a> on Harvard NLP also provides a working notebook type of explanation with some implementation.</p>
+
+<!--more-->
+
+
+<h2>Model Architecture</h2>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post21/transformer_architecture.png" alt="transformer architecture" />
+<em>Model Architecture of Transformer <a href="http://jalammar.github.io/images/t/transformer_resideual_layer_norm_3.png">(Credit)</a></em></p>
+
+<p>The Transformer follows the Encoder-Decoder architecture. The encoder maps an input sequence $(x_1, \cdots, x_n)$ to a sequence of continuous representation $\textbf{z} = (z_1, \cdots, z_n)$. Given $\textbf{z}$, the decoder generates an output sequence $(y_1, \cdots, y_n)$ one step at a time. The model is auto-regressive, as the previous generated symbols are consumed as additional input at every step. The Transformer proposed several new mechanism that enabled abandoning recurrence, namely <strong>multi-head self-attention</strong>, <strong>point-wise feed-forward networks</strong> and <strong>positional encoding</strong>.</p>
+
+<h3>1. Multi-Head Self-Attention</h3>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post21/multi-head-attention.png" alt="attention" />
+<em>Scaled Dot-Product Attention and Multi-Head Attention <a href="https://arxiv.org/pdf/1706.03762.pdf">(Credit)</a></em></p>
+
+<h4>Scaled Dot-Product Attention</h4>
+
+<p>Attention takes a query and a set of key-value pairs and output a weighted sum of the values. The Transformer uses the Scaled Dot-Product Attention, which takes the dot products of the query with all keys, divide each by $\sqrt{d_k}$ and apply a softmax function to obtain the weights on the value. Dividing the dot products by $\sqrt{d_k}$ prevents the its magnitude from getting too large and saturate the gradient on the softmax function.</p>
+
+<p>$$\text{Attention}(Q,K,V) = \text{softmax} ( \frac{QK^T}{\sqrt{d_k}})V$$</p>
+
+<h4>Multi-Head Attention</h4>
+
+<p>The authors found it beneficial to linearly project the queries, keys and values $h$ times with different learned linear projections ($W_i^Q, W_i^K, W_i^V$). Attention is then performed in parallel on each of these projected versions. These are concatenated and once again projected by $W^O$ and result in the final values. <strong>Multi-head attention allows the model to jointly attend to information from different representation subspaces at different positions.</strong></p>
+
+<p>$$\text{MultiHead}(Q,K,V) = \text{Concat} ( \text{head}_1, \text{head}_h)W^O$$
+$$\text{head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)$$</p>
+
+<h4>Three types of Attention Mechanisms</h4>
+
+<ul>
+<li>In the attention layers between an Encoder and a Decoder, the queries come from the decoder and the key-value pairs come from the encoder. This allow every position in the decoder to attention over all the positions in the encoder.</li>
+<li>The attention layers in the Encoders serve as self-attentions, where each position in the later encoder and attend to all positions in the previous layer of encoder.</li>
+<li>The attention layers in the Decoders are also self-attention layers. In order to prevent leftward information flow and preserve the auto-regressive property (<em>new output consumes previous outputs to the left, but not the other way around</em>), all values in the input that correspond to illegal connection are masked out as $-\infty$.</li>
+</ul>
+
+
+<h3>2. Position-wise Feed-forward Networks</h3>
+
+<p>Each of the Feed-Forward (also called Fully-Connected) layers is applied to each position separately and identically. This is similar to the idea of <a href="https://www.tensorflow.org/api_docs/python/tf/keras/layers/TimeDistributed">TimeDistributed</a> wrapper in Tensorflow/Keras, where the same layer is applied to every temporal slice of an input.</p>
+
+<h3>3. Positional Encoding</h3>
+
+<p>In order for the model to make use of the order of the sequence, the paper introduces <strong>positional encoding</strong>, which encodes the relative or absolute position of the tokens in the sequence. The positional encoding is a vector that is added to each input embedding. They follow a specific pattern that helps the model determine the distance between different words in the sequence. For each dimension of the vector, the position of the token are encoded along with the sine/cosine functions.</p>
+
+<p>$$\text{PE}_{(pos,2i)} = sin(\frac{pos}{10000^{2i/d_{model}}}) \ \ \ \ \ \ \text{PE}_{(pos,2i+1)} = cos(\frac{pos}{10000^{2i/d_{model}}})$$</p>
+
+<p>The intuition is that each dimension corresponds to a sinusoid with wavelengths from $2\pi$ to $10000 \cdots 2\pi$ and it would allow the model to learn to attention by relative positions, since for any fixed offset $k$, $PE_{pos+k}$ can be represented as a linear function of $PE_{pos}$. As shown in the figure below, the earlier dimensions have smaller wavelengths and can capture short range offset, while the later dimensions can capture longer distance offset. <em>While I understand the intuition, I am quite doubtful about whether this really work.</em></p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post21/sinusoid_positional_encoding.png" alt="sinusoid" />
+<em>Examples of Sinusoid with different wavelengths for different dimensions <a href="http://nlp.seas.harvard.edu/images/the-annotated-transformer_49_0.png">(Credit)</a></em></p>
+
+<h2>Discussion on Self-Attention</h2>
+
+<p>The authors devoted a whole section of the paper to compare various aspects of self-attention to recurrent and convolutional layers on three criteria:</p>
+
+<ul>
+<li><strong>Complexity</strong> is the total amount of computation needed per layer.</li>
+<li><strong>Sequential Operations</strong> is the minimum number of required sequential operations. These operations cannot be parallelized and thus largely determine the actual complexity of the layer.</li>
+<li><strong>Maximum Path Length</strong> is the length of paths forward and backward signals have to traverse in the network. The shorter these path, the easier it is to learn long-range dependencies.</li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post21/self-attention-complexity.png" alt="self_attention_complexity" />
+<em>Complexity Comparison of Self Attention, Convolutional and Recurrent Layer. <a href="https://arxiv.org/pdf/1706.03762.pdf">(Credit)</a></em></p>
+
+<p>In the above table, $n$ is the sequence length, $d$ is the representation dimension, $k$ is the kernel size of convolution and $r$ is the size of the neighborhood in restricted self-attention.</p>
+
+<h4>Recurrent Layer</h4>
+
+<p>Computing each recurrent step takes $O(d^2)$ for matrix multiplication. Stepping through the entire sequences of length $n$ takes a total computation complexity of $O(nd^2)$. The Sequential Operations and Maximum Path Length are $O(n)$ due to the sequential nature.</p>
+
+<h4>Convolutional Layer</h4>
+
+<p>Assuming the output feature map is $n$ by $d$, each 1D convolution takes $O(k \cdot d)$ operation, making the total complexity $O(k \cdot n \cdot d^2)$. Since convolution is fully parallelizable, the Sequential Operations is $O(1)$. A single convolutional layer with kernel width $k &lt; n$ does not connect all pairs of input and positions, thus requiring a stack of $O(n/k)$ contiguous kernels, or $O(log_k(n))$ in case of dilated convolutions.</p>
+
+<h4>Self-Attention Layer</h4>
+
+<p>Computing the dot product between the representations of two positions take $O(d)$. Computing the attention for all pairs of positions takes $O(n^2d)$. The compute is parallelizable, the Sequential Operations is $O(1)$. The self-attention layer connects all positions with a constant number of operations since there is a direct connection between any two positions in input and output. $O(1)$</p>
+
+<h4>Self-Attention Layer with Restriction</h4>
+
+<p>To improve the computational performance for tasks involving very long sequences, self-attention can be restricted to considering only a neighborhood size of $r$ centered around the respective position. This decreases the total complexity to $O(r\cdot n \cdot d)$, though it takes $O(n/r)$ operations to cover the maximum path length.</p>
+
+<h2>Training</h2>
+
+<ul>
+<li><strong>Training time</strong>: full model takes 3.5 days to train on 8 NVIDIA P100 GPUs. :0</li>
+<li><strong>Optimizer</strong>: Adam. Increase learning rate for the first <em>warmup_steps</em> training steps and decrease it thereafter. Similar <a href="https://arxiv.org/abs/1506.01186">cyclic learning rate</a> or the Slanted Triangular LR in <a href="https://arxiv.org/pdf/1801.06146.pdf">ULMFiT</a></li>
+<li><strong>Regularization</strong>:
+
+<ul>
+<li>Residual dropout: apply dropout to output layer before the residual connection and layer normalization $P_{drop} = 0.1$</li>
+<li>Embedding dropout: apply dropout to the sums of the embeddings and the positional encodings $P_{drop} = 0.1$</li>
+<li><a href="https://arxiv.org/pdf/1512.00567.pdf">Label Smoothing</a> of $\epsilon_{ls} =0.1$. This hurts perplexity but improves BLEU score.</li>
+</ul>
+</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Hello, Twitter! ]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/11/03/hello-twitter/"/>
+    <updated>2018-11-03T16:00:20-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/11/03/hello-twitter</id>
+    <content type="html"><![CDATA[<p>This week I joined the flock as a Machine Learning Engineer at <a href="https://cortex.twitter.com/en.html">Twitter Cortex</a>, where I will be developing and deploying state-of-the-art Deep Learning and NLP models to automate content understanding. Super excited to see what the future holds!</p>
+
+<p align="center">
+  <img style="display:inline" src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post20/twitter-logo.png" width="150" />
+  <img style="display:inline" src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post20/cortex-logo.png" width="150" />
+</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Conditional Random Field]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/10/04/conditional-random-field/"/>
+    <updated>2018-10-04T23:26:45-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/10/04/conditional-random-field</id>
+    <content type="html"><![CDATA[<p>Conditional Random Field (CRF) is a <a href="https://en.wikipedia.org/wiki/Graphical_model">probabilistic graphical model</a> that excels at modeling and labeling sequence data with wide applications in NLP, Computer Vision or even biological sequence modeling. In ICML 2011, it received &ldquo;Test-of-Time&rdquo; award for best 10-year paper, as time and hindsight proved it to be a seminal machine learning model. It is a shame that I didn&rsquo;t know much about CRF till now but better late than never!</p>
+
+<p>Reading summaries of the following paper:</p>
+
+<ul>
+<li>Original paper: <a href="https://dl.acm.org/citation.cfm?id=655813">Conditional Random Fields: Probabilistic Models for Segmenting and Labeling Sequence Data</a></li>
+<li>Tutorial from original author of CRF: <a href="https://people.cs.umass.edu/~mccallum/papers/crf-tutorial.pdf">Intro to Conditional Random Fields</a></li>
+<li>Technique for confidence estimation for entities: <a href="https://dl.acm.org/citation.cfm?id=1614012">Confidence estimation for information extraction</a></li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post19/crf.png" alt="CRF" /></p>
+
+<!--more-->
+
+
+<h1>1. Hidden Markov Model (HMM)</h1>
+
+<p>Hidden Markov Model (HMM) models a sequence of observations $X = \{x_t \}_{t=1}^T$ by assuming that there is an underlying sequence of states (also called <strong>hidden</strong> states) $Y = \{y_t \}_{t=1}^T$ drawn from a finite state $S$. HMM is powerful because it models many variables that are interdependent sequentially. Some typical tasks for HMM is modeling time-series data where observations close in time are related, or modeling natural languages where words close together are interdependent.</p>
+
+<p>In order to model the joint distribution $p(Y, X)$ tractably, HMM makes two strong independence assumptions:</p>
+
+<ul>
+<li><strong>Markov property</strong>: each state $y_t$ depends only on its immediate predecessor $y_{t-1}$ and independent of all its ancestors $y_{t-2}, \cdots y_{1}$.</li>
+<li><strong>Output independence</strong>: each observation $x_t$ depends only on the current state $y_t$</li>
+</ul>
+
+
+<p>With these assumptions, wen can model the joint probability of a state sequence $Y$ and an observation sequence $X$ as</p>
+
+<p>$$p(Y, X) = \prod_{t=1}^T p(y_t|y_{t-1}) p(x_t|y_t)\tag{1}$$</p>
+
+<p>where the initial state distribution $p(y_1)$ is written as $p(y_1|y_0)$.</p>
+
+<h1>2. Generative vs Discriminative Models</h1>
+
+<p><strong>Generative models</strong> learn a model of the joint probability $p(y,x)$ of the inputs $x$ and labels $y$. HMM is an generative model. Modeling the joint distribution is often difficult since it requires modeling the distribution $p(x)$, which can include complex dependencies. A solution is to use <strong>discriminative models</strong> to directly model the conditional distribution $p(y|x)$. With this approach, dependencies among the input variables $x$ do not need to be explicitly represented, affording the use of rich, global features of the input.</p>
+
+<p>An interesting read about this topic is <a href="https://ai.stanford.edu/~ang/papers/nips01-discriminativegenerative.pdf">On Discriminative &amp; Generative Classifiers: A comparison of logistic regression and naive Bayes</a> from the famous Prof. Andrew Ng back when he was a graduate student. A generative model and a discriminative model can form a <strong>Generative-Discriminative pair</strong> if they are in the same hypothesis space. For example,</p>
+
+<ul>
+<li>if $p(x|y)$ is Gaussian and $p(y)$ is multinomial, then <a href="https://en.wikipedia.org/wiki/Linear_discriminant_analysis">Linear Discriminant Analysis</a> and Logistic Regression models the same hypothesis space</li>
+<li>if $p(x|y)$ is Gaussian and $p(y)$ is binary, then <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier#Gaussian_naive_Bayes">Gaussian Naive Bayes</a> has the same model form as Logistic Regression</li>
+<li>There is a discriminative analog to HMM, and it&rsquo;s the <strong>linear-chain Conditional Random Field (CRF)</strong>.</li>
+</ul>
+
+
+<h1>3. Linear-Chain Conditional Random Field</h1>
+
+<h2>From HMM to CRF</h2>
+
+<p>To motivate the comparison between HMM and CRF, we can re-write the Eq. (1) in a different form</p>
+
+<p>$$p(Y, X) = \frac{1}{Z} \prod_{t=1}^T \text{exp} \left\{ \sum_{k = 1}^K \lambda_k f_k\left( y_t, y_{t-1}, x_t\right) \right\}\tag{2}$$</p>
+
+<p>The $K$ feature function $f_k\left( y_t, y_{t-1}, x_t\right)$ are a general form that takes into account of all state transitions probabilities and state-observation probabilities. There is one feature function $f_{ij}( y, y', x) = \boldsymbol{1}_{y =i} \boldsymbol{1}_{y' =j}$ for each state transition pair $(i,j)$ and one feature function $f_{io}( y, y', x) = \boldsymbol{1}_{y=i} \boldsymbol{1}_{x=0}$ for each state-observation pair $(i,o)$. Z is a normalization constant for the probability to sum to 1.</p>
+
+<p>To turn the above into a linear-chain CRF, we need to write the conditional distribution</p>
+
+<p>$$
+\begin{align}
+p(Y|X) &amp;= \frac{p(Y, X)}{\sum_Y p(Y, X)} \\
+&amp;= \frac{\prod_{t=1}^T \text{exp} \left\{ \sum_{k = 1}^K \lambda_k f_k\left( y_t, y_{t-1}, x_t\right) \right\} }{\sum_{y'} \prod_{t=1}^T \text{exp} \left\{ \sum_{k = 1}^K \lambda_k f_k\left( y'_t, y'_{t-1}, x_t\right) \right\}} \\
+&amp;= \frac{1}{Z(X)} \prod_{t=1}^T \text{exp} \left\{ \sum_{k = 1}^K \lambda_k f_k\left( y_t, y_{t-1}, x_t\right) \right\}
+\end{align} \tag{3}
+$$</p>
+
+<h2>Parameter Estimation</h2>
+
+<p>Just like most other machine learning models, the parameter is estimated via Maximum Likelihood Estimation (MLE). The objective is to find the parameter that maximize the <strong>conditional log likelihood</strong> $l(\theta)$</p>
+
+<p>$$
+\begin{align}
+l(\theta) &amp;= \sum_{i=1}^N \ \text{log} p(y^{(i)} | x^{(i)}) \\
+&amp;= \sum_{i=1}^N \sum_{t=1}^T \sum_{k=1}^K \lambda_k f_k\left( y_t^{(i)}, y_{t-1}^{(i)}, x_t^{(i)}\right) - \sum_{i=1}^N  \text{log} Z(x^{(i)})
+\end{align} \tag{4}
+$$</p>
+
+<p>The objective function $(\theta)$ cannot be maximized in closed form, so numerical optimization is needed. The partial derivative of Eq. (4) is</p>
+
+<p>$$\frac{\partial l(\theta)}{\partial \lambda_k} = \sum_{i=1}^N \sum_{t=1}^T f_k\left( y_t^{(i)}, y_{t-1}^{(i)}, x_t^{(i)}\right) - \sum_{i=1}^N \sum_{t=1}^T \sum_{y'_{t-1}, y'_{t}} f_k\left( y'_{t}, y'_{t-1}, x_t^{(i)}\right) p(y'_{t}, y'_{t-1}| x_t^{(i)}) \tag{5}$$</p>
+
+<p>which has the form of (observed counts of $f_k$) - (expected counts of $f_k$). To compute the gradient, inference is required to compute all the marginal edge distributions $p(y'_{t}, y'_{t-1}| x_t^{(i)})$. Since the quantities depend on $x^{(i)}$, we need to run inference once for each training instance every time the likelihood is computed.</p>
+
+<h2>Inference</h2>
+
+<p>Before we go over the typical inference tasks for CRF, let&rsquo;s define a shorthand for the weight on the transition from state $i$ to state $j$ when the current observation is $x$.</p>
+
+<p>$$
+\begin{align}
+\Psi_t(j,i,x) &amp;= p(y_{t} = j | y_{t-1} = i) \cdot p(x_{t} = x |y_{t} = j) \\
+&amp;= \left[ \delta_{t}(i) \ \text{exp} \left( \sum_{k = 1}^K \lambda_k f_k\left( j, i, x_{t+1}\right) \right) \right]
+\end{align} \tag{6}
+$$</p>
+
+<h4>Most probable state sequences</h4>
+
+<p>The most needed inference task for CRF is to find the most likely series of states $Y^{*} = \text{argmax}_{Y} \ p(Y|X)$, given the observations. This can be computed by the <a href="https://en.wikipedia.org/wiki/Viterbi_algorithm">Viterbi recursion</a>. The Viterbi algorithm stores the probability of the most likely path at time $t$ that accounts for the first $t$ observations and ends in state $j$.</p>
+
+<p>$$\delta_{t}(j) = \text{max}_{i \in S} \ \delta_{t-1}(i) \cdot \Psi_t(j,i,x) \tag{7}$$</p>
+
+<p>The recursive formula terminates in $p^{*} = \text{argmax}_{i \in S} \ \delta_{T}(i)$. We can backtrack through the dynamic programming table to find the mostly probably state sequences.</p>
+
+<h4>Probability of an observed sequence</h4>
+
+<p>We can use Eq. (3) to compute the likelihood of an observed sequence $p(Y|X)$. While the numerator is easy to compute, the denominator $Z(X)$ is very difficult to compute since it contains an exponential number of terms. Luckily, there is another dynamic programming algorithms called <a href="https://en.wikipedia.org/wiki/Forward%E2%80%93backward_algorithm">forward-backward</a> to compute it efficiently.</p>
+
+<p>The idea behind forward-backward is to compute and store two sets of variables, each of which is a vector with size as the number of states. The forward variables $\alpha_t(j) = p(x_1, \cdots, x_t, y_t = j)$ stores the probability of all the paths through the first $t$ observations and ends in state $j$. The backward variables $\beta_t(i) = p(x_t, \cdots, x_T, y_t = i)$ is the exact reverse and stores the probability of all the paths through the last $T-t$ observations with the <em>t</em>-th state as $i$</p>
+
+<p>$$\alpha_t(j) = \sum_{i \in S} \Psi_{t}(j, i, x_t) \alpha_{t-1}(i)\tag{8}$$
+$$\beta_t(i) = \sum_{j \in S} \Psi_{t+1}(j, i, x_t) \beta_{t+1}(j)\tag{9}$$</p>
+
+<p>The initialization for the forward-backward is $\alpha_1{j} = \Psi_{t}(j, y_0, x_1)$ and $\beta_T(i) = 1$. After the dynamic programming table is filled, we can compute $Z(X)$ as</p>
+
+<p>$$Z(x) = \sum_{i \in S} \alpha_T(i)\tag{10}$$</p>
+
+<p>Forward-backward algorithm is also used to compute all the marginal edge distributions $p(y_{t}, y_{t-1}| x_t)$ in Eq. (5) that is needed for computing the gradient.</p>
+
+<p>$$p(y_{t}, y_{t-1}| x_t) = \alpha_{t-1}(y_{t-1}) \Psi_t(y_{t},y_{t-1},x_t) \beta_t(y_t)$$</p>
+
+<h4>Confidence in predicted labeling over a specific segment</h4>
+
+<p>Sometimes in task like Named Entity Recognition (NER), we are interested in the model&rsquo;s confidence in its predicted labeling over a segment of input to estimate the probability that a field is extracted correctly. This marginal probability $p(y_t, y_{t+1}, \cdots, y_{t+k}|X)$ can be computed using constrained forward-backward algorithm, introduced by <a href="https://dl.acm.org/citation.cfm?id=1614012">Culotta and McCallum</a>.</p>
+
+<p>The algorithm is an extension to the forward-backward we described above, but with added constraints such that each path must conforms to some sub-path of constraints $C = \{ y_t, y_{t+1}, \cdots\}$. $y_t$ can either be a <em>positive</em> constraint (sequence must pass through $y_t$) or a <em>negative</em> constraint (sequence must not pass through $y_t$). In the context of NER, the constraints $C$ corresponds to an extracted field. The positive constraints specify the tokens labeled inside the field, and the negative field specify the field boundary.</p>
+
+<p>The constraints is a simple trick to shut off the probability of all paths that don&rsquo;t conform to the constraints. The calculation of the forward variables in Eq. (8) can be modified slightly to factor in the constraints</p>
+
+<p>$$\alpha'_t(j) =
+\begin{cases}
+\sum_{i \in S} \Psi_{t}(j, i, x_t) \alpha_{t-1}(i),  &amp; \text{if} \ j \ \text{conforms to} \ y_{t} \\
+0, &amp; \text{otherwise}
+\end{cases}$$</p>
+
+<p>For time steps not constrained by $C$, Eq. (8) is used instead. Similar to Eq. (10), we calculate the probability of the set of all paths that conform to $C$ as $Z'(X) = \sum_{i \in S} \alpha'_T(i)$. The marginal probability can be computed by replacing $Z(X)$ with $Z'(X)$ in Eq. (3).</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Word Embeddings]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/09/12/word-embeddings/"/>
+    <updated>2018-09-12T22:23:31-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/09/12/word-embeddings</id>
+    <content type="html"><![CDATA[<p>Reading summaries about widely-used embeddings:</p>
+
+<ul>
+<li><strong>word2vec</strong>: <a href="https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf">Distributed Representations of Words and Phrases and their Compositionality</a></li>
+<li><strong>word2vec</strong>: <a href="https://arxiv.org/pdf/1301.3781.pdf">Efficient Estimation of Word Representations in Vector Space</a></li>
+<li><strong>GloVe</strong>: <a href="https://nlp.stanford.edu/pubs/glove.pdf">Global Vectors for Word Representation</a></li>
+<li><strong>fastText</strong>: <a href="https://arxiv.org/pdf/1607.04606.pdf">Enriching Word Vectors with Subword Information</a></li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post18/embedding_illustration.png" alt="illustration" /></p>
+
+<!--more-->
+
+
+<h2>1. Why Embedding?</h2>
+
+<p>Many classic NLP systems and techniques (i.e. popular N-gram model) treat words as atomic units. There is no notion of similarity between words, as they are represented as indices in a vocabulary. This approach works when trained on huge amounts of data, but are limited in many tasks when data is limited (i.e. speech recognition data, parallel corpus for machine translation). Learning representation of words establishes similarity between words and allows data to be used much more efficiently.</p>
+
+<h2>2. word2vec</h2>
+
+<p>The high-level assumption of word2vec is that words close to each other have more similar meaning than words far apart. Under this assumption, two model architectures were proposed by the researchers at Google.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post18/cbow_skip_gram.png" alt="cbow_skipgram" /></p>
+
+<h3>2.1 Skip-gram Model</h3>
+
+<p>The objective of the Skip-gram model is to find word representations that are useful for predicting the surrounding words in a sentence or a document. The objective of the model is to maximize the average log probability</p>
+
+<p>$$\frac{1}{T} \sum_{t=1}^{T} \sum_{-c \leq j \leq c, j \neq 0} \text{log} \ p(w_{t+j}|w_{t})\tag{1}$$</p>
+
+<p>The probability $p(w_{t+j}|w_{t})$ is defined using the softmax function:</p>
+
+<p>$$p(w_{O}|w_{I}) = \frac{\text{exp} ( u_{w_{O}}^T v_{w_{I}})}{\sum_{w=1}^W \text{exp} ( u_{w}^T v_{w_{I}})}\tag{2}$$</p>
+
+<p>where $v$ and $u$ are input and output representation of the word. This is impractical since computing the gradient w.r.t the entire vocabulary is $\mathcal{O}(W)$, the size of the vocabulary.</p>
+
+<h4>Hierarchical Softmax</h4>
+
+<p>A computationally efficient approximation of the full softmax is hierarchical softmax, which uses a binary tree representation of the output layer with $W$ words as its leaves. With the words as leaf nodes, then we only need to follow the path to the leaf node of that word, without having to consider any of the other nodes. $p(w|w_I)$ simply the product of the probabilities of taking right and left turns respectively that lead to its leaf node. This is much faster since computing the gradient is $\mathcal{O}( \text{log} \ W)$.</p>
+
+<h4>Negative Sampling</h4>
+
+<p>We can also subsample the entire vocabulary to compute the softmax. The idea of Noise Contrastive Estimation (NCE) is to train binary logistic regressions for a true pair (center word and word in its context window) vs a couple of noise pairs (the center word paired with a random word). The objective with NCE is</p>
+
+<p>$$\text{log} \ \sigma( u_{w_{O}}^T v_{w_{I}}) + \sum_{j \sim P(w)} \text{log} \ \sigma( - u_{w_{j}}^T v_{w_{I}})\tag{3}$$</p>
+
+<p>The intuition of the above loss is to maximize the probability that real context word appears through the first term and minimize probability that random words appear around center word through the second term.</p>
+
+<p>The noise distribution $P(w) = U(w)^{&frac34;}/Z$, where $U(w)$ is the unigram distribution.</p>
+
+<h4>Subsampling Frequent Words</h4>
+
+<p>To counter the imbalance between the rare and frequent words, each word $w_i$ in the training set is discarded with probability of $P(w_i) = 1 - \sqrt{\frac{t}{f(w_i)}}$, where $f(w_i)$ is the frequency of the word and $t$ is a chosen threshold with typical value of $10^{-5}$. For words whose frequency is greater than t, it is subsampled aggressively.</p>
+
+<h3>2.2 Continuous Bag-of-Words (CBOW)</h3>
+
+<p>CBOW is a similar idea to Skip-gram, but instead of predicting the context words based on current word, it predicts the current word based on the context. The model is named bag-of-words since the order of words in the context does not influence the model, where an average of the context word vectors are used to predict the current word. Same as Skip-gram, we seek to maximize the average log probability</p>
+
+<p>$$\frac{1}{T} \sum_{t=1}^{T} \text{log} \ p(w_{t}|\bar{w_{t}})\tag{4}$$
+where the input vector is the average of all context word vectors $\bar{w_{t}} = \frac{1}{2c}\sum_{-c \leq j \leq c, j \neq 0} w_{t+j}$. Different from the Skip-gram model, the weight matrix of input and output word vectors is shared. The authors found that CBOW</p>
+
+<ul>
+<li>Slightly outperforms on the <strong>Syntactic Accuracy tests</strong> (&ldquo;apparent&rdquo; -> &ldquo;apparently&rdquo; = &ldquo;rapid&rdquo; -> &ldquo;rapidly&rdquo;)</li>
+<li>Underperforms significantly on <strong>Semantic Accuracy tests</strong> (&ldquo;Athens&rdquo; -> &ldquo;Greece&rdquo; = &ldquo;Oslo&rdquo; -> &ldquo;Norway&rdquo;)</li>
+</ul>
+
+
+<h2>3. GloVe</h2>
+
+<p>About a year after word2vec was published, Pennington et al. from Stanford came up with a new global model that combines the advantages of global matrix factorization methods (i.e. LSA) and local context window methods (i.e. word2vec).</p>
+
+<h4>Matrix Factorization vs Local Context Windows</h4>
+
+<p>Matrix factorization methods for generating low-dimensional word representations utilize low-rank approximations to decompose large matrices that capture statistical information about a corpus. In LSA, the matrix is term-document matrix filled with counts of words in each documents. In Hyperspace Analogue to Language (HAL), the matrix is a term-term matrix filled with counts of words co-occurring in the same context.</p>
+
+<p>The main problem with Matrix Factorization Methods is that the most frequent words contribute a disproportionate amount to the similarity measurement, despite conveying relatively little semantic relatedness. The local context window models, on the other hand, suffer from the disadvantage that they do not operate directly on the co-occurrence statistics of the corpus.</p>
+
+<h4>Deriving the GloVe Model</h4>
+
+<p>Let $X$ be the word-word co-occurrence count matrix, where $X_{ij}$ denote the number of times word $j$ occurs in the context of word $i$. $X_i = \sum{k} X_{ik}$ is the number of times any word appears in the context of word $i$. Let $P_{ij} = P(j|i) = X_{ij} / X_i$ be the probability that word $j$ appear in the context of word $i$.</p>
+
+<p>GloVe originates from the idea that meaning can be extracted directly from co-occurrence probabilities. Consider two words <em>i = ice</em> and <em>j = steam</em>; we see that $P_{ik}/P_{jk}$ is large when $k$ is related to $i$, but not $j$ and vice versa. When $k$ is either related to both or unrelated to both, $P_{ik}/P_{jk}$ is close to 1.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post18/ice_steam.png" alt="ice_steam" /></p>
+
+<p>The above argument suggest that the word vector should be learned with ratios of co-occurrence probabilities. The most general model can be in the form of</p>
+
+<p>$$F\left( w_i, w_j, \tilde{w}_k \right) = \frac{P_{ik}}{P_{jk}}\tag{5}$$</p>
+
+<p>We can restrict $F$ in the following way</p>
+
+<ul>
+<li>$F$ should be only dependent on the difference of the two target words $w_i - w_j$</li>
+<li>To keep the linear nature of the vector space, restrict $F$ to take the dot product of the arguments $(w_i - w_j)^T \tilde{w}_k$</li>
+<li>By requiring the role of target words and context words can be exchanged, we have $F\left((w_i - w_j)^T \tilde{w}_k \right) = F(w_{i}^T\tilde{w}_{k}) / F(w_{j}^T\tilde{w}_{k})$</li>
+</ul>
+
+
+<p>This gives us the solution of $F = \text{exp}$ and $w_{i}^T\tilde{w}_{k} = \text{log} (P_{ik}) = \text{log} (X_{ik}) - \text{log} (X_{i})$. To restore the symmetry between target word and context words, we can set $b_i=\text{log} (X_{i})$ and add an bias term $\tilde{b}_k$,</p>
+
+<p>$$w_{i}^T\tilde{w}_{k} + b_i + \tilde{b}_k = \text{log} (X_{ik})\tag{6}$$</p>
+
+<p>A main drawback of this model is that it weighs all co-occurrence equally. To fix this problem, we add weights to the model. The weighted least squares regression model has the following cost function:</p>
+
+<p>$$J = \sum_{i,j=1}^{V} f(X_{ij}) \left( w_{i}^T\tilde{w}_{k} + b_i + \tilde{b}_j - \text{log} (X_{ij}) \right)^2 \tag{7}$$</p>
+
+<p>where $f(x)$ is defined very similar to $P(w)$ from word2vec.</p>
+
+<p>$$f(x) =
+\begin{cases}
+(x/x_{max})^{&frac34;},  &amp; x &lt; x_{max} \\
+1, &amp; \text{otherwise}
+\end{cases}$$</p>
+
+<h4>Context Window</h4>
+
+<p>GloVe shares the same assumption that very distant word pairs are expected to contain less relevant information about the words’ relationship to one another. Skip-gram defined &ldquo;context&rdquo; as a moving window. GloVe specifies that word pairs that are $d$ words apart contribute $1/d$ to the total count. Hence Global vectors to account for context.</p>
+
+<h4>Relationship to Skip-gram</h4>
+
+<p>Let $Q_{ij}$ be the softmax and $X_{ij}$ be the context co-occurrence, the objective of the skip-gram function is</p>
+
+<p>$$J = - \sum_{i}\sum_{j \in context(i)} \text{log} (Q_{ij}) = - \sum_{i}\sum_{j} X_{ij} \ \text{log} (Q_{ij})$$</p>
+
+<p>With the notation of $X_i = \sum{k} X_{ik}$ and $P_{ij} = P(j|i) = X_{ij} / X_i$, the cost function can be re-written as</p>
+
+<p>$$
+\begin{align}
+J &amp;= - \sum_{i}\sum_{j} X_{i}P_{ij} \ \text{log} (Q_{ij}) \\
+&amp;= - \sum_{i} X_{i} \sum_{j}P_{ij} \ \text{log} (Q_{ij}) \\
+&amp;= \sum_{i} X_{i} H(P_{i}, Q_{i})
+\end{align}
+$$</p>
+
+<p>where $H(P_{i}, Q_{i})$ is the cross entropy between the distribution $P_{i}$ and $Q_{i}$. The loss is a weighted sum of the cross entropy error and it&rsquo;s very similar to the weighted least squares objective of GloVe.</p>
+
+<h2>4. fastText</h2>
+
+<p>There is a limitation in skip-gram and GloVe that word representations ignore the morphology of words and assign a distinct vector to each word. Bojanowski et al. from Facebook Research proposed a new extension to skip-gram to learn representations for character <em>n</em>-grams and to represent words as the sum of the <em>n</em>-gram vectors.</p>
+
+<p>Each word is represented as a bag of character <em>n</em>-grams. A special boundary symbols <em>&lt;></em> are added at the start and end of a word. The word <em>w</em>itself is also in the set of its <em>n</em>-grams to learn a representation for each word. For example, for the word <em>where</em> and $n=3$, we have the character <em>n</em>-grams <em>&lt;wh, whe, her, ere, re>, where</em>. In practice, all <em>n</em>-grams for $3 \leq n \leq 6$ are used.</p>
+
+<p>Given a word <em>w</em> and a set of <em>n</em>-grams $\mathcal{G}_w$ of size $G$, a vector representation $z_g$ is assigned to each <em>n</em>-grams $g$. In skip-gram, the scoring function between a context word and a center word is defined as $s(w, c) = u_g^Tv_c$. Since a word is reprenseted as the sum of the vector representations of its <em>n</em>-grams,  we have $s(w, c) = \sum_{g \in \mathcal{G}_w} z_g^Tv_c$. With this change, Eq. 2 becomes</p>
+
+<p>$$p(w_{O}|w_{I}) = \frac{\text{exp} ( \sum_{g \in \mathcal{G}_{w_{O}}} z_g^Tv_{w_{I}} )}{\sum_{w=1}^W \text{exp} ( \sum_{g \in \mathcal{G}_w} z_g^T v_{w_{I}})}\tag{8}$$</p>
+
+<p>This simple model allows sharing the representations across words, thus allowing to learn reliable representation for rare words. Also, the model can infer word vectors for words that do not appear in the training set (Out-of-Vocabulary) simply by averaging the vector representation of its n-grams. In fact, Bojanowski et al found that imputing vectors for unseen words is always at least as good as not doing so, and in some cases give a large performance boost.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Predicting Classified Ads Demand]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/09/04/kaggle-predict-demand-for-classified-ads/"/>
+    <updated>2018-09-04T10:32:18-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/09/04/kaggle-predict-demand-for-classified-ads</id>
+    <content type="html"><![CDATA[<p>After three competitions, I felt I was ready to push for my first Gold Medal. Along with my four teammates, we took on the challenge of predicting demand for classified ads. We fought tooth and nail till the last moment and were in the Gold zone on the public leaderboard. While we ended up losing the Gold Metal narrowly by 1 spot, it was overall a great learning experience. I look forward to making progress toward a real gold medal in the future.</p>
+
+<p><strong>TL;DR A failed attempt to push for my first Gold Metal on Kaggle. My team ranked top 1% but missed the Gold Metal narrowly by 1 spot!</strong></p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/avito_rank.png" alt="avito" /></p>
+
+<!--more-->
+
+
+<h2>1. The Competition</h2>
+
+<p>The <a href="https://www.kaggle.com/c/avito-demand-prediction">Avito Demand Prediction Challenge</a> is sponsored by <a href="https://www.avito.ru/rossiya">Avito</a>, Russia’s largest classified advertisements website. The task is to predict demand for an online advertisement based on its full description (title, description, images, etc.), its context (geographically where it was posted, similar ads already posted) and historical demand for similar ads in similar contexts.</p>
+
+<h2>2. Our Solution</h2>
+
+<p>My teammates and I have put together a <a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/60059#350998">write-up</a> on the Kaggle discussion forum.</p>
+
+<p>An interesting characteristics of this competition is the Cross-Validation (CV) performance is very consistent with Leaderboard (LB) Performance. Therefore, all top teams ended up doing crazy stacking &ldquo;towers&rdquo; (from 3-level to even 6-level towers!). All of my time in the later stage of the competition is spent on the stacking tower below.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post17/stacking_tower.png" alt="stacking" /></p>
+
+<h2>3. Learning From Top Solutions</h2>
+
+<h3><a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59880">1st place solution</a></h3>
+
+<p>Below is the architecture of Neural Network from the 1st place winner. The architecture is quite similar to <a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59917">what we end up using</a>.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post17/1st_solution.jpg" alt="1st-place" /></p>
+
+<p><strong>What separates them from the rest of the crowd is that they found a &ldquo;magic&rdquo; feature from the unlabeled part of the dataset</strong> (something I have been trying so hard throughout the competition but couldn&rsquo;t accomplish).</p>
+
+<blockquote><p>I’ve designed 3 nn models trained on active data to predict log1p(price), renewed and log1p(total_duration). These models had 2 rnn branches for title and description and also used category embeddings. The difference between actual log1p(price) and predicted one was an extremely important feature.                                   &ndash; <a href="https://www.kaggle.com/gdanschin">Georgiy Danshchin</a></p></blockquote>
+
+<p>A well-deserved win!</p>
+
+<h3><a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59871">2nd place solution</a></h3>
+
+<p>Their best single model was a Neural Network at 0.2163 on public leaderboard (a big better than ours was at 0.2181). Some characteristics as follows:</p>
+
+<ul>
+<li>target encoded features for categorical features and their second and third order interactions</li>
+<li>cyclic LR, Nadam optimizer</li>
+<li>plenty of BNs, big dropouts</li>
+</ul>
+
+
+<p>A whopping 6-level stack! And 10-fold Cross-Validation! They must have a lot of compute resource.</p>
+
+<h3><a href="https://www.kaggle.com/c/avito-demand-prediction/discussion/59885">3rd place solution</a></h3>
+
+<p>The 3rd place winner is lead by the famous <a href="https://www.kaggle.com/kazanova">KazAnova</a>. They have a very interesting time-series ensemble in addition to normal ensembles:</p>
+
+<blockquote><p>The second ensemble used a time-series schema. The test data begins a number of days past the final day included in the training data. We tried to replicate this in our internal validation. To do so, we trained on the first six days of training and used days ten through thirteen as validation. This meant days six through nine were excluded, mimicking the gap between train and test.Then, to generate predictions for the test data, we trained on the entire training set.</p>
+
+<p>In order to generate likelihoods of categorical features for this approach, we always applied a gap of 4 days. For example to estimate likelihoods for day four of the training data, we use the average of target for day zero. To estimate likelihoods for day five, we used likelihoods of (day0+day1)/2. We decided on a gap of four days for stability, as it gave similar CV and LB performance.</p></blockquote>
+
+<p>I remember trying something like this for the <a href="https://www.kaggle.com/c/talkingdata-adtracking-fraud-detection">TalkingData AdTracking Fraud Detection Challenge</a> but it wasn&rsquo;t particularly strong. I am happy that somebody can pull this off.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[On Normalization Layers]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/06/11/on-normalization-layers/"/>
+    <updated>2018-06-11T14:34:57-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/06/11/on-normalization-layers</id>
+    <content type="html"><![CDATA[<p>Reading notes / survey of three papers related to Batch Normalization</p>
+
+<ul>
+<li><a href="https://arxiv.org/pdf/1502.03167.pdf">Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</a>, the paper that introduced Batch Normalization, one of the breakthroughs in Deep Learning</li>
+<li><a href="https://arxiv.org/pdf/1607.06450.pdf">Layer Normalization</a> that extended Batch Normalization to RNNs</li>
+<li><a href="https://arxiv.org/pdf/1805.11604.pdf">How Does Batch Normalization Help Optimization?(No, It Is Not About Internal Covariate Shift)</a>, a paper (barely one week old at the time of writing) that dived into the fundamental factors for Batch Normalization&rsquo;s success empirically and theoretically</li>
+</ul>
+
+
+<!--more-->
+
+
+<h2>1. Why Normalization?</h2>
+
+<h4>Covariate Shift</h4>
+
+<p>Covariate Shift refers to the change in the distribution of the input variables $X$ between a source domain $\mathcal{s}$ and a target domain $\mathcal{t}$. We assume $P_{\mathcal{s}}(Y|X) = P_{\mathcal{t}}(Y|X)$ but a different marginal distribution $P_{\mathcal{s}}(X) \neq P_{\mathcal{t}}(X)$.</p>
+
+<p>We are interested in modeling $P(Y|X)$. However, we can only observe $P_{\mathcal{s}}(Y|X)$. The optimal model for source domain $\mathcal{s}$ will be different from the optimal model for target domain $\mathcal{t}$. The intuition, as shown in the diagram below, is that the optimal model for $P_{\mathcal{s}}(X)$ will put more weights and perform better in dense area of $P_{\mathcal{s}}(X)$, which is different from the dense area of $P_{\mathcal{t}}(X)$.
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/covariate_shift.png" height="400" width="400" alt="covariate_shift" />
+<em>Covariate Shift Diagram <a href="http://iwann.ugr.es/2011/pdfInvitedTalk-FHerrera-IWANN11.pdf">Source</a></em></p>
+
+<h4>Internal Covariate Shift (ICS)</h4>
+
+<p>In Neural Networks (NN), we face a similar situation like Covariate Shift. A layer $l$ in a vanilla feedforward NN can be defined as</p>
+
+<p>$$X^{l} = f\left(X^{l-1}W^{l} + b^l \right) \ \ \ $$</p>
+
+<p>where $X^{l-1}$ is $m \times n_{in}$  and $W^{l}$ is $n_{in} \times n_{out}$. $m$ is the number of samples in the batch. $n_{in}$ and $n_{out}$ are the input and output feature dimension of the layer.</p>
+
+<p>The weights $W^{l}$ is learned to approximate $P_{\mathcal{s}}(X^{l}|X^{l-1})$. However, the input from last layer $X^{l-1}$ is constantly changing so $W^{l}$ needs to continuously adapt to the new distribution of $X^{l-1}$. <a href="https://arxiv.org/pdf/1502.03167.pdf">Ioffe et al.</a> defined such change in the distributions of internal nodes of a deep network during training as <strong>Internal Covariate Shift</strong>.</p>
+
+<h2>2. Batch Normalization (BN)</h2>
+
+<p>An obvious procedure to reduce ICS is to fix the input distribution to each layer. And that is exactly what Ioffe et al. proposed. Batch Normalization (BN) is a layer that normalizes each input feature to have mean of 0 and variance of 1. For a BN layer with $d$-dimensional input $X = (x^{1}, \cdots, x^{d})$, each feature is normalized as</p>
+
+<p>$$\hat{x}^{(k)} = \frac{x^{(k)} - \mu_{x^{(k)}}}{\sigma_{x^{(k)}}}$$</p>
+
+<h4>Mini Batch Statistics</h4>
+
+<p>Computing the mean and standard deviation of each feature requires iterating through the whole dataset, which is impractical. Thus, $\mu_{x^{(k)}}$ and $\sigma_{x^{(k)}}$ are estimated using the empirical samples from the current batch.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/bn.png" height="10" width="300" alt="bn" /></p>
+
+<h4>Scale and Shift Parameters</h4>
+
+<p>To compensate for the loss of expressiveness due to normalization, a pair of parameters $\gamma^{(k)}$ and $\beta^{(k)}$ are trained to scale and shift the normalized value.</p>
+
+<p>$$y^{(k)} = \gamma^{(k)} x^{(k)} + \beta^{(k)}$$</p>
+
+<p>The scale and shift parameters restore the representation power of the network. By setting $\beta^{(k)} = \mu_{x^{(k)}}$ and $\gamma^{(k)} = \sigma_{x^{(k)}}$, the original activations could be recovered, if that were the optimal thing to do.</p>
+
+<h4>Batch Normalization in Feed-forward NN</h4>
+
+<p>Consider the <em>l</em>-th hidden layer in a feed-forward NN. The summed inputs are computed through a linear projection with the weight matrix $W^l$ and the bottom-up inputs $X^l$. The summed inputs are passed through a BN layer and then an activation layer (<em>whether to apply BN before or after the activation layer is a topic of debate</em>), as following:</p>
+
+<p>$Z^{l}$ is a</p>
+
+<p>$$Z^{l} = X^{l-1}W^{l} + b^l \ \ \ \ \
+\hat{Z}^{l} = \textbf{BN}_{\gamma, \beta}(Z^{l}) \ \ \ \ \
+X^{l} = f(\hat{Z}^{l})$$</p>
+
+<p>$Z^{l}$ is a $m \times n_{out}$ matrix, whose element $z_{ij}$ is the summed input to the <em>j</em>-th neuron from the <em>i</em>-th sample in the mini-batch.</p>
+
+<p>$$ Z^{l} =
+\begin{bmatrix}
+z_{11} &amp; \cdots &amp; z_{1n_{out}} \\
+\vdots &amp; \ddots &amp; \vdots \\
+z_{m1} &amp; \cdots &amp; z_{mn_{out}}
+\end{bmatrix} =
+\begin{bmatrix}
+| &amp; | &amp; \cdots &amp;| \\
+\textbf{z}_{1} &amp; \textbf{z}_{2} &amp; \cdots &amp; \textbf{z}_{n_{out}} \\
+| &amp; | &amp; \cdots&amp; | \\
+\end{bmatrix}
+$$</p>
+
+<p>$$\textbf{BN}_{\gamma, \beta}(Z^{l}) =
+\begin{bmatrix}
+| &amp; | &amp; \cdots &amp;| \\
+\gamma_1 \hat{\textbf{z}}_{1} + \beta_1 &amp; \gamma_2 \hat{\textbf{z}}_{2} + \beta_2 &amp; \cdots &amp; \gamma_{n_{out}} \hat{\textbf{z}}_{n_{out}} + \beta_{n_{out}} \\
+| &amp; | &amp; \cdots&amp; | \\
+\end{bmatrix}
+$$</p>
+
+<p>Column <em>j</em> of $Z^{l}$ is the summed inputs to the <em>j</em>-th neuron from each <em>m</em> samples in the mini-batch. The BN layer is a <strong>whitening / column-wise normalization</strong> procedure to normalize $\left[ \textbf{z}_{1}, \textbf{z}_{2}, \cdots, \textbf{z}_{n_{out}}\right]$ to $\mathcal{N}(0,1)$. Each neuron/column has a pair of scale $\gamma$ and shift parameters $\beta$.</p>
+
+<h2>3. Layer Normalization (LN)</h2>
+
+<p>BN has had a lot of success in Deep Learning, especially in Computer Vision due to its effect on CNNs. However, it also has a few shortcomings:</p>
+
+<ul>
+<li>BN replies on mini-batch statistics and is thus dependent on the mini-batch size. BN cannot be applied to to online learning tasks (batch size of 1) or tasks that require a small batch size.</li>
+<li>There is no elegant way to apply BN to RNNs. Applying BN to RNNs requires computing and storing batch statistics for each time step in a sequence.</li>
+</ul>
+
+
+<p>To tackle the above issues, <a href="https://arxiv.org/pdf/1607.06450.pdf">Ba et al.</a> proposed Layer Normalization(LN), a transpose of BN that computes the mean and variance used for normalization from all of the summed inputs to the neurons in a layer on a <strong>single</strong> training sample.</p>
+
+<p>Using the same notation as above, we have $Z^{l}$ is a $m \times n_{out}$ matrix, whose element $z_{ij}$ is the summed input to the <em>j</em>-th neuron from the <em>i</em>-th sample in the mini-batch. Row <em>i</em> of $Z^{l}$ is the summed inputs to the all neuron in the <em>l</em>-th layer from the <em>i</em>-th sample in the mini-batch. As a direct transpose of BN, the LN layer is a <strong>row-wise normalization</strong> procedure to normalize $\left[ \textbf{z}_{1}, \textbf{z}_{2}, \cdots, \textbf{z}_{m}\right]$ to have mean zero and standard deviation of one. Same as BN, each neuron is given its own adaptive bias and scale parameters.</p>
+
+<p>$$ Z^{l} =
+\begin{bmatrix}
+z_{11} &amp; \cdots &amp; z_{1n_{out}} \\
+\vdots &amp; \ddots &amp; \vdots \\
+z_{m1} &amp; \cdots &amp; z_{mn_{out}}
+\end{bmatrix} =
+\begin{bmatrix}
+- &amp; \textbf{z}_{1} &amp; - \\
+- &amp; \textbf{z}_{2} &amp; - \\
+\cdots &amp; \cdots &amp; \cdots \\
+- &amp; \textbf{z}_{m} &amp; - \\
+\end{bmatrix}
+$$</p>
+
+<p>$$\textbf{BN}_{\gamma, \beta}(Z^{l}) =
+\begin{bmatrix}
+- &amp; \hat{\textbf{z}}_{1} &amp; - \\
+- &amp; \hat{\textbf{z}}_{2} &amp; - \\
+\cdots &amp; \cdots &amp; \cdots \\
+- &amp; \hat{\textbf{z}}_{m} &amp; - \\
+\end{bmatrix}
+\circ
+\begin{bmatrix}
+| &amp; | &amp; \cdots &amp;| \\
+\gamma_1 &amp; \gamma_2 &amp; \cdots &amp; \gamma_{n_{out}} \\
+| &amp; | &amp; \cdots&amp; | \\
+\end{bmatrix}
++
+\begin{bmatrix}
+| &amp; | &amp; \cdots &amp;| \\
+\beta_1 &amp; \beta_2 &amp; \cdots &amp; \beta_{n_{out}} \\
+| &amp; | &amp; \cdots&amp; | \\
+\end{bmatrix}
+$$</p>
+
+<h4>Layer Normalization on RNN</h4>
+
+<p>In RNN, the summed input are computed from the current input $\textbf{x}^t$ and previous hidden state $\textbf{h}^{t-1}$ as
+$$\textbf{a}^{(t)} = W_{hh}\textbf{h}^{(t-1)} + W_{xh}\textbf{x}^{(t)}$$.</p>
+
+<p>LN computes the layer-wise mean and standard deviation, then then re-centers and re-scales the activations
+$$\boldsymbol{\mu}^{(t)} =\frac{1}{H} \sum_{i=1}^H \textbf{a}^{(t)} \ \ \ \ \
+\boldsymbol{\sigma}^{(t)} = \sqrt{\frac{1}{H} \sum_{i=1}^H (\textbf{a}^{(t)} - \boldsymbol{\mu}^{(t)})^2 } \ \ \ \ \
+\textbf{h}^{(t)} = f \left( \frac{\boldsymbol{\gamma}}{\boldsymbol{\sigma}^{(t)}} \circ \left( \textbf{a}^{(t)} - \boldsymbol{\mu}^{(t)}\right) + \boldsymbol{\beta} \right)
+$$</p>
+
+<p>LN provides the following benefits when applied to RNN:</p>
+
+<ul>
+<li>No need to compute and store separate running averages for each time step in a sequence because the normalization terms depend on only the current time-step.</li>
+<li>With LN, the normalization makes it invariant to re-scaling all of the summed inputs to a layer, which helps preventing exploding or vanishing gradients and results in much more stable hidden-to-hidden dynamics.</li>
+</ul>
+
+
+<h4>Invariance Properties of Normalizations</h4>
+
+<p>The below table shows the invariant properties of three different normalization procedures. <strong>These invariance properties make the training of the network more robust</strong>. Invariance to the scaling and shifting of weights means that proper weight initialization is not as important. Invariance to the scaling and shifting of data means that one bad (too big, too small, etc.) batch of input from the previous layer don&rsquo;t ruin the training of next layer.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/invariance.png" height="400" width="800" alt="covariate_shift" /></p>
+
+<h2>4. Not ICS, But A Smoother Optimization Landscape?</h2>
+
+<p>Despite its pervasiveness, the effectiveness of BN still lacks theoretical proof. <a href="https://arxiv.org/pdf/1805.11604.pdf">Santurkar and Tsipras et al.</a> recently proposed that <strong>ICS has little to do with the success of BN</strong>. Instead, BN <strong>makes the optimization landscape much smoother</strong>, which induces a more predictive and stable behavior of the gradients.</p>
+
+<h4>The performance of BN Doesn&rsquo;t Stem From reducing ICS</h4>
+
+<p>Santurkar and Tsipras et al. designed a clever experiment, where a network was trained with <em>random</em> noise (non-zero mean and non-unit variance distribution, changes at every time step) injected after BN layers, creating an artificial ICS. The performance of the network with &ldquo;noisy&rdquo; BN was compared with networks trained with and without BN. “Noisy” BN network has less stable distributions than the standard, no BN network due to the artificial ICS, yet it still performs better.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/noisy_bn_ics.png" height="400" width="800" alt="BN_ICS" /></p>
+
+<h4>BN doesn&rsquo;t even reduce ICS</h4>
+
+<p>Previously, ICS is a conception that has no measurement. Santurkar and Tsipras et al. defined a metric for ICS, which is difference ($||G_{t,i} - G_{t,i}\prime||_2$) between the gradient $G_{t,i}$ of the layer parameters and the same gradient $G_{t,i}\prime$ <strong>after</strong> all the previous layers have been updated. Experiments showed that models with BN have similar, or even worse, ICS, despite performing better.</p>
+
+<h4>The Fundamental Phenomenon at Play: the Smoothing Effect</h4>
+
+<p>Santurkar and Tsipras et al. argued that the key impact of BN is that it reparametrizes the underlying optimization problem to <strong>make its landscape significantly more smooth</strong>. With BN,</p>
+
+<ul>
+<li>The loss landscape is smoother and has less discontinuity (i.e. kinks, sharp minima). The loss changes at a smaller rate and the magnitudes of the gradient is smaller too. In other words, the Lipschitzness of the loss function is improved. (a function f is <em>L</em>-Lipschitz, $|f(x_1) - f(x_2)| \leq L||x_1 - x_2||$)</li>
+<li>Improved Lipschitzness of the gradients gives us confidence that
+when we take a larger step in a direction of a computed gradient, this gradient direction remains a fairly accurate estimate of the actual gradient direction after taking that step.</li>
+<li>The gradients are more stable and changes more reliably and predictively. In other words, the loss exhibits a significantly better “effective” $\beta$-smoothness. (a function f is $\beta$-smooth if its gradients are $\beta$-Lipschitz, i.e. $||\nabla f(x_1) - \nabla f(x_2)| \leq \beta||x_1 - x_2||$)</li>
+<li>Improved Lipschitzness of the gradients gives us confidence that
+when we take a larger step in a direction of a computed gradient, this gradient direction remains a fairly accurate estimate of the actual gradient direction after taking that step.</li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post16/bn_smooth.png" height="400" width="800" alt="BN_ICS" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Classifying Toxic Comment]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/05/01/kaggle-toxic-comment/"/>
+    <updated>2018-05-01T17:51:44-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/05/01/kaggle-toxic-comment</id>
+    <content type="html"><![CDATA[<p>I had lots of fun at my last Kaggle competition <a href="https://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/">Mercari Price Suggestion Challenge</a>. Without a second thought, I dived right in the <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge">Toxic Comment Classification Challenge</a> to further practice my NLP skills.</p>
+
+<p>To get a different experience, I decided to team up instead of going solo. It turned out great, as I learned a ton from my teammates <a href="https://www.kaggle.com/learnmower">Thomas</a>, <a href="https://www.kaggle.com/konradb">Konrad</a> and <a href="https://www.kaggle.com/newtohere">Song</a>, who have been doing this much longer than I have. Unknownly, I put myself in the best situation for learning - being the least experienced team member.</p>
+
+<p><strong>TL;DR The Jigsaw Toxic Comment Classification Challenge is the most nail-biting that I have participated in. I am estatic that my team ranked top 1% out of 4,500+ teams</strong></p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/toxic_comment_rank.png" alt="toxic" /></p>
+
+<!--more-->
+
+
+<h2>1. The Competition</h2>
+
+<p>The <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge">Jigsaw Toxic Comment Classification Challenge</a> is sponsored by Google and Jigsaw, with a purpose to improve online conversation. The task is to build a multi-headed model that’s capable of detecting different types of of toxicity like threats, obscenity, insults, and identity-based hate. The dataset consists of comments from Wikipedia’s talk page edits.</p>
+
+<p>The competition isn&rsquo;t smooth sailing by any means. It had several major changes through its course:</p>
+
+<ul>
+<li><strong>Dataset Change</strong>: since a portion of the data was previously released (a.k.a data leak), Jigsaw had to collect and label more data for a new test set, which turned out to be on a slightly different distribution from the training set. Therefore one of the biggest challenge of the competition is to find a reliable cross-validation strategy. The competition was also extended for 1 month to accommodate the new dataset.</li>
+<li><strong>Metric Change</strong>: the competition started with <a href="http://scikit-learn.org/stable/modules/generated/sklearn.metrics.log_loss.html">log loss</a> (also known as cross entropy) as the evaluation metric. However, log loss is not <a href="https://en.wikipedia.org/wiki/Scale_invariance">scale-invariant</a> so teams were focusing on silly post-processing that improves the score. The host made a good call to switch to <a href="https://en.wikipedia.org/wiki/Receiver_operating_characteristic">ROC AUC</a>, which is scale-invariant and makes more business sense.</li>
+</ul>
+
+
+<p>Since the corpus is relatively small and there is a difference in distribution between training and test set, the key to success is to <strong>build a robust model that can generalize to the different distribution of the test set.</strong> In retrospect, we found that all successful techniques in this competition specifically addressed the point above.</p>
+
+<h2>2. Our Experience</h2>
+
+<h3>2.1 Pre-Processing</h3>
+
+<p>Since the corpus consists of online comments that are likely toxic, there is an abundance of intentional misspells (to avoid bad words filtering), typos, emojis and derogatory ascii art. Thomas and I wrote quite an exhaustive script trying to clean and normalize the corpus. Here are some examples:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">## cleaning smile emoji</span>
+</span><span class='line'><span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&quot;\(:&quot;</span><span class="p">,</span> <span class="s">&quot; smile &quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+</span><span class='line'><span class="c">## cleaning the penis asci art...</span>
+</span><span class='line'><span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&#39;8=+D&#39;</span><span class="p">,</span> <span class="s">&#39;dick&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It turns out that the pre-processing was not impactful at all. All of the top teams have had the same experience as well. Our effort of a 400+ line pre-processing script went nowhere, but I am actually happy since I hate pre-processing/feature engineering and I don&rsquo;t believe they are part of the path to generalizable machine learning /AI.</p>
+
+<h3>2.2 Embeddings</h3>
+
+<p>Word embedding is a technique of representing the meaning of words by mapping them to a continuous high dimensional vector space. The most well-known embedding is <a href="https://www.tensorflow.org/tutorials/word2vec">word2vec</a> by <a href="https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf">Mikolov et al</a>. The embedding we used in the competition were <a href="https://nlp.stanford.edu/projects/glove/">GloVe</a> (common crawl &amp; twitter), <a href="https://github.com/facebookresearch/fastText">fastText</a> and <a href="http://anthology.aclweb.org/P16-2068">LexVec</a>, though we were only able to re-train a small portion of models with different embeddings due to time constraint.</p>
+
+<p><strong>Using a variety of embeddings turned out to be crucial in this competition</strong>. In the context of <a href="https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff">bias-variance decomposition</a>, there is an irreducible bias term due to the different distribution of training and test set. Hence, the best way to improve the model performance is to decrease the variance. Ensembling a wide range of diverse models is a great way to decrease the variance of the Ensemble. Alas, it was towards the end of the competition that Thomas found out training the same model with different embedding was a very effective way to produce performant yet diverse base models.</p>
+
+<p>Out of all embeddings, <a href="https://github.com/facebookresearch/fastText">fastText</a> gave the best performance overall. The capability of <a href="https://arxiv.org/abs/1607.04606">generating word vectors for out-of-vocabulary words using subword information</a> was tremendously helpful for correcting misspells and typos.</p>
+
+<h3>2.3 Base Models</h3>
+
+<h4>2.3.1 NB-SVM</h4>
+
+<p><a href="https://sijunhe.github.io/blog/2018/04/03/nb-svm/">NB-SVM</a> is a widely-used baseline for text classification. It is based on bag-of-words approach and has a robust performance across tasks and datasets (important for this competition). NB-SVM was popular in this competition as a base model, thanks to this wonderful baseline <a href="https://www.kaggle.com/jhoward/nb-svm-strong-linear-baseline">kernel</a> by <a href="https://www.kaggle.com/jhoward">Jeremy Howard</a> with a public leaderboard score of <code>0.9770</code>.</p>
+
+<p>After some additional pre-processing and hyperparameter tuning, we were able to improve the model to <code>0.9813</code> on public leaderboard. The surprise came after the competition, when we found that our NB-SVM scored <code>0.9821</code> on the private leaderboard. This is impressive since</p>
+
+<ul>
+<li><strong>Generalization</strong>: all other models of ours <em>overfitted</em> to the public leaderboard (higher public score than private score) and NB-SVM was the only exception.</li>
+<li><strong>Performance</strong>: the performance of <code>0.9821</code> was very good for such a minimal linear model. In comparison, our best single model scored <code>0.9857</code> (+0.36) and the best single model of the competition was around <code>0.9869</code> (+0.48). NB-SVM is also much faster to train and a breeze to deploy compared with the other two so one could argue that the NB-SVM is a more viable solution.</li>
+</ul>
+
+
+<h4>2.3.2 RNN</h4>
+
+<p>As expected in the NLP domain, Recurrent Neural Network (RNN) dominates this competition. Our strongest single model was a single layer RNN-Capsule Network with GRU cell at <code>0.9857</code> on the private leaderboard. Following closely is a single layer RNN with linear attention and GRU cell at <code>0.9856</code>. From what I have read, the best single models of all released top solutions are RNN-based.</p>
+
+<p>Given that the challenge is on generalization, most RNN-based models I have seen lean on the simple side, with a single layer of RNN followed by some variant of an attention layer (i.e. global max pooling, global mean pooling, attention, etc) over the time axis. Also, we have observed that GRU outperforms LSTM in general, probably because GRU has less parameters and thus less prone to overfitting.</p>
+
+<h4>2.3.3 CNN</h4>
+
+<p>There is a lot of arguments about whether RNN or CNN is better at NLP task. A <a href="https://arxiv.org/abs/1702.01923">comparative study</a> suggested that CNN is good at extracting position-invariant features and RNN at modeling units in sequence. For me, CNN is a generalized n-gram feature extractor. I thought CNN would be strong at this competition since the task is more similar to key word detection than sentiment analysis. I was wrong.</p>
+
+<p>I didn&rsquo;t have much success on CNN and I didn&rsquo;t see any CNNs that could compete with RNNs on public kernel. My best CNN is a <a href="https://arxiv.org/abs/1408.5882">wide and shallow CNN</a> with a private leaderboard score of <code>0.9835</code>. The CNN got &ldquo;feature selected&rdquo; in our ensemble and contributed nothing. Though, the 2nd place team wrote that they had <a href="http://ai.tencent.com/ailab/media/publications/ACL3-Brady.pdf">DPCNN</a> as one of their base models. I too have experimented with DPCNN during the competition but didn&rsquo;t have any success.</p>
+
+<h4>2.3.4 Tree-Based Models</h4>
+
+<p>In theory, tree-based models aren&rsquo;t well-suited for NLP task, primarily due to high cardinality categorical features from huge word vocabulary space. Tree-based models sucked in practice as well. We experimented with Random Forest, Extra Tree, LightGBM and XGBoost and all of them severely underperformed other models. Our best attempt was a <a href="http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesClassifier.html">Extra Tree model</a> by Konrad with <code>0.9792</code> on private leaderboard. It is worth noting that despite their underwhelming performances, tree-based models still accounted for about 10% of the weight in our linear stacking ensemble.</p>
+
+<h3>2.4 Ensembling</h3>
+
+<p><a href="http://blog.kaggle.com/2016/12/27/a-kagglers-guide-to-model-stacking-in-practice/">Stacking</a> (also called meta ensembling) is a model ensembling technique used to combine information from multiple predictive models to generate a new model. This competition was the first time I used <a href="http://blog.kaggle.com/2017/06/15/stacking-made-easy-an-introduction-to-stacknet-by-competitions-grandmaster-marios-michailidis-kazanova/">stacking</a> and it was the most valuable learning experience of the competition.</p>
+
+<p>Since the data size is relatively small, the competition is the perfect candidate for stacking. We split the dataset into 10 folds, trained L1 models and produced out-of-fold predictions to the train L2 model. We had about 35 L1 models from a wide range of performances. The 2 L2 model we experimented with were XGBoost and LASSO. Their performance were comparable at <code>0.9871</code>. A simple average of the two stacking model gave us our best and final model at <code>0.9872</code>.</p>
+
+<h3>2.5 Selected Model Performance</h3>
+
+<table>
+<thead>
+<tr>
+<th> Model            </th>
+<th style="text-align:center;"> Private Leaderboard </th>
+<th style="text-align:center;"> Public Leaderboard </th>
+<th style="text-align:center;"> Overfitting Delta </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> Extra Tree         </td>
+<td style="text-align:center;"> 0.9792 </td>
+<td style="text-align:center;"> 0.9805 </td>
+<td style="text-align:center;"> -0.0013 </td>
+</tr>
+<tr>
+<td> NB-SVM             </td>
+<td style="text-align:center;"> 0.9821 </td>
+<td style="text-align:center;"> 0.9813 </td>
+<td style="text-align:center;"> <strong>+0.0008</strong> </td>
+</tr>
+<tr>
+<td> Shallow &amp; Wide CNN </td>
+<td style="text-align:center;"> 0.9835 </td>
+<td style="text-align:center;"> 0.9846 </td>
+<td style="text-align:center;"> -0.0011 </td>
+</tr>
+<tr>
+<td> GRU + Attention    </td>
+<td style="text-align:center;"> 0.9856 </td>
+<td style="text-align:center;"> 0.9864 </td>
+<td style="text-align:center;"> -0.0008 </td>
+</tr>
+<tr>
+<td> GRU + Capsule Net  </td>
+<td style="text-align:center;"> 0.9857 </td>
+<td style="text-align:center;"> 0.9863 </td>
+<td style="text-align:center;"> -0.0006 </td>
+</tr>
+<tr>
+<td> Lasso Stacking     </td>
+<td style="text-align:center;"> 0.9870 </td>
+<td style="text-align:center;"> 0.9874 </td>
+<td style="text-align:center;"> -0.0004 </td>
+</tr>
+<tr>
+<td> XGBoost Stacking   </td>
+<td style="text-align:center;"> 0.9870 </td>
+<td style="text-align:center;"> 0.9873 </td>
+<td style="text-align:center;"> -0.0003 </td>
+</tr>
+<tr>
+<td> <strong>Average of Lasso &amp; XGBoost Stacking</strong>   </td>
+<td style="text-align:center;"> <strong>0.9872</strong> </td>
+<td style="text-align:center;"> <strong>0.9875</strong> </td>
+<td style="text-align:center;"> <strong>-0.0003</strong> </td>
+</tr>
+</tbody>
+</table>
+
+
+<h2>3. Reflections</h2>
+
+<h3>3.1 What We did well</h3>
+
+<ul>
+<li><strong>Stacking</strong>: Biggest learning of this competition. It also contributed a lot to our rank since our single model performance is lower than other teams around us.</li>
+<li><strong>Model Diversity</strong>: We experimented with a wide range of models and helped with stacking. It was also nice to revisit all the different models.</li>
+</ul>
+
+
+<h3>3.2 Areas of Improvements</h3>
+
+<ul>
+<li><strong>Single model performance</strong>: Our single model performance is lower than top teams around us since we missed a few key techniques that other top teams used.</li>
+<li><strong>Team collaboration</strong>: We literally had teammates all over the world (Netherlands, New York, Hawaii and California) and it was difficult to collaborate around the time difference. We never had a team call or a discussion when everybody were awake.</li>
+</ul>
+
+
+<h3>3.3. Learning From Top Solutions</h3>
+
+<h4>3.3.1 1st Place Solution</h4>
+
+<p>The 1st place team had a very systematic approach to the problem with an scientific rigor that I truly admire. They even did an ablation analysis! An elaborate solution overview can be found <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/discussion/52557">here</a>. Their approach can be summarized as the following:</p>
+
+<ul>
+<li><strong>Diverse Embedding</strong>: as described in the above embedding section</li>
+<li><strong>Train/Test Time Augmentation (TTA)</strong>: They did data augmentation at both training and test time leveraging <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/discussion/48038">translation</a>. Each input sentence was translated to French, German and Spanish and then back to English. At training time, the translations of a sentence stay in the same fold to avoid leakage. At test time, the prediction is made by averaging various translations. TTA had a big impact on the performance of their models, with the following ablation analysis</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th> Model            </th>
+<th style="text-align:center;"> Leaderboard Score </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> Baseline Bi-GRU  </td>
+<td style="text-align:center;"> 0.9862 </td>
+</tr>
+<tr>
+<td> + train-time augmentation      </td>
+<td style="text-align:center;"> 0.9867      </td>
+</tr>
+<tr>
+<td> + test-time augmentation       </td>
+<td style="text-align:center;"> 0.9865      </td>
+</tr>
+<tr>
+<td> + train/test-time augmentation </td>
+<td style="text-align:center;"> 0.9874      </td>
+</tr>
+</tbody>
+</table>
+
+
+<ul>
+<li><strong>Pseudo Labeling</strong>: Pseudo Labeling is a semi-supervised technique introduced in ICML 2013 by <a href="http://deeplearning.net/wp-content/uploads/2013/03/pseudo_label_final.pdf">Lee</a> that improves generalization performance (just what we need for this competition) using unlabeled data. The procedure is to train a model on the training set, predict the &ldquo;pseudo-labels&rdquo; on the test set and treat the pseudo-labeled test set as part of the new training set. The method is similar to <a href="https://pdfs.semanticscholar.org/1ee2/7c66fabde8ffe90bd2f4ccee5835f8dedbb9.pdf">Entropy Regularization</a>. By minimizing the cross entropy for unlabeled data, the overlap of class probability distribution can be reduced and the decision boundary of the model becomes more accurate. The team reported a increase in leaderboard score from <code>0.9880</code> to <code>0.9885</code> with the Pseudo Labeling technique.</li>
+</ul>
+
+
+<h4>3.3.2 3rd Place Solution</h4>
+
+<p>The 3rd place team has the <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/discussion/52644">strongest single model</a> I have read, with a private leaderboard score of <code>0.9869</code>. With the <a href="https://explosion.ai/blog/deep-learning-formula-nlp">embed-encode-attend-predict</a> framework, it can be break down as following:</p>
+
+<ul>
+<li><strong>embed</strong>: concatenated <a href="https://github.com/facebookresearch/fastText">fastText</a> and <a href="https://nlp.stanford.edu/projects/glove/">GloVe</a> twitter embeddings. The redundancy definitely helped</li>
+<li><strong>encode</strong>: 2-layer RNN setting, with Bi-LSTM following by Bi-GRU. I also experimented brief with deeper RNN models during the competition but it didn&rsquo;t go anywhere</li>
+<li><strong>attend</strong>: A concatenation of the last states, global maximum pool, global average pool and two features: &ldquo;Unique words rate&rdquo; and &ldquo;Rate of all-caps words&rdquo;. Again, the redundancy helped</li>
+<li><strong>predict</strong>: dense layer</li>
+</ul>
+
+
+<p>The other interesting thing is that Alex trained with a larger batch size (512) but for many epochs (15 epochs). I did the exact opposite and trained with small batch size (64 or 128) for a small number of epochs (usually 4 - 6 epochs). I am not sure if the training schedule had any impact.</p>
+
+<h3>4. Summary</h3>
+
+<p>Another great experience and my best finish on Kaggle so far! Teaming up gave a entirely different experience and I learned a lot working with my teammates. While it was a pity that we didn&rsquo;t get a gold metal (we were very close with a difference of <code>-0.0002</code>), we did miss a few key techniques used by the gold-winning teams so we didn&rsquo;t really deserve it. The push for a gold medal and the kaggle master tier continues.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[On Factorization Models]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/04/19/factorization-machines/"/>
+    <updated>2018-04-19T16:37:42-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/04/19/factorization-machines</id>
+    <content type="html"><![CDATA[<p>Recently, I have been working on the <a href="https://www.kaggle.com/c/talkingdata-adtracking-fraud-detection">TalkingData AdTracking Fraud Detection Challenge</a>. This is my first experience with CTR prediction, which is similar to NLP and Recommendation Systems in a way that features are very sparse. <a href="https://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf">Field-aware Factorization Models</a> have been dominating the last few CTR prediction competitions on Kaggle so here is my a little write-up for <a href="https://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf">Field-aware Factorization Models</a> and the its origin - <a href="https://www.csie.ntu.edu.tw/~b97053/paper/Rendle2010FM.pdf">Factorization Model</a>.</p>
+
+<!--more-->
+
+
+<h2>1. Factorization Machines (FM)</h2>
+
+<ul>
+<li>The most common prediction task is to estimate a function $y: \mathcal{R}^n \rightarrow T$ from a real valued feature vector $\textbf{x} \in \mathcal{R}^n$ to a target domain $T$ ($T = \mathcal{R}$ for regression or $T = \{+, -\}$ for classification)</li>
+<li>Under sparsity, almost all of the elements in $\textbf{x}$ are zero. Huge sparsity appears in many real-world data like recommender systems or text analysis. One reason for huge sparsity is that the underlying problem deals with large categorical variable domains.</li>
+<li>The paper uses the following example of transaction data of a movie review system, with user $u \in U$ rates a movie $i \in I$ at a time $t \in \mathcal{R}$ with a rating $r = \{1, 2, 3, 4, 5\}$
+<img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post15/fm_example.png" alt="fm_example" /></li>
+<li>The above figure shows an example of how feature vectors can be created.
+
+<ul>
+<li>$|U|$ and $|I|$ binary indicators variables for the active user and item, respectively</li>
+<li>Implicit indicators of all other movies the users has ever rated, normalized to sum up to 1</li>
+<li>Binary indicators of the last movie rated before the current one</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>1.1 Factorization Machine Model</h4>
+
+<ul>
+<li><p>The equation for a factorization machine of degree $d = 2$
+$$\hat{y}(\textbf{x}) = w_0 + \sum_{i=1}^n w_i x_i + \sum_{i=1}^n \sum_{j=i+1}^n \langle \textbf{v}_i, \textbf{v}_j \rangle x_i x_j \tag{1}$$
+where $w_0 \in \mathcal{R} \ \  \textbf{w} \in \mathcal{R}^n \ \ \textbf{V} \in \mathcal{R}^{n \times k}$</p></li>
+<li><p>A row $\textbf{v}_i$ describes the <em>i</em>-th variable with <em>k</em>-factors. $k$ is a hyperparameter that defines the dimensionality of the factorization</p></li>
+<li><p>The 2-way FM captures all single and pairwise interactions between variables</p>
+
+<ul>
+<li>$w_0$ is the global bias, $w_i$ models the strength of the i-th variable</li>
+<li>$\hat{w}_{i,j} = \langle \textbf{v}_i, \textbf{v}_j \rangle$ models the interaction between i-th and j-th variable. The FM models the interaction by factorizing it, which is the key point which allows high quality parameter estimates of higher-order interactions under sparsity</li>
+</ul>
+</li>
+<li><p><strong>Expressiveness</strong>: For any positive definite matrix $\textbf{W}$, there exists a matrix $\textbf{V}$ such that $W = \textbf{V}\textbf{V}^T$ if $k$ is large enough. Thus, FM can express any interaction matrix $\textbf{W}$ if $k$ is chosen large enough. However, in sparse settings, typically a small $k$ should be chosen because there is not enough data to estimate complex interactions. <strong>Restricting $k$ and the expressiveness of FM often lead to better generalization under sparsity.</strong></p></li>
+<li><p><strong>Parameter Estimation Under Sparsity</strong>: FM can estimate interactions even in sparse settings well because they break the independence of the interaction parameters by factorizing them. This means that the data for one interaction helps also to estimate the parameters for related interactions.</p></li>
+<li><p><strong>Computation</strong>: The complexity of straight forward computational of Eq. 1 is in $O(kn^2)$ due to pairwise interactions. With the kernel trick, the model equation can be computed in linear time $O(kn)$</p></li>
+</ul>
+
+
+<p>$$\begin{align}
+\sum_{i=1}^n \sum_{j=i+1}^n \langle \textbf{v}_i, \textbf{v}_j \rangle x_i x_j &amp;= \frac{1}{2} \left[ \sum_{i=1}^n \sum_{j=1}^n \langle \textbf{v}_i, \textbf{v}_j \rangle x_i x_j - \sum_{i=1}^n \langle \textbf{v}_i, \textbf{v}_i \rangle x_i^2 \right] \\
+&amp;= \frac{1}{2} \left[ \sum_{i=1}^n \sum_{j=1}^n \sum_{f=1}^k v_{i,f} v_{j,f}  x_i x_j - \sum_{i=1}^n  \sum_{f=1}^k v_{i,f} v_{i,f} x_i^2 \right] \\
+&amp;= \frac{1}{2} \sum_{f=1}^k \left[ \left( \sum_{i=1}^n v_{i,f} x_i \right)  \left( \sum_{j=1}^n v_{j,f} x_j \right) - \sum_{i=1}^n v_{i,f}^2 x_i^2 \right] \\
+&amp;= \frac{1}{2} \sum_{f=1}^k \left[ \left( \sum_{i=1}^n v_{i,f} x_i \right)^2 - \sum_{i=1}^n v_{i,f}^2 x_i^2 \right]
+\end{align}$$</p>
+
+<h4>1.2 Loss Function of FM</h4>
+
+<ul>
+<li><strong>Regression</strong>: $\hat{y}(\textbf{x})$ can be used directly as the predicator and the loss is MSE</li>
+<li><strong>Binary Classification</strong> the sign of $\hat{y}(\textbf{x})$ is used and the loss is the hinge loss or logit loss</li>
+<li><strong>Ranking</strong>: the vectorr $\textbf{x}$ are odered by the score of $\hat{y}(\textbf{x})$ and loss is calculated over pairs of vectors with a pairwise classification loss</li>
+</ul>
+
+
+<h4>1.3 Learning Factorization Machines</h4>
+
+<p>Since FM has a closed model equation, the model parameters $w_0, \textbf{w}, \textbf{V}$ can be learned efficiently by gradient descent methods for a varity of loss.</p>
+
+<p>$$\frac{\partial }{\partial \theta}\hat{y}(\textbf{x}) =
+\begin{cases}
+1,  &amp; \theta = w_0 \\
+x_i, &amp; \theta = w_i \\
+x_i \sum_{i=1}^n v_{i,f} x_i - v_{i,f} x_i^2, &amp; \theta = v_{i, f}
+\end{cases}$$</p>
+
+<h4>1.4 d-way FM</h4>
+
+<p>The 2-way FM can easily be generalized into a d-way FM and it can still be computed in linear time.</p>
+
+<h2>2. FM vs SVM</h2>
+
+<ul>
+<li>The model equation of an SVm can be expressed as the dot product between the transformed input $\textbf{x}$ and model parameter $\textbf{w}$, $\hat{y}(\textbf{x}) = \langle \phi(\textbf{x}), \textbf{w} \rangle$, where $\phi$ is a mapping from the feature space $\mathcal{R}^n$ to a more complex space $\mathcal{F}$.</li>
+<li>We can define the kernel as $K(\textbf{x}, \textbf{z}) = \langle \phi(\textbf{x}), \phi(\textbf{z}) \rangle$</li>
+</ul>
+
+
+<h4>2.1 SVM Model</h4>
+
+<h5>Linear Kernel</h5>
+
+<ul>
+<li>The linear kernel is $K(\textbf{x}, \textbf{z}) = 1 + \langle \textbf{x}, \textbf{z} \rangle$, which translate to the mapping $\theta(\textbf{x}) = [1, x_1, \cdots, x_n]$.</li>
+<li>The model equation of a linear SVM can also be written as $\hat{y}(\textbf{x}) = w_0 + \sum_{i=1}^n w_i x_i$, which is identical to FM with degree $d = 1$</li>
+</ul>
+
+
+<h5>Polynomial Kernel</h5>
+
+<ul>
+<li>The polynomial kernel  $K(\textbf{x}, \textbf{z}) = (1 + \langle \textbf{x}, \textbf{z} \rangle)^d$ allow the SVM to model higher interactions between variables.</li>
+<li>For $d = 2$, the polynomial SVMs can be written as
+$$\hat{y}(\textbf{x}) = w_0 + \sqrt{2}\sum_{i=1}^n w_i x_i + \sum_{i=1}^n w_{i,i}^{(2)} x_i^2 + \sqrt{2}\sum_{i=1}^n \sum_{j=i+1}^n w_{i,j}^{(2)} x_i \tag{1}$$</li>
+<li>The main difference between a polynomial SVM (eq (2)) and the FM with degree $d = 2$ (eq (1)) is the parameterization: <strong>all interaction parameters $w_{i,j}$ of SVMs are completely independent</strong>. In contrast to the this, <strong>interaction parameters of FMs are factorized</strong> and $\langle \textbf{v}_i, \textbf{v}_j \rangle$ and $\langle \textbf{v}_i, \textbf{v}_l \rangle$ dependent on each other</li>
+</ul>
+
+
+<h4>2.2 Parameter Estimation Under Sparsity</h4>
+
+<ul>
+<li>For very sparse problems in collaborative filtering settings, linear and polynomial SVMs fail.</li>
+<li>This is primarily due to the fact that all interaction parameters of SVMs are independent. For a reliable estimate of the interaction parameter $w_{i,j}$, there must be enough data points where $x_i \neq 0$ and $x_j \neq 0$. As soon as either $x_i = 0$ or $x_j$, the case $\textbf{x}$ cannot be used for estimating the parameter $w_{i,j}$. If the data is too sprase, SVMs are likely to fail due to too few or even no cases for $(i,j)$</li>
+</ul>
+
+
+<h2>3. Field-aware Factorization Machine (FFM)</h2>
+
+<ul>
+<li>A variant of FMs, field-aware factorization machiens (FFMs), have been outperforming existing models in a number of CTR-prediction competitions (<a href="https://www.kaggle.com/c/avazu-ctr-prediction">Avazu CTR Prediction</a> and <a href="https://www.kaggle.com/c/criteo-display-ad-challenge">Criteo CTR Prediction</a>)</li>
+<li>The key idea in FFM is <strong>field</strong> and each feature has several latent vectors, depending on the field of other features.</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th style="text-align:center;"> Clicked </th>
+<th style="text-align:center;"> Publisher (P) </th>
+<th style="text-align:center;"> Advertiser (A) </th>
+<th style="text-align:center;"> Gender (G) </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;"> Yes     </td>
+<td style="text-align:center;"> ESPN </td>
+<td style="text-align:center;"> Nike </td>
+<td style="text-align:center;"> Male </td>
+</tr>
+</tbody>
+</table>
+
+
+<ul>
+<li>For the above example, FM will model it as (neglecting the bias terms),
+$$\hat{y}_{FM} = \langle v_{ESPN}, v_{Nike} \rangle + \langle v_{ESPN}, v_{Male} \rangle + \langle v_{Male}, v_{Nike} \rangle$$</li>
+<li>In FM, eveyr feature has only one latent vector to learn the latent effect with any other features. $v_{ESPN}$ is used to learn the latent effect with Nike $\langle v_{ESPN}, v_{Nike} \rangle$ and Male $\langle v_{ESPN}, v_{Male} \rangle$. However, Nike and Male belong to different fields so the latent efects of (ESPN, Nike) and (ESPN, Male) may be different.</li>
+<li><p>In FFM, each feature has several latent vectors. Depending on the field of other features, one of them is used to do the inner product. For the same example, FFM will model it as
+$$\hat{y}_{FFM} = \langle v_{ESPN,A}, v_{Nike,P} \rangle + \langle v_{ESPN,G}, v_{Male,P} \rangle + \langle v_{Male,G}, v_{Nike,A} \rangle$$</p></li>
+<li><p>Neglecting the global bias terms, the model equation of degree $d = 2$ FM is defined as
+$$\hat{y}(\textbf{x}) = \sum_{i=1}^n \sum_{j=i+1}^n \langle \textbf{v}_i, \textbf{v}_j \rangle x_i x_j \tag{3}$$</p></li>
+<li>the model equation of degree $d = 2$ FFM is defined as
+$$\hat{y}(\textbf{x}) = \sum_{i=1}^n \sum_{j=i+1}^n \langle \textbf{v}_i^{(J)}, \textbf{v}_j^{(I)} \rangle x_i x_j \tag{4}$$
+where $I$ and $J$ are the fields of $i, j$</li>
+<li>If $m$ is the number of fields, the total parameters of FFM is $mnk$ and the total parameter of FM is $nk$</li>
+<li>The time complexity of FFM is $O(kn^2)$ and the time complexity of FM is $O(kn)$</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[NB-SVM]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/04/03/nb-svm/"/>
+    <updated>2018-04-03T16:42:23-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/04/03/nb-svm</id>
+    <content type="html"><![CDATA[<p>A commonly-used baseline for text classification competitions on Kaggle is NB-SVM, introduced by Sida Wang and Chris Manning in the paper <a href="https://nlp.stanford.edu/pubs/sidaw12_simple_sentiment.pdf">Baselines and Bigrams: Simple, Good Sentiment and Topic Classification</a> in 2012. With Deep Learning based models dominating the field of NLP, it is nice to have a bag-of-words model that trains with a fraction of the resource (time &amp; compute) but performs only slightly worse.</p>
+
+<!--more-->
+
+
+<h2>1. Abstract</h2>
+
+<ul>
+<li>Naive Bayes (NB) and Support Vector Machine (SVM) are widely used as baselines in text-related tasks but their performance varies significantly across variants, features and datasets.</li>
+<li>Word bigrams are useful for sentiment analysis, but not so much for topical text classification
+tasks</li>
+<li>NB does better than SVM for short snippet sentiment tasks, while SVM outperforms NB for longer documents</li>
+<li>A SVM variant using NB log-count ratios as feature values consistently performs well across tasks and datasets</li>
+</ul>
+
+
+<h2>2. Methods</h2>
+
+<ul>
+<li>The main model is formulated as a linear classifier</li>
+</ul>
+
+
+<p>$$\textbf{y} = \text{sign}(\textbf{w}^T\textbf{x} + \textbf{b})\tag{1}$$</p>
+
+<ul>
+<li>Let $\textbf{f}^{(i)}$ be the feature vector for training case $i$ with binary label $y^{(i)} \in {-1, 1}$. Define the two count vectors $\textbf{p}$ and $\textbf{q}$ as</li>
+</ul>
+
+
+<p>$$\textbf{p} = \alpha + \sum_{i: y^{(i)} = 1} \textbf{f}^{(i)}\tag{2}$$</p>
+
+<p>$$\textbf{q} = \alpha + \sum_{i: y^{(i)} = -1} \textbf{f}^{(i)}\tag{3}$$</p>
+
+<ul>
+<li>$\alpha$ is the smoothing parameter</li>
+<li>Log-count ratio can be defined as</li>
+</ul>
+
+
+<p>$$\textbf{r} = \text{log}\left( \frac{\textbf{p} / ||\textbf{p}||_1 }{ \textbf{q} / ||\textbf{q}||_1 } \right)\tag{4}$$</p>
+
+<h4>2.1 Multinomial Naive Bayes (MNB)</h4>
+
+<ul>
+<li>For MNB, the feature vectors represent the frequencies with which events are generated by a multinomial distribution $\textbf{p} = (p_1, \cdots, p_n)$.</li>
+<li>The feature vector $\textbf{x} = (x_1, \cdots, x_n)$ is a histogram, where $x_k$ is the number of times event $k$ was observed in a particular instance.</li>
+<li>With the multinomial assumption and the Naive Bayes assumption, the likelihood of $\textbf{x}$ conditional on y is given by
+$$p(\textbf{x} | y) = \frac{\sum_k x_k !}{\prod_k x_k !} \prod_k p_{yk}^{x_k}$$
+$$p(y | \textbf{x}) = \frac{p(y) p(\textbf{x} | y)}{p(\textbf{x})} \propto p(y) p(\textbf{x} | y) $$
+$$
+\begin{align}
+\text{log} \ p(y | \textbf{x}) &amp;\propto \text{log} \ \left[ p(y) \prod_k p_{yk}^{x_k} \right] \\
+&amp;= \text{log} \ p(y) + \sum_k x_k \text{log} \ p_{yk} \tag{4}
+\end{align}
+$$</li>
+<li><p>The multinomial naive Bayes classifier becomes a linear classifier when expressed in log-space, since $Eq. (4)$ can be change into the format of $Eq. (1)$
+$$
+\begin{align}
+y &amp;= \text{argmax} \ \text{log} \ p(y) + \sum_k x_k \ \text{log} \ p_{k} \\
+&amp;= \text{sign} \left( \text{log} \ \frac{p(y = 1)}{p(y = -1)} + \sum_k x_k \ \text{log} \ \frac{p_{1k}}{p_{-1k}} \right) \\
+&amp;= \text{sign} \left( \text{log} \ \frac{N_+}{N_-} + \textbf{r}^T\textbf{f} \right)
+\end{align}
+$$</p></li>
+<li><p><a href="http://www2.aueb.gr/users/ion/docs/ceas2006_paper.pdf">Metsis et al.</a> showed that binarizing $\textbf{f}$ is better. Hence we define $\hat{\textbf{f}} = \textbf{1}(\textbf{f} > 0)$ and use $\hat{\textbf{f}}$ to compute $\hat{\textbf{p}}, \hat{\textbf{q}}, \hat{\textbf{r}}$</p></li>
+</ul>
+
+
+<h4>2.2 Support Vector Machine (SVM)</h4>
+
+<ul>
+<li>For SVM, we set $\textbf{x} = \hat{\textbf{f}}$ and obtain the $\textbf{w}, b$ by minimizing the loss function</li>
+</ul>
+
+
+<p>$$L(\textbf{w}, b) = \textbf{w}^T \textbf{w} + C \sum_i \text{max}\left(0, 1 - y^{(i)}(\textbf{w}^T \hat{\textbf{f}}^{(i)} + b)\right)^{2}     $$</p>
+
+<h4>2.3 SVM with NB features (NBSVM)</h4>
+
+<ul>
+<li>For NBSVM, we use the log likelihood ratios as the feature vector and set $\textbf{x} = \hat{\textbf{r}} \circ \hat{\textbf{f}}$</li>
+<li>While works well for longer documents, an interpolation between MNB and SVM performs well for all documents</li>
+</ul>
+
+
+<p>$$\textbf{w}` = (1 - \beta)\bar{w} + \beta \textbf{w}$$</p>
+
+<ul>
+<li>$\bar{w}$ is the mean magnitude of $\textbf{w}$ and $\beta \in [0, 1]$ is the interpolation parameter</li>
+<li>The interpolation is a form of regularization: trust NB unless the SVM is very confident</li>
+</ul>
+
+
+<h2>3. Results</h2>
+
+<ul>
+<li>MNB is better at snippets while SVM is better at full-length reviews</li>
+<li>NBSVM performs well on snippets and longer documents for for sentiment, topic and subjectivity classification. NBSVM is a very strong baseline for sophisticated methods aiming to beat a bag of features.</li>
+<li>In sentiment classification there are gains from adding bigrams because they can capture modified verbs and nouns.</li>
+</ul>
+
+
+<h2>4. Implementation</h2>
+
+<p>A well-written implementation with scikit-learn scikit-learn estimator api and the interpolation parameter $\beta$ can be found <a href="https://github.com/scotthlee/document_classification/blob/master/nbsvm.py">here</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Mercari Price Suggestion]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/"/>
+    <updated>2018-03-02T21:46:50-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge</id>
+    <content type="html"><![CDATA[<p>One of my first data science experience was with Kaggle more than two years ago when I played around with the <a href="https://sijunhe.github.io/blog/2015/10/31/kaggle-titanic-part-i/">Titanic competition</a>. While the competition itself was minimal, the experience was magical, intuitive and one of the reasons I got into data science.</p>
+
+<p>Two years later, I work full-time as a data scientist. One night, I decided to challenge myself on a whim and ended up spending all of my free time on this competition for two weeks.</p>
+
+<p><strong>TL;DR I had my first serious Kaggle competition and ranked 65th out of 2384 teams (top 3%)</strong></p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/mercari_rank.png" alt="mecari" /></p>
+
+<!--more-->
+
+
+<h2>1. The Competition</h2>
+
+<p>The <a href="https://www.kaggle.com/c/mercari-price-suggestion-challenge">Mercari Price Suggestion Challenge</a> was to build an algorithm that automatically suggests the right product prices with provided user-inputted text descriptions of their products, including details like product category name, brand name, and item condition.</p>
+
+<p>The most challenging part was that this was a <strong>kernel-only</strong> competition, which meant the training and inference of the model would be in a container environment provided by Kaggle. The script had to finish within 60 minutes and consumed no more than 16 GB of RAM. The test dataset was also quite large so that it couldn&rsquo;t be loaded into memory at once for inference, and batch inference was required. Overall, the idea of submitting a script to train a model and do inference on an unknown dataset was very unsettling, compared with a normal Kaggle competition where models are trained locally.</p>
+
+<h2>2. My Experience</h2>
+
+<h3>2.1 Entering Late</h3>
+
+<p>I decided to seriously compete in this competition about a month before the deadline. One of the benefits of entering the competition late was that I could directly start from some strong public kernels and use them as my baselines. Due to my lack of creativity and my inexperience in Kaggle competitions, all of the models that I used in the final submissions originated from public kernels, including</p>
+
+<ul>
+<li><a href="https://www.kaggle.com/knowledgegrappler/a-simple-nn-solution-with-keras-0-48611-pl">RNN Baseline Model</a> for a RNN model that got me started</li>
+<li><a href="https://www.kaggle.com/valkling/mercari-rnn-2ridge-models-with-notes-0-42755">Ensemble of RNN and Ridge</a> for a ridge baseline model and ensembling methods in a kernel environment</li>
+<li><a href="https://www.kaggle.com/anttip/wordbatch-ftrl-fm-lgb-lbl-0-42555">Wordbatch FTRL and FM_FTRL</a> for teaching me <a href="https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41159.pdf">FTRL-Proximal</a>, a very popular online algorithm</li>
+</ul>
+
+
+<p>In addition to using public kernels as baseline models, I also benefited tremendously from</p>
+
+<ul>
+<li><a href="https://www.kaggle.com/thykhuely/mercari-interactive-eda-topic-modelling">EDA and Topic Modeling for Mercari</a></li>
+<li><a href="https://www.kaggle.com/lopuhin/eli5-for-mercari">ELI5 for Mercari</a> that introduced the <a href="https://pypi.python.org/pypi/eli5">eli5</a>, which is a fantastic library that helps explain and inspect black-box models</li>
+</ul>
+
+
+<h3>2.2 Base Models</h3>
+
+<h4>2.2.1 Ridge Regression</h4>
+
+<p>Linear model with L2 regularization on TF-IDF features. The main advantage of Ridge Regression is its speed (~ 10 minutes). One notable observation is that Ridge was a lot faster than LASSO since L2 loss is much easier to optimize compared with L1 loss.</p>
+
+<h4>2.2.2 RNN</h4>
+
+<p>Recurrent Neural Network (RNN) is one of the strongest models in this competition. A lot of teams in the competition included a RNN model in their final Ensemble. The tricky part of RNN is that we need to consider <strong>speed</strong> when designing its architecture and tuning the hyper-parameter (especially batch size, and number of epochs). RNNs are the bread and butter for most Ensembles in this competition and usually takes 25 - 45 minutes. RNN was my main model but I failed to make a significant improvement over the RNNs from public kernels. To my surprise, none of the top teams used RNN in their final ensemble, probably due to slow training time.</p>
+
+<h4>2.2.3 FTRL &amp; FM_FTRL</h4>
+
+<p>Models using <a href="https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41159.pdf">Follow-the-Regularized-Leader(FTRL)</a> online learning algorithm became very popular for this competition, thanks to the wonderful <a href="https://www.kaggle.com/anttip/wordbatch-ftrl-fm-lgb-lbl-0-42555">kernel</a> by <strong>attip</strong>, who is also the author of the package <a href="https://github.com/anttttti/Wordbatch">Wordbatch</a>. I have never heard or used FTRL before and was amazed by its speed and performance. Ridge Regression and the Linear model Proximal-FTRL is essentially the same model but optimized by different algorithms. It was fascinating how much of a difference the optimization algorithm made.</p>
+
+<p>The FM_FTRL implementation in Wordbatch of Factorization Machines estimates linear effects with FTRL and factor effects with adaptive SGD. FM_FTRL is a very strong model for this competition since it turned out that capturing the interaction effect between some of the variables (item category, item condition) was key. FM_FTRL was also very fast (~ 10 minutes) which made it a very good base model to ensemble.</p>
+
+<h4>2.2.4 MLP on Sparse Feature</h4>
+
+<p>MLP is definitely the largest winner of the competition, as most of the top teams chose it as their core base model. It not only ran blazingly fast, but also outperforms every other single model on this dataset. I think the main reason that MLP is so strong is it can capture complex feature interaction. This is something I should have realized when I saw the strong performance of FM_FTRL, which only captures pairwise interaction.</p>
+
+<h4>2.2.5 LightGBM</h4>
+
+<p>Some <a href="https://www.kaggle.com/anttip/wordbatch-ftrl-fm-lgb-lbl-0-42555">popular pubic kernels</a> used LightGBM on TF-IDF features as the main base model, which I didn&rsquo;t really understand. Despite I have never used LightGBM before at that time, my reasoning was that TF-IDF features are too high-dimensional and sparse for tree-based models, which lead to slows training and weak performance. Looking back at the published solutions, LightGBM is clearly not a mainstream model . I am glad to see a few teams achieved good results with LightGBM and I am more than happy to learn the their secret sauce from the <a href="https://www.kaggle.com/peterhurford/lgb-and-fm-18th-place-0-40604/data">kernels</a>.</p>
+
+<h3>2.3 Ensembling</h3>
+
+<p>I have always heard that Kaggle competitions are essentially ensembling competitions. While that might be true for almost all Kaggle competitions, it&rsquo;s less so for the Mercari Price Suggestion Challenge. The time limit of 60 minutes and the memory limit of 16GB adds constraints to ensembling and competitors need to produce an ensemble that is not only accurate, but also fast and memory efficient. <strong>The limits of kernels add a &ldquo;production&rdquo; flavor and transform the ensembling process from &ldquo;shove as many things in it as we can&rdquo; to &ldquo;choose a small subset of models that blend well while complying with the constraints&rdquo;.</strong> Due to the time constraints, most teams did not do stacking. Some attempts were made by keeping a small validation set and use it to find the optimal blending weights.</p>
+
+<p>Ensembling was definitely the biggest learning of the competition for me. It was my first time to seriously blend models together and I was amazed by the amount of performance gains from even a simple weighted average of diverse models. For this competition, I employed a rarely-used trick of ensembling using different checkpoints of a single RNN over time, inspired my <a href="http://cs231n.github.io/neural-networks-3/#ensemble">lecture notes</a> from CS231 at Stanford. The time cost of this trick is only a few minutes but the performance gain was considerable (from <code>~0.429</code> to <code>~0.423</code>).</p>
+
+<h3>2.4 My final submissions</h3>
+
+<p>My <a href="https://www.kaggle.com/sijunhe9248/rnn-ensemble-fm-ready-multithread?scriptVersionId=2482847">conservative solution</a> consists of a RNN trained for 3 epochs and a FM_FTRL, ran multi-threaded in Keras and scikit-learn. The public score is <code>0.41574</code> and private score is <code>0.41678</code>.</p>
+
+<p>My <a href="https://www.kaggle.com/sijunhe9248/corrected-final-rnn-ridge">aggressive solution</a> was a last minute Hail Mary, consists of the same RNN as the conservative solution and a Ridge Regression from a <a href="https://www.kaggle.com/rumbok/ridge-lb-0-41944">kernel</a> that was made public a day before the deadline. The kernel caused major disruption to the leaderboard as many people were trying to incorporate it last minute. I was among them and a trivial bug in my hasty last-minute effort lead to a no score. Without the bug, the public score is <code>0.41170</code> and private score would be <code>0.41111</code>. <strong>I would have ranked around 35th instead of 65th, though I still wouldn&rsquo;t get a Gold medal.</strong></p>
+
+<h2>3. Reflections</h2>
+
+<h3>3.1 What I did well</h3>
+
+<ul>
+<li>Ensembling using different checkpoints of a single RNN over time</li>
+<li>Focus on learning from and improving upon public kernels</li>
+</ul>
+
+
+<h3>3.2 Areas of Improvements</h3>
+
+<ul>
+<li>I didn&rsquo;t try MLP. I should have gotten the hint from the strong performance of FM that feature interaction is key in this competition.</li>
+<li>The inability to improve my RNN meaningfully over the public kernel</li>
+<li>I need more discipline in hyper-parameter search (i.e. random grid search, <a href="https://github.com/fmfn/BayesianOptimization">Bayesian Optimization</a>) since I don&rsquo;t have enough experience for a good intuition for hhyper-parameter tuning yet</li>
+</ul>
+
+
+<h3>3.3. Learning From Other Solutions</h3>
+
+<h4>3.3.1 1st Place Solution - MLP</h4>
+
+<p>Pawel and Konstantin won this competition by a huge margin. Their <a href="https://www.kaggle.com/lopuhin/mercari-golf-0-3875-cv-in-75-loc-1900-s">solution</a> is as graceful as one can be - a standard MLP neural network of 83 lines of code that ran in 1900 seconds (In comparison, my spaghetti-like Ensemble is more than 500 lines of code, took almost an entire hour and performed much worse ). Some of their key ideas are:</p>
+
+<ul>
+<li><p><strong>MLP</strong>: Their model was a standard MLP ran on sparse feature (TF-IDF). Usually MLP overfits like crazy and I am very surprised it worked so well on this dataset. As Konstantin wrote</p>
+
+<blockquote><p>It has huge variance and each single model is tuned to overfit to a different local minima, but when averaged, they give a really good result. It seems to capture feature interactions which look really important here, and it&rsquo;s fast to train.</p></blockquote></li>
+<li><p><strong>Parallelization</strong>: Their kernel train 4 MLP models in parallel (one model per core) and average them to get the final results. The parallelization squeezed all the juice out of the 4-core Kaggle kernel. I think I need to learn how to wrote multiprocessing code in Python next.</p></li>
+<li><p><strong>Text Concatenation</strong>: The only text preprocessing they did in the kernel was concatenate all text fields (name, item_description, category, brand) together to reduce the dimensionality of the text fields. This didn&rsquo;t make much sense to me theoretically, so I feel this is purely empirical and a testament to the amount of effort they put in this.</p></li>
+<li><p><strong>Doubling the batch size</strong>: Since the training time is a key constraint in this competition, many of the top teams utilized the technique of increasing batch size instead of decaying the learning rate. As described in this <a href="https://arxiv.org/abs/1711.00489">paper</a> by Google, increasing the batch size as opposed to decaying the learning rate gives equivalent test accuracies, but with fewer parameter updates, leading to greater parallelism and shorter training times.</p></li>
+</ul>
+
+
+<h4>3.3.2 4th Place Solution - XNN</h4>
+
+<p><a href="https://www.kaggle.com/chenglongchen">Chenglong Chen</a> not only did extremely well in this competition, but also wrote a detailed <a href="https://github.com/ChenglongChen/tensorflow-XNN">documentation</a> about his models. I admire the his modular design of the code which followed a <a href="https://explosion.ai/blog/deep-learning-formula-nlp">post</a> by Matthew Honnibal to break all models into 4 components: <strong>embed, encode, attend and predict</strong>. Chen methodically experimented a wide range of options for each of the components:</p>
+
+<ul>
+<li><strong>Embed</strong>: FastText, TextCNN, TextRNN, TextBiRNN, TextRCNN</li>
+<li><strong>Attend</strong>: Average Pooling, Max Pooling, Context Attention, Self Attention</li>
+<li><strong>Predict</strong>: NN-based FM, ResNet, MLP</li>
+</ul>
+
+
+<p>Chen also ended up choosing MLP, like all other top teams. Another highlight was that he used a technique called <a href="https://openreview.net/pdf?id=BJYwwY9ll">Snapshot Ensemble</a>, which is similar to my idea of using different checkpoints of the same models but coupled with cyclic learning schedule.</p>
+
+<h2>4. Summary</h2>
+
+<p>I had a great experience in my first Kaggle competition and I am quite happy with the result I had. What mattered much more than the result was the learning - I am amazed by how much I learned during the competition, may it be new models, ensembles or best practices. I am humbled by how smart the Kaggle community is and I think I am addicted! Hopefully I will improve in my next competition.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Highway Networks]]></title>
+    <link href="http://sijunhe.github.io/blog/2018/01/21/reading-highway-network/"/>
+    <updated>2018-01-21T18:18:41-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2018/01/21/reading-highway-network</id>
+    <content type="html"><![CDATA[<p>I have been working on some NLP-related Kaggle competitions lately and have came across the <a href="https://arxiv.org/pdf/1505.00387.pdf">Highway Networks</a> in quite a few papers and models. The LSTM-inspired Highway Networks make it easier to train deep networks by adding a small twick to the vanilla feedforward layer. I am reading the paper to get an intuition of how they work.</p>
+
+<!--more-->
+
+
+<h2>1. Introduction</h2>
+
+<ul>
+<li>It&rsquo;s well known that deep networks can represent certain function classes exponentially more efficiently than shallow ones. However, optimization of deep networks is considerably more difficult.</li>
+<li>Srivastava et al. presented a architecture that enables the opmiziation of networks with virtually arbitary depth by a learned gating mechanism for regulating information flow. A network can have paths along which information can flow across several layers without attenuation.</li>
+</ul>
+
+
+<h2>2. Highway Networks</h2>
+
+<ul>
+<li><p>For a layer in a plain feedforward network
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H})$$
+where H is an affine transfor following by a non-linear activation function.</p></li>
+<li><p>For a highway network, we define two non-linear transforms $T(\mathbf{x}, \mathbf{W}_T)$ and $C(\mathbf{x}, \mathbf{W}_C)$ such that
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H}) \cdot T(\mathbf{x}, \mathbf{W}_T) + \mathbf{x} \cdot C(\mathbf{x}, \mathbf{W}_C)$$</p></li>
+<li><p>$T$ is the transform date and $C$ is the carry gate, each respectively express how much of the output is produced by transforming the input and carrying it.</p></li>
+<li><p>For simplicity, we set $C = 1 - T$, giving
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H}) \cdot T(\mathbf{x}, \mathbf{W}_T) + \mathbf{x} \cdot (1-T(\mathbf{x}, \mathbf{W}_C))$$</p></li>
+<li><p>This re-parametrization of the layer transformation is more flexible than the plain feedforward layer. Since
+$$ \mathbf{y} =
+\begin{cases}
+\mathbf{x},  &amp; \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 0 \\
+H(\mathbf{x}, \mathbf{W}_{H}), &amp; \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 1
+\end{cases}$$
+$$ \frac{d\mathbf{y}}{d\mathbf{x}} =
+\begin{cases}
+\mathbf{I} = 0 \\
+H'(\mathbf{x}, \mathbf{W}_{H}), &amp; \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 1
+\end{cases}$$</p></li>
+<li><p>Depending on the output of the transform gates $(\mathbf{x}, \mathbf{W}_C)$, a highway layer can smoothly vary its behavior between a plain layer and a layer that simply passes its inputs through.</p></li>
+<li><p>For highway layers, we user the tranform gate defined as
+$$T(\boldsymbol{x}) = \sigma(\boldsymbol{W}_T^T + \boldsymbol{b}_T)$$</p></li>
+<li><p>For training very deep networks, $\boldsymbol{b}_T$ can be initallzed with a negative value such that the network is initially biased towards <strong>carrry</strong> behavior.</p></li>
+</ul>
+
+
+<h2>Experiments and Analysis</h2>
+
+<ul>
+<li>Networks with depths of 10, 20, 50 and 100 plain or highway layers are trained.</li>
+<li><strong>Optimization</strong>: The performance of plain networks degrades significantly as depth increases, while highway networks do not seem to suffer from an increase in depth at all.</li>
+</ul>
+
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post14/highway_networks_depth.png" alt="highway_networks_depth" /></p>
+
+<ul>
+<li><p><strong>Performance</strong>: The performance of highway networks is similar to <a href="https://arxiv.org/abs/1412.6550">Fitnets</a> on CIFAR-10 and MNIST datasets. But highway network is much easier to train since no two-stage training procedure is needed.</p></li>
+<li><p><strong>Analysis</strong>: By analzing the biases of the transform gates and the outputs of the block, it was found that the strong negative biases at low depths are not used to shut down the gates, but to make them more selective.</p></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Crossing the Chasm]]></title>
+    <link href="http://sijunhe.github.io/blog/2017/11/22/reading-crossing-the-chasm/"/>
+    <updated>2017-11-22T18:49:19-08:00</updated>
+    <id>http://sijunhe.github.io/blog/2017/11/22/reading-crossing-the-chasm</id>
+    <content type="html"><![CDATA[<p>After hearing numerous quotes and ideas from it in meetings, I finally decided to read <a href="https://www.amazon.com/Crossing-Chasm-3rd-Disruptive-Mainstream/dp/0062292986/">Crossing the Chasm: Marketing and Selling Disruptive Products to Mainstream Customers</a>. I wanted to understand the fundamentals of high technology business development and the book did not disappoint. While there were portion of it that I couldn&rsquo;t understand fully due to lack of experience, I could resonate with the rest of it. It wouldn&rsquo;t be an overstatement to say that this book changed the way I looked at high-tech business.</p>
+
+<!--more-->
+
+
+<h1>1. High-Tech Marketing Illusion</h1>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post13/tech_adoption_cycle.png" alt="Tech_Adoption_Cycle" /></p>
+
+<h3>Technology Adoption Life Cycle</h3>
+
+<ul>
+<li>The <strong>Technology Adoption Life Cycle</strong> is a model for understanding the acceptance of new products.</li>
+<li>Each group represents a unique psychographical profile toward a discontinuous innovation based on a new technology
+
+<ul>
+<li><strong>Innovators</strong>: Pursue new technology produces aggresively. Intrigued with any fundamental advance and often make a technology purchase simply for the pleasure of exploring the new device&rsquo;s properties</li>
+<li><strong>early adopter</strong>: Buy into new product concepts very early in their life cycle. When there is a strong match, they are willing to base their buying decisions upon it. They do not rely on well-established references in marking these buying decisions.</li>
+<li><strong>early majority</strong>: Driven by a strong sense of practicality. They want well-established references before investing substantiall. Roughly <em>a third</em> of the whole adoption life cycle and winning their business is key to profit and growth.</li>
+<li><strong>late majority</strong>: They wait until something has become an established standard, even then they want to see lots of support and tend to buy from large, well-stablished companies. Roughly <em>a third</em> of the total buying population. Courting its favor is highly profitable.</li>
+<li><strong>laggard</strong>: Simply don&rsquo;t want anything to do with new technology. The only tie they ever buy a technological product is when it is buried very deep inside another product. Generally regarded as not worth pursuing.</li>
+</ul>
+</li>
+<li>The way to develop a high-tech market is to work the curve left to right and use each &ldquo;captured&rdquo; group as a reference base for going on to market to the next group.</li>
+</ul>
+
+
+<h1>2. High-Tech Marketing Enlightenment</h1>
+
+<h4>Innovators (Techies)</h4>
+
+<ul>
+<li>Innovators are those who appreciate the technology for its own sake. They are the gatekeepers for any new technology and the first key to any high-tech marketing effort.</li>
+<li>A small class of enthusiasts will want to try the product just to see if it works. Mostly, they are not powerful enough to dictate the buying decisions. But they represent a beachhead, a source of initial product or service references, and a test bed for the product.</li>
+<li>The other key to working with enthusiasts is to find the ones who are near or have access to the big boss, a.k.a the <em>early adopters</em> or the <em>visionaries</em>.</li>
+</ul>
+
+
+<h4>Early Adopters (visionaries)</h4>
+
+<ul>
+<li>Visionaries are early adopters of high-tech products, often working with budgets in the multiple millions. They are the least price-sensitive and are great reference. They are easy to sell but very hard to please.</li>
+<li>Visionaries are not looking for an <em>improvement</em>, they are looking for a fundamental <em>breakthrough</em>. They drive the high-tech industry because they see the potential for an &ldquo;order-of-magnitude&rdquo; return on investment and willingly take high risks to pursue that goal.</li>
+<li>They are an opportunity early in a product&rsquo;s life cycle to generate a burst of revenue and gain exceptional visibility. It also comes with a big price tag since they are highly-demanding. Visioanries are the ones who give high-tech companies their first biog break. It is hard to plan for them but it even harder to plan without them.</li>
+</ul>
+
+
+<h4>Early Majority (pragmatists)</h4>
+
+<ul>
+<li>Pragmatists are prudent souls who never volunteer to be an early test site and who have learned the hard way that the &ldquo;leading edge&rdquo; is too often the &ldquo;bleeding edge&rdquo;.</li>
+<li>The goal of pragmatists is to make a percentage improvement - incremental, measurable, predictable progress.</li>
+<li>They are hard to win over, but they are loyal once won. They are prudent and they are planning on living with this decision personally for a long time to come.</li>
+<li>They tend to be &ldquo;vertically&rdquo; oriented that they communicate more with others like themselves within their own industry than do techies or visionaries who communicate &ldquo;horizontally&rdquo; across industry boundaries. This means it is very hard to break into a new industry selling to pragmatists.</li>
+<li>They like to see competition and want to buy from proven market leaders because market-leading products create an <em>aftermarket</em> that other vendors service.They are reasonably price-sensitive and are willing to pay a modest premium for top quality service. In absence of any special differentiation, they want the test deal.</li>
+</ul>
+
+
+<h4>Late Majority (conservatives)</h4>
+
+<ul>
+<li>Conservatives are against discontinuous innovation and believe far more in tradition than in progress. They often succumb to new technology only to stay on par with the rest of the world.</li>
+<li>They often fear high tech a little bit hence they tend to invest only at the end of a technology life cycle, when products are extremely mature. They do not have high aspirations about their high-tech investments and hence will not support high price margins.</li>
+<li>They like to buy preassembled packages, with everything bundled, at a heavily discounted price. They like products decitated to a single function (i.e. word processors, calculators, copies and fax machine instead of a single computer).</li>
+<li>Conservatives have enormous value since they greatly extend the market for high-tech components that are no longer state-of-the-art. But high-tech business success within the conservatives market will require a new kind of marketing imagination likned to a less venturesome financial model.</li>
+</ul>
+
+
+<h4>Laggards (skeptics)</h4>
+
+<ul>
+<li>Skeptics do not participate in the high-tech marketplace except to block purchases. Thus, the primary function of high-tech marketing in relation to skeptics is to neuralize their influence.</li>
+<li>Their favorite arguments is that the billions of dollars invested in office automation have not improved the productivity of the office place.</li>
+<li>Ultimately the service that skeptics provide to high-tech marketers is to point continually to the discrepancies between the sales claims and the delivered product.</li>
+</ul>
+
+
+<h4>The Chasm</h4>
+
+<ul>
+<li>Visionaries tend to keep in touch with the techies and conservatives look to pragmatists to help lead them in terms of high-tech products.</li>
+<li>Between visionaries and pragmatists, there is a <strong>chasm</strong>, since visionaries are not the right sort of references for pragmatists since visionaries alienate pragmatists.</li>
+</ul>
+
+
+<h1>3. D-Day Analogy</h1>
+
+<h4>Overall Strategy</h4>
+
+<ul>
+<li>Long-term goal is to enter and take control of a mainstream market that is currently dominated by an entrenched competitor, while the immediate goal is to transition from an early market base to a <strong>strategic target market segment</strong> in the mainstream</li>
+<li>Cross the chasm by targeting a very specific niche market, drive competitiors out of that market niche, and then use it as a base for broader operations.</li>
+</ul>
+
+
+<h4>Starting a fire</h4>
+
+<ul>
+<li>When crossing the chasm, be a market-driven company, not a sales-driven company, since the sole goal of the company during this stage of market development must be to secure a beachhead in a mainstream market (create a pragmatist customer base that is referenceable)</li>
+<li>There are three compelling reasons that the sales-driven strategy should be avoided
+
+<ul>
+<li>We must ensure the customer gets the <strong>whole product</strong> - the complete set of products and services needed to achieve the desired result. Whole product commitments are expensive can only be made sparingly and strategically.</li>
+<li>Seeding a <strong>strong word-of-mouth reputation</strong> among buyers. Winning four or five customers in one segment wil create the desired word-of-mouth effect, while winning one or two in each of 5 or 10 different segments won&rsquo;t.</li>
+<li>Pragmatist customers want to buy from market leaders and the only right strategy is to take a **&ldquo;big fish, small pond&rdquo; approach</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>Beyond niche</h4>
+
+<ul>
+<li>The key to moving beyong one&rsquo;s initial target niche is to select <strong>strategic</strong> target market segments to begin with. Target a segment that creates an entry point into a larger segment.</li>
+<li><strong>Example of Mac crossing the chasm</strong>: Target niche was the graphic arts department in Fortune 500 companies. Apple then leverage its win into adjacent departmens within the corporation - first marketing, then sales. The beachhead in Graphic arts also extended into external markets - creative agencies, ad agencies and publishers.</li>
+</ul>
+
+
+<h4>Application vs. Platforms</h4>
+
+<ul>
+<li>Aplications have a huge advantage in chasm crossing since disruptive innovation are more likely to be championed by end users.</li>
+<li>Platforms are infrastructure and are slower in adoption. Vendor must tie them directly to an application in order to gain the end-user sponsorship.</li>
+<li>Platforms are likely to remian the market leader for a long time to come in any niche that you have saturated. When markets go mass, platforms have the advantage of participate openly in many value chains at the same time.</li>
+</ul>
+
+
+<h1>4. Target the Point of Attack</h1>
+
+<ul>
+<li>Choosing the niche market to target is a very important marketing decision <strong>with little or no useful hard information</strong>. No one has any direct experience in the product since we are introducing a discontinuous innovation.</li>
+<li>Need to understand that <strong>informed intuition</strong>, rather than analytics reason, is the most trustworthy decision-making tool to use. Informed intuition involves conclusions based on isolating a few high-quality images that are archetypes of a broader and more complex reality.</li>
+</ul>
+
+
+<h4>Target-Customer Characterization</h4>
+
+<ul>
+<li><p>A formal process for making up target customer image s, getting them out of individual heads and in front of a marketing decision-making group.</p></li>
+<li><p>The idea is to create as many characeterizations as possible and apply technique to reduce these images into a prioritized list of desirable target amrket segment opportunities.</p></li>
+<li>A representative format for target-customer scenarios include
+
+<ul>
+<li><strong>Header information</strong>: thumbnail info about end user, the technical buyer and the economic buyer.
+
+<ul>
+<li>Business markets: industry, geograph, department, job title</li>
+<li>Consumer markets: age, sex, economic status, social group</li>
+</ul>
+</li>
+<li><strong>A day in the life (before)</strong>: describe a situation in which the user in stuck, with significant consequences for the economic buyer
+
+<ul>
+<li>Catpures the five elements: <em>situation</em>, <em>desired outcome</em>, <em>attemtped approach</em>, <em>interfering factors</em>, <em>economic consequences</em></li>
+</ul>
+</li>
+<li><strong>A day in the life (after)</strong>: Take the same situation, same desired outcome and replay the scenario with the new technology in place.
+
+<ul>
+<li>Catpures the three elements: <em>new approach</em>, <em>enabling factors</em>, <em>economic rewards</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>Market Development Strategy Checklist</h4>
+
+<ul>
+<li>The scenerios are crude at best and we need to submit them to a refinery - the market development strategy checklist. The list consists of issues around which go-to-market plans are built.</li>
+<li>The <em>Show-stopper</em> issues are:
+
+<ul>
+<li><strong>Target customer</strong>: Is there a single, identifiable economic buyer, accessible to our sales channel  and sufficiently well-funded to pay the price?</li>
+<li><strong>Compelling reason to buy</strong>: Are the economic consequences sufficient to mandate any reasonable economic buyer to fix the problem?</li>
+<li><strong>Whole product</strong>: Can we field a complete solution tto the target customer&rsquo;s compelling reason to buy in the next three months?</li>
+<li><strong>Competition</strong>: Has this problem already been addressed by another compnay such that they have crossed the chasm ahead of us and occpied the space we would be targetting?</li>
+</ul>
+</li>
+<li><p>The <em>Nice to have</em> factors are:</p>
+
+<ul>
+<li><strong>Parnters and allies</strong>: Do we already have relationships begun with other companies needed to fulfill the whole product?</li>
+<li><strong>Distribution</strong>: Do we have a sales channel in place?</li>
+<li><strong>Pricing</strong>: Is the price of the whole product consistent with the target customer&rsquo;s budget and the values gained?</li>
+<li><strong>Positioning</strong>: Is the company credible as a provider of products and services to the target niche?</li>
+<li><strong>Next target customer</strong>: Does it have good &ldquo;bowling pin&rdquo; potential?</li>
+</ul>
+</li>
+<li><p><strong>Commiting</strong>: Don&rsquo;t have to pick the optimal beachhead to be successful. Just need to win the beachhead you have picked.</p></li>
+<li><strong>Target segment size</strong>: Pick somebody your own size.</li>
+</ul>
+
+
+<h1>5. Assemble the Invasion Force</h1>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post13/whole-product.png" alt="Whole Product Model" /> <img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post13/simplfied-whole-product.png" alt="Simplified Whole Product" /></p>
+
+<ul>
+<li>Wiring the marketplace starts with targetting markets that have a compelling reason to buy your product. The next step is to ensure that you have a monopoly over fulfilling that reason to buy. To secure that monopoly, you need to understand <strong>what a whole product consists of</strong> and <strong>how to organizae a marketplace to provide a whoel product</strong></li>
+</ul>
+
+
+<h4>The Whole Product Concept</h4>
+
+<ul>
+<li>There is a gap between the marketing promise made to the customer and the ability of the shipped product to fulfill that promise. The model identified four different perceptions of product:
+
+<ul>
+<li><strong>Generic product</strong>: what is shipped in the box and covered by the purchasing contract.</li>
+<li><strong>Expected product</strong>: the product that the consumer thought she was buying when you bought the generic product. The <em>minimum</em> product and services to have any chance of achieving the buying objective</li>
+<li><strong>Augmented product</strong>: the product that provide the <em>maximum</em> chance of achieving the buying objective.</li>
+<li><strong>Potential product</strong>: the product&rsquo;s room for growth</li>
+</ul>
+</li>
+<li>The marketing battle takes place at the level of the <strong>generic product</strong> for the <em>early market</em>. But as marketplaces develop as we enter the <em>mainstream market</em>, the battle shifts increasingly to the outer circles.</li>
+<li>Technology enthusiasts are the customers least in need of whole product support. Visionaries accept that they are going to have to take responsibility for creating the whole product under their own steam. <strong>Pragmatists evalulate and buy whole products.</strong></li>
+</ul>
+
+
+<h4>Whole Product Planning</h4>
+
+<ul>
+<li><strong>Winning the whole product battle means winning the war.</strong> Whole product planning is the centerpiece for developing a market domination strategy as pragmatists will hold off committing until they see a strong whole product.</li>
+<li>The focus should be on the minimum commitment to whole product needed to cross the chasm. There are two categories in the simplified model:
+
+<ul>
+<li>what we ship</li>
+<li>whatever else the customer need in order to achieve their compelling reason to buy</li>
+</ul>
+</li>
+<li>The contract does not require the compnay to deliver on the later, but the <em>customer relationship</em> does. Lack of attention to whole product marketing is the wellspring of high tech&rsquo;s inability to deliver on its promise.</li>
+</ul>
+
+
+<h4>Partners and Allies</h4>
+
+<ul>
+<li>The purpose of <strong>tactical alliances</strong> is to accelerate the formation of whole product infrastructre within a specific target market segment. The basic commitment is to codevelop a whole product and market it jointly.</li>
+<li>for any company crossing the chasm, fostering the initial partnerships to create the whole product is the equivalent of seeding the value chain, getting it started. Once the value starts being generated, the market system becomes self-reinforcing.</li>
+</ul>
+
+
+<h1>6. Define the Battle</h1>
+
+<ul>
+<li>To dominate our beachhead we need to understand who or what the competition is, what their current relationship to our target customer consist of, and how we can best <strong>position</strong> ourselves to force them out of our target market segmgent.</li>
+<li>One of the key things a pragmatist customer wants to see is strong compeition. In crossing the chasm, that competition is not likely to exist. What you have to do then is create it.</li>
+<li>When developing an early market, competition are usually from alternative modes of operation. Resistance are growing out of commitment to the status quo, fear, risk, or lack of compelling reason to buy. Our goal is to ennlist visionary sponsors to help overcome this resistance.</li>
+<li>In pragmatist&rsquo;s domain, competition is defined by <strong>comparative evaluations of products and vendors</strong> within a common category. These evaluations are extremely reassuring to the pragmatists, who are loath to buy until they can compare. <strong>Competition</strong>, therefore, becomes a fundamental condition for purchase.</li>
+<li>Creating your competition starts with locating your product within a buying category and position your product as the indisputably correct buying choice (with some rigging). The buying category need to be both credible and attractive.</li>
+</ul>
+
+
+<h4>Competitive-Positioning Compass</h4>
+
+<ul>
+<li>Crossing the chasm requires
+
+<ul>
+<li>moving from an environment of <strong>support</strong> by the visionaries to <strong>skepticism</strong> among the pragmatists</li>
+<li>moving from an <strong>product-oriented</strong> issues to <strong>market-oriented</strong> ones</li>
+<li>moving from the audience of like-minded <strong>specialists</strong> to essentially uninterested <strong>generalists</strong></li>
+</ul>
+</li>
+<li>It&rsquo;s the <strong>market-centric value system</strong> &ndash; supplemented by the product-centric ones &ndash; that must be the basis for the value profile of the target customers when crossing the chasm.</li>
+</ul>
+
+
+<table>
+<thead>
+<tr>
+<th> Product-Centric          </th>
+<th> Market-Centric                  </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> Fastest product          </td>
+<td> Largest installed base          </td>
+</tr>
+<tr>
+<td> Easier to use            </td>
+<td> Most third party supporters     </td>
+</tr>
+<tr>
+<td> Elegant architecture     </td>
+<td> De facto standard               </td>
+</tr>
+<tr>
+<td> Product price            </td>
+<td> Cost of ownership               </td>
+</tr>
+<tr>
+<td> Unique functionality     </td>
+<td> Quality of support              </td>
+</tr>
+</tbody>
+</table>
+
+
+<h4>Creating the Competition</h4>
+
+<ul>
+<li><strong>Market Alternative</strong>: a company that the target customer has been buying from for years. They address the problem that we will address. The market alternative helps people identify your target customer and your compelling reason to buy.</li>
+<li><strong>Product Alternative</strong>: a company that has also harnessed a discontinuous innovation. Their existence gives credibility to the notion that now is the time to embrace a discontinuity. The product alternative helps people appreciate your technology leverage.</li>
+<li><strong>Example 1</strong>: Silicon Graphics targetting post-production film editing process in Hollywood.
+
+<ul>
+<li>Market Alternative: Tradidional editing of cutting and splicing film.</li>
+<li>Product Alternative: Sun and HP workstations.</li>
+</ul>
+</li>
+<li><strong>Example 2</strong>: Quicken targetting home computer user who pay bills
+
+<ul>
+<li>Market Alternative: paper and pen checking.</li>
+<li>Product Alternative: Professional programs for financial enthusiasts.</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>Positioning</h4>
+
+<ul>
+<li>The goal of positioning is to make products easier to buy. There are four stages in this process, corresponding the the four primary psychographic types:
+
+<ul>
+<li><strong>Name it and frame it</strong>: What the product is and what category it falls under? Positioning for technology enthusiasts.</li>
+<li><strong>Who for and what for</strong>: Who is going to use it and for what purpose? Positioning for visionaries.</li>
+<li><strong>Competition and differentiation</strong>: a comparative context for the product? Positioning for pragmatists.</li>
+<li><strong>Financials and Futures</strong>: Is the product from a vendor with staying power? Positioning for conservative.</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>The Claim: Elevator Pitch</h4>
+
+<table>
+<thead>
+<tr>
+<th> Framework                                                                          </th>
+<th> Example (Intuit Quicken)                                           </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> <strong>For</strong> (target customers &ndash; beachhead segment only)                               </td>
+<td> For the bill-paying member of the family who also uses a home PC   </td>
+</tr>
+<tr>
+<td> <strong>Who are dissatisfied with</strong> (the current market alternative)                     </td>
+<td> Who is tired of filling out the same old checks month after month  </td>
+</tr>
+<tr>
+<td> <strong>Our product is a new</strong> (new product category)                                    </td>
+<td> Quicken is a PC home finance program                               </td>
+</tr>
+<tr>
+<td> <strong>That provides</strong> (key problem-solving capability)                                 </td>
+<td> That automatically creates and tracks all your check-writing       </td>
+</tr>
+<tr>
+<td> <strong>Unlike</strong> (the product alternative),                                              </td>
+<td> Unlike <em>Managing Your Money</em>, a financial analysis package,        </td>
+</tr>
+<tr>
+<td> <strong>We have assembled</strong> (key whole product features for your specific application).  </td>
+<td> Our system is optimized specifically fofr home bill-paying         </td>
+</tr>
+</tbody>
+</table>
+
+
+<h1>7. Launch the Invasion</h1>
+
+<ul>
+<li>The #1 corporate objective when crossing the chasm is to secure a <strong>channel</strong> into the mainstream market with which pragmatist customer will be comfortable.</li>
+<li>The fundamental function of pricing during this period is to <strong>motivate the channel</strong>.</li>
+</ul>
+
+
+<h4>The Structure of High-Tech Distribution</h4>
+
+<ul>
+<li><strong>Direct sales</strong>: dedicated sales force in the direct employ of the vendor. Optimized for creating demand.</li>
+<li><strong>Retail</strong>: the retail system works optimally when its job is to fulfill demand rather than to creat it. Structurally unsuited to solve the chasm problem.</li>
+<li><strong>Value-Added Reselling</strong>: for products that are too complex for retail. These are typically small companies which specialize in a particular technology or a particular vertical market. VARs are problematic to be mainstream distribution</li>
+</ul>
+
+
+<h4>The Right Choice</h4>
+
+<ul>
+<li>Use direct sales and support as a demand-creation channel to penetrate the initial target segment</li>
+<li>Once segment has become aware of your presence, transition to the most efficient fulfillment channel</li>
+</ul>
+
+
+<h4>Pricing</h4>
+
+<ul>
+<li><strong>Customer-Oriented Pricing</strong>: perspective of the customers varies among different psychographics
+
+<ul>
+<li>Visionaries: <strong>value-based pricing</strong>, price-insensitive and seeks an order-of-magnitude ROI</li>
+<li>Conservatives: <strong>cost-based pricing</strong>, wait until complete institutionalization of the product and keep their cost way down</li>
+<li>Pragmatists: <strong>competition-based pricing</strong>, want to back the market leader and would pay premium for the market leader</li>
+</ul>
+</li>
+<li><strong>Vendor-Oriented Pricing</strong>: function of internal issues, i.e. cost og foods, cost of capital, promised rate of return, etc. Unsuitable for for the chasm perid since we need to be entirely external focused.</li>
+<li><strong>Distribution-Oriented Pricing</strong>: price does not become a major issue during the sales cycle, price high enough for a sufficient margin to reward the channel</li>
+<li><strong>Overall Strategy</strong>:
+
+<ul>
+<li>price at the market leader price point</li>
+<li>build a disproportionally high reward for the channel. The reward should phased out as the product becomes established in the mainstream.</li>
+</ul>
+</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[The Effective Engineer]]></title>
+    <link href="http://sijunhe.github.io/blog/2017/10/12/reading-the-effective-engineer/"/>
+    <updated>2017-10-12T22:46:13-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2017/10/12/reading-the-effective-engineer</id>
+    <content type="html"><![CDATA[<p>I am always skeptical about productivity books since they can easily come off as very theoretical and of little use for my work. After recommendations from several friends, I decided to read <a href="https://www.amazon.com/Effective-Engineer-Engineering-Disproportionate-Meaningful/dp/0996128107">The Effective Engineer</a> and found it to be a <strong>highly leveraged</strong> use of my time! As a relatively new engineer, I can already resonate deeply with what Lau wrote. I also started to adopt some of the techniques Lau recommended and have seen good results. Here is my reading notes for <a href="https://www.amazon.com/Effective-Engineer-Engineering-Disproportionate-Meaningful/dp/0996128107">The Effective Engineer</a>.</p>
+
+<!--more-->
+
+
+<h1>1 Adopt the Right Mindsets</h1>
+
+<h2>1.1 Focus on High-Leverage Activities</h2>
+
+<ul>
+<li>Leverage is defined as
+$$\text{Leverage} = \frac{\text{Impact Produced}}{\text{Time Invested}}$$</li>
+<li>Example of high leverage activities <strong>mentoring new engineers</strong>. A new hire may spend 1% of the total time being mentored, but it can have an outsized infludnece on the productivity and effectiveness of the other 99% of work hours.</li>
+<li>As engineers, we can always ask ourselves about any activity we are working on:
+
+<ul>
+<li>How can I complete this activity in a shorter amount of time?</li>
+<li>How can I increase the value produced by this activity?</li>
+<li>Is there something else that I could spend my time on that would produce more value?</li>
+</ul>
+</li>
+<li>Many high-leverage activities require consistent applications of effort over long time periods to achieve impacts. An example is how Facebook built and maintain a strong hiring culture to attrack strong people.</li>
+</ul>
+
+
+<h2>1.2 Optimize for Learning</h2>
+
+<ul>
+<li><strong>Adopt a growth mindset</strong>. Believe that I can cultivate and grow their intelligence and skills through effort. View challenges and failures as opportunities to learn.</li>
+<li><strong>Invest in your learning rate</strong>. Learning compunds like interest. The earlier the compounding starts, the sooner you hit the region of rapid grwoth and reap its benefits. Optimize for learning over profitability, particularly early in your career.</li>
+<li><strong>Find work environments that can sustain your growth</strong>. Find out what opportunites a company provide for onboarding and mentoring, how transparent they are internally, how fast they move, what your prospective co-wrokers are like, and how much autonomy you&rsquo;ll have.</li>
+<li><strong>Learn at work</strong>. Work with and learn from your best co-workers. Dive into internal learning resource. Look into classes or books that your workplace might be willing to subsidize.</li>
+<li><strong>Learn outside of work</strong>. Challenge yourself to become better by just 1% a day, and not limited to engineering skills
+
+<ul>
+<li>Read books</li>
+<li>Attend talks and meetups</li>
+<li>Build and maintain network of relationships</li>
+<li>Read and follow blogs</li>
+<li>Write blogs</li>
+<li>Tinker on side projects</li>
+</ul>
+</li>
+</ul>
+
+
+<h2>1.3 Prioritize Regularly</h2>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post12/importance_urgency_quadrant.gif" alt="Importance_Urgency_Matrix" /></p>
+
+<ul>
+<li><strong>Write down and track To-Dos</strong>. Human brain is optimized for processing and not for storage, so treat your brain as a processor instad of a memory bank. Spend your mental energy on prioritizing and processing the tasks instead of remembering them. (<em>I have successfully persuaded myself and my team to adopt <a href="https://app.asana.com/">Asana</a></em>)</li>
+<li><strong>Work on both what directly leads to value and the Important &amp; Non-Urgent</strong>. Along with prioritizing the activities that directly produce value, we also need to prioritize the investments that increase our ability to deliver more value in the future.</li>
+<li><strong>Protect your Maker&rsquo;s schedule</strong>. Preserve larger blocks of focused time in the schedule to maintain the <em>flow</em>. Learn to say no to unimportant activities.</li>
+<li><strong>Reduce context switching</strong>. Limit the number of ongoing projects so that you don&rsquo;t spend your cognitive energy actively juggling tasks.</li>
+<li><strong>Make a routine of prioritization</strong>. Make prioritization part of your daily routine and it will help you to focus on and complete your highest-leverage activities.</li>
+</ul>
+
+
+<h1>2 Execute, Execute, Execute</h1>
+
+<h2>2.1 Invest in Iteration Speed</h2>
+
+<ul>
+<li><strong>Move fast to learn fast</strong>. The faster you can iterate, the more you can learn. Conversely, when you move too slowly trying to avoid mistakes, you lose opportunities.</li>
+<li><strong>Invest in time-saving tools</strong>. Time-saving tools pays-off large dividends. Faster compile times, faster deployment cyrcles and faster turnaround times for development all provide time-saving benefits that compound the more you use them.</li>
+<li><strong>Shorten debugging and validation loops</strong>. Create tight testing loops so we can debug faster and iterate quicker.</li>
+<li><strong>Master fundamentals of your craft</strong>. Get very comfortable with your dev environment (IDE) by learning and defining shortcuts. Use more keyboard than mouse. Learn UNIX shell commands and how to effectively pipe them together.</li>
+<li><strong>Think about your non-engineering bottlenecks</strong>. Find out where the biggest bottlenecks in your iteration cycle are, whether in engineering, cross-team dependencies, approvals from decision-makers, or organizational processes. Then, work to optimize them.</li>
+</ul>
+
+
+<h2>2.2 Measure What You Want to Improve</h2>
+
+<ul>
+<li><strong>Measure your progress</strong>. If you can&rsquo;t measure it, you can&rsquo;t improve it. Good metrics accomplish a number of goals, ranging from driveing forward progress to measuring effectiveness over time.</li>
+<li><strong>Pick the right metric</strong>. Different metrics incentivize different behaviors. Example here includes Google using &ldquo;long click-through rate&rdquo; to track search quality, companies use 95th/99th percentile of response times instead of average response time to hunt down the worest-case behavior in the system.</li>
+<li><strong>Instrument your system</strong>. Measure and instrument as much as possible to ensure you are not flying blind.</li>
+<li><strong>Internalize useful numbers</strong>. Memorize numbers that can benchmark your progress or help wit back-of-the-envelope calculations. Like the <a href="https://gist.github.com/jboner/2841832">table of common latency numbers</a></li>
+<li><strong>Prioritize data integrity</strong>. Having bad data is wrose than having no data because you will make the wrong decisions thinking that you are right. Here are some strategies you can use to increase confidence in your data integrity:
+
+<ul>
+<li>Log data liberally, in case it turns out to be useful later on.</li>
+<li>Build tools to iterate on data accuracy sooner</li>
+<li>Write end-too-end integration tests to validate your entire analytics pipeline</li>
+<li>Examine collected data sooner.</li>
+<li>Cross-validate data accuracy by computing the same metric in mulitple ways.</li>
+<li>When a number does look off, dig in to it early.</li>
+</ul>
+</li>
+</ul>
+
+
+<h2>2.3 Validate Your Ideas Early and Often</h2>
+
+<ul>
+<li><strong>Find low-effort ways to validate your work</strong>. Invest a little effort (i.e. minimum viable product) to figure out if the rest of your plan is worth doing.</li>
+<li><strong>Continously validate your product hypotheses</strong>. Use A/B testing to incremtnally develop a product and identify what works and doesn&rsquo;t work. This way, you increase the probability that your efforts are aligned with what users actually want.</li>
+<li><strong>Find way of soliciting feedback when working on solo projects</strong>. Being the one-man team runs the huge risk of overlooking something that , if spotted early, could save you lots of wasted effort. Some strategies are:
+
+<ul>
+<li>Ask to bounce ideas off your teammates.</li>
+<li>Send out a design document before devoting your energy to your code.</li>
+<li>Structure ongoing projects so that there is some shared context with your teammates.</li>
+<li>Solicit buy-in before investing too much time.</li>
+</ul>
+</li>
+</ul>
+
+
+<h2>2.4 Improve Your Project Estimation Skills</h2>
+
+<ul>
+<li><strong>Incorporate estimates into project planning</strong>. Use the estimates to inform project planning, not the other way around. Some concrete strategies that provide more accurate estimates are:
+
+<ul>
+<li>Decompose the project into granular tasks</li>
+<li>Think of estimates as probability distributions, not best-case scenarios</li>
+<li>Let the person doing the actual task make the estimate</li>
+<li>Beware of anchoring bias. Avoid committing to an initial number before actually outlining the tasks involved.</li>
+<li>Use timeboxing to constrain tasks that can grow in scope</li>
+</ul>
+</li>
+<li><strong>Budget for the unknown</strong>. Take into account competing work obligations, holidays, illnesses, etc. The longer a project, the higher the probability that some of these will occur.</li>
+<li><strong>Define measureable milestones</strong>. Define specific goals to reduce risk and efficiently allocate time, and outline milestones to track progress. This allows us to build alignment around what can tasks can be deferred and decreases the chance that a project inadvertently grows in scope.</li>
+<li><strong>Do the riskiest task first</strong>. Instead of giving yourself the illusion of progress by focusing first on what is easy to do, tackle the rickiest task first to reduce variance in your estimates and explore the unknown early on.</li>
+<li><strong>Don&rsquo;t sprint in the middle of a marathon</strong>. Don&rsquo;t sprint just because you are hebind. Work overtime only if you are confident that it will enable you to finish on time.</li>
+</ul>
+
+
+<h1>3 Build Long-Term Value</h1>
+
+<h2>3.1 Balance Quality with Pragmatism</h2>
+
+<ul>
+<li><strong>Establish a culture of reviewing code</strong>. Code reviews facilitate positive modeling of good coding practices. Find the right balance between code quality and development speed.</li>
+<li><strong>Manage complexity through abstraction</strong>. MapReduce illustrates how the right abstraction can dramatically amplify an engineer&rsquo;s output. Make sure you have complete information about use cases before building abstractions, or you will ned up with something clunky and unusable.</li>
+<li><strong>Scale code quality with automated testing</strong>. Automated testing provide a scalable way of managing a growing codebase with a large team without constantly breaking the build or the product.</li>
+<li><strong>Manage your technical debt</strong>. Incur technical debt when it&rsquo;s necessary to get things done for a deadline, but to pay off that debt periodically. Only repay the debt with the highest leverage.</li>
+</ul>
+
+
+<h2>3.2 Minimize Operational Burden</h2>
+
+<ul>
+<li><strong>Embrace operational simplicity</strong>. Simple solutions impose a lower operational burden because they are easier to understand, maintain, and modify. Always ask &ldquo;what is the simplest solution that can get the job done while also reducing our future operational burden&rdquo;?</li>
+<li><strong>Build systems to fail fast</strong>. Slow failing systems muddy the sources of code errors, making it difficult to debug. Building systems to fail fast helps reduce the time you spend maintaining and debugging software by surfacing problematic issues sooner and more directly.</li>
+<li><strong>Automate Mechanical Tasks</strong>. Every time you do something that a machine can do, ask yourself whether it&rsquo;s worthwhile to automate it.</li>
+<li><strong>Aim for idempotence</strong>. An <em>idempotent</em> process produces the same results regardless of whether it&rsquo;s run once or multiple times. Idempotence make it easier for you to retry actions in the face of failure.</li>
+<li><strong>Plan and practice failure modes</strong>. Building confidence in your ability to recover lets you proceed more boldly.</li>
+</ul>
+
+
+<h2>3.3 Invest in Your Team&rsquo;s Growth</h2>
+
+<ul>
+<li><strong>Help the peopel around you be successful</strong>. The higher you climb up the engineering ladder, the more your effectiveness will be measured not by your individual constributions, but by you rimpact on the people around you. &ldquo;If you are a staff engineer, you make a whole team better. You are a principal engineer if you are making the whole company better. And you are distinguished if you are improving the industry&rdquo;.</li>
+<li><strong>Make hiring a priority</strong>. Keep a high hiring bar and play an active role in growing your team.</li>
+<li><strong>Build shared ownership of code</strong>. Increase your bus factor to be greater than one so that you are not a bottleneck for development. This gives you the flexibility to focus on other high-leverage activities.</li>
+<li><strong>Document collective wisdom</strong>. Reflect on projects with team member, learn what worked and what didn&rsquo;t work, and document and share the lessions so that valuable wisdom doesn&rsquo;t get lost.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Fast (Feedforward) Style Transfer]]></title>
+    <link href="http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer/"/>
+    <updated>2017-04-21T15:15:34-07:00</updated>
+    <id>http://sijunhe.github.io/blog/2017/04/21/reading-fast-feedforward-style-transfer</id>
+    <content type="html"><![CDATA[<p><a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16.pdf">Perceptual Losses for Real-Time Style Transfer and Super-Resolution</a> is the second paper in my reading series for Neural Style Transfer, where Johnson et al. built on the work of Gatys et al. and used feedforward networks to stylize image order of magnitudes faster than the previous optimization approach.</p>
+
+<!--more-->
+
+
+<h3>Intro</h3>
+
+<p>Two common approach for image transformation, where an input image is transformed into an output image:</p>
+
+<ul>
+<li>feed-forward CNN using <strong>per-pixel loss</strong> between the output and ground-truth image</li>
+<li>generate image by defining and optimizing <strong>perceptual loss</strong> based on high-level features extracted from pretrained networks</li>
+</ul>
+
+
+<p>The paper combined the benefits of both approaches and proposed a system that</p>
+
+<ul>
+<li>train feed-forward network using use perceptual loss functions that depend on high-level features from a pretrained loss network</li>
+<li>allow the feed-forward network to learn a artistic style during training and can stylize images in <strong>real-time</strong> at test time</li>
+</ul>
+
+
+<h3>Method</h3>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/fast_neural_style_system.png" alt="fast_neural_style_system" />
+The system consists of two components:</p>
+
+<ul>
+<li><strong>image transformation network $f_W$</strong>: a deep residual CNN parameterized by $W$ and transforms input images $x$ into output images $\hat{y} = f_W(x)$</li>
+<li><strong>loss network $\phi$</strong>: used to define several loss functions $l_1, \cdots, l_k$. Each loss function computes a scalar loss value $l_i(\hat{y}, y_i)$ that measures the difference between the output image $\hat{y}$ and a target image $y_i$.</li>
+</ul>
+
+
+<p>The network is trained using SGD to minimize a loss functions of
+$$W^{\ast}  = \text{argmin}_W \ \textbf{E}_{x, \{y_i\} } \left[ \sum_{i} \lambda_i l_i (f_W(x), y_i)\right]$$</p>
+
+<ul>
+<li>Inspired from the optimziation approach from Gatys et al. and others, the author use a pretrained network $\phi$ as a fixed loss network to define the loss functions.</li>
+<li>The loss network $\phi$ is used to define a <strong>feature reconstruction loss $l_{feat}^{\phi}$</strong> and <strong>style reconstruction loss $l_{style}^{\phi}$</strong> that measure differences in <strong>content</strong> and <strong>style</strong> between images.</li>
+<li>For each input image $x$, there is a <strong>content target $y_c$</strong> and a <strong>style target $y_s$</strong></li>
+<li>For <strong>style transfer</strong>, the content target $y_c$ is the input image $x$ and the style target $y_s$ is the designated style image. One network is trained for each style target.</li>
+</ul>
+
+
+<h3>Image Transformation Network</h3>
+
+<p>The image transformation network is a Deep Residual Network. More detail can be found in the <a href="http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16Supplementary.pdf">supplementary notes</a> of the paper.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/deep_residual_network_architecture.png" alt="deep_residual_network_architecture" /></p>
+
+<h3>Loss Network</h3>
+
+<p>Johnson et al. defined the feature reconstruction loss and the style reconstruction loss in the same way as Gatys et al., though with a different notation. Let $\phi_{j}(x)$ be the $j$-th layer activations of the loss network for image $x$ with a shape $C_j \times H_j \times W_j$.</p>
+
+<h4>Feature Reconstruction Loss</h4>
+
+<ul>
+<li>Euclidean distance between feautre representations
+$$l_{feat}^{\phi, j}(\hat{y},y) = \frac{1}{C_j H_j W_j} ||\phi_j(\hat{y}) - \phi_j(y)||^2_2$$</li>
+<li><strong>Minimizing  $l_{feat}^{\phi}$ would reserve the image content and overall spatial structure, but not the color, texture or exacte shape</strong></li>
+</ul>
+
+
+<h4>Style Reconstruction Loss</h4>
+
+<ul>
+<li>Squared Frobenius norm of the distance between the <strong>Gram matrices</strong> between the output and target image</li>
+<li>Gram matrix $G_j^\phi(x)$ is a $C_j \times C_j$ whose elements are the inner product between the two channels $c$ and $c'$ of activations
+$$G_j^\phi(x)_{c,c'} = \frac{1}{C_j H_j W_j} \sum_{h=1}^{H_j} \sum_{w=1}^{W_j} \phi_j(x)_{h,w,c} \phi_j(x)_{h,w,c'}$$
+$$l_{style}^{\phi, j}(\hat{y},y) = ||G^\phi_j(\hat{y}) - G^\phi_j(y)||^2_F$$</li>
+<li><strong>Minimizing  $l_{style}^{\phi}$ would reserve the stylistic features, but not its spatial structure</strong></li>
+</ul>
+
+
+<h4>Total Variation Regularization</h4>
+
+<p>Other than the $l_{feat}^{\phi}$ and $l_{style}^{\phi}$, Johnson et al. also defined a loss function $l_{TV}(\hat{y})$ to encourage spatial smoothness in the output image $\hat{y}$.</p>
+
+<h3>Experiments and Training Details</h3>
+
+<ul>
+<li>The goal of style transfer is to generate an image $\hat{y}$ that combines the content of the content target $y_c$ with the style of the style target $y_s$.</li>
+<li>Gatsy et al. formulate the problem as a optimization problem. An image $\hat{y}$ is generated by solving the problem
+$$\hat{y} = \text{argmin}_y \ \lambda_c l_{feat}^{\phi, j}(y, y_c) + \lambda_s l_{style}^{\phi, j}(y, y_s) + \lambda_{TV} l_{TV}(y)$$</li>
+<li>However, the method is slow since satifactory results takes about 500 iterations and each iterations requires a forward and a backward pass</li>
+<li>The result from the style transfer network is <strong>qualitatively similar to Gatsy et al&rsquo;s method</strong>, but can be run in real time during test time</li>
+<li>Even though the style transfer network is trained on $256 \times 256$ images, they also <strong>perform satisfactorily in higher resolution</strong> of $512 \times 512$ and $1024 \times 1024$, achieving a performance comparable to 50-100 iterations of Gatsy et al&rsquo;s method</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

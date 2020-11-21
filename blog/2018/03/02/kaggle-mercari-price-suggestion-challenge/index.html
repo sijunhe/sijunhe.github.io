@@ -1,0 +1,306 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Mercari Price Suggestion - Blog | Sijun He</title>
+	<meta name="author" content="Sijun He">
+
+	
+	<meta name="description" content="Mercari Price Suggestion One of my first data science experience was with Kaggle more than two years ago when I played around with the Titanic &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="" rel="alternate" title="Blog | Sijun He" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/style.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='https://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!--- MathJax Configuration -->
+	<script type="text/x-mathjax-config">
+  		MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML">
+	</script>
+	<!-- <script type="text/javascript" async
+	  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+	</script> -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-69112205-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><img src= 'https://s3-us-west-1.amazonaws.com/sijunhe-blog/images/name_white.png' height: 150px width: 150px >
+<nav id="main-nav">
+<section class="aboutme">
+  <h3>
+    Sijun's Machine Learning Odyssey
+  </h3>
+</section>
+
+<ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/blog/categories">Categories</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+</ul></nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/sijunhe" title="Twitter">Twitter</a>
+		
+		
+		
+		
+		
+			<a class="linkedin" href="http://www.linkedin.com/in/sijunhe48" title="LinkedIn">LinkedIn</a>
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Mercari Price Suggestion</h1>
+	<div class="entry-content" itemprop="articleBody"><p>One of my first data science experience was with Kaggle more than two years ago when I played around with the <a href="https://sijunhe.github.io/blog/2015/10/31/kaggle-titanic-part-i/">Titanic competition</a>. While the competition itself was minimal, the experience was magical, intuitive and one of the reasons I got into data science.</p>
+
+<p>Two years later, I work full-time as a data scientist. One night, I decided to challenge myself on a whim and ended up spending all of my free time on this competition for two weeks.</p>
+
+<p><strong>TL;DR I had my first serious Kaggle competition and ranked 65th out of 2384 teams (top 3%)</strong></p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/sijunhe-blog/kaggle/mercari_rank.png" alt="mecari" /></p>
+
+<!--more-->
+
+
+<h2>1. The Competition</h2>
+
+<p>The <a href="https://www.kaggle.com/c/mercari-price-suggestion-challenge">Mercari Price Suggestion Challenge</a> was to build an algorithm that automatically suggests the right product prices with provided user-inputted text descriptions of their products, including details like product category name, brand name, and item condition.</p>
+
+<p>The most challenging part was that this was a <strong>kernel-only</strong> competition, which meant the training and inference of the model would be in a container environment provided by Kaggle. The script had to finish within 60 minutes and consumed no more than 16 GB of RAM. The test dataset was also quite large so that it couldn&rsquo;t be loaded into memory at once for inference, and batch inference was required. Overall, the idea of submitting a script to train a model and do inference on an unknown dataset was very unsettling, compared with a normal Kaggle competition where models are trained locally.</p>
+
+<h2>2. My Experience</h2>
+
+<h3>2.1 Entering Late</h3>
+
+<p>I decided to seriously compete in this competition about a month before the deadline. One of the benefits of entering the competition late was that I could directly start from some strong public kernels and use them as my baselines. Due to my lack of creativity and my inexperience in Kaggle competitions, all of the models that I used in the final submissions originated from public kernels, including</p>
+
+<ul>
+<li><a href="https://www.kaggle.com/knowledgegrappler/a-simple-nn-solution-with-keras-0-48611-pl">RNN Baseline Model</a> for a RNN model that got me started</li>
+<li><a href="https://www.kaggle.com/valkling/mercari-rnn-2ridge-models-with-notes-0-42755">Ensemble of RNN and Ridge</a> for a ridge baseline model and ensembling methods in a kernel environment</li>
+<li><a href="https://www.kaggle.com/anttip/wordbatch-ftrl-fm-lgb-lbl-0-42555">Wordbatch FTRL and FM_FTRL</a> for teaching me <a href="https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41159.pdf">FTRL-Proximal</a>, a very popular online algorithm</li>
+</ul>
+
+
+<p>In addition to using public kernels as baseline models, I also benefited tremendously from</p>
+
+<ul>
+<li><a href="https://www.kaggle.com/thykhuely/mercari-interactive-eda-topic-modelling">EDA and Topic Modeling for Mercari</a></li>
+<li><a href="https://www.kaggle.com/lopuhin/eli5-for-mercari">ELI5 for Mercari</a> that introduced the <a href="https://pypi.python.org/pypi/eli5">eli5</a>, which is a fantastic library that helps explain and inspect black-box models</li>
+</ul>
+
+
+<h3>2.2 Base Models</h3>
+
+<h4>2.2.1 Ridge Regression</h4>
+
+<p>Linear model with L2 regularization on TF-IDF features. The main advantage of Ridge Regression is its speed (~ 10 minutes). One notable observation is that Ridge was a lot faster than LASSO since L2 loss is much easier to optimize compared with L1 loss.</p>
+
+<h4>2.2.2 RNN</h4>
+
+<p>Recurrent Neural Network (RNN) is one of the strongest models in this competition. A lot of teams in the competition included a RNN model in their final Ensemble. The tricky part of RNN is that we need to consider <strong>speed</strong> when designing its architecture and tuning the hyper-parameter (especially batch size, and number of epochs). RNNs are the bread and butter for most Ensembles in this competition and usually takes 25 - 45 minutes. RNN was my main model but I failed to make a significant improvement over the RNNs from public kernels. To my surprise, none of the top teams used RNN in their final ensemble, probably due to slow training time.</p>
+
+<h4>2.2.3 FTRL &amp; FM_FTRL</h4>
+
+<p>Models using <a href="https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41159.pdf">Follow-the-Regularized-Leader(FTRL)</a> online learning algorithm became very popular for this competition, thanks to the wonderful <a href="https://www.kaggle.com/anttip/wordbatch-ftrl-fm-lgb-lbl-0-42555">kernel</a> by <strong>attip</strong>, who is also the author of the package <a href="https://github.com/anttttti/Wordbatch">Wordbatch</a>. I have never heard or used FTRL before and was amazed by its speed and performance. Ridge Regression and the Linear model Proximal-FTRL is essentially the same model but optimized by different algorithms. It was fascinating how much of a difference the optimization algorithm made.</p>
+
+<p>The FM_FTRL implementation in Wordbatch of Factorization Machines estimates linear effects with FTRL and factor effects with adaptive SGD. FM_FTRL is a very strong model for this competition since it turned out that capturing the interaction effect between some of the variables (item category, item condition) was key. FM_FTRL was also very fast (~ 10 minutes) which made it a very good base model to ensemble.</p>
+
+<h4>2.2.4 MLP on Sparse Feature</h4>
+
+<p>MLP is definitely the largest winner of the competition, as most of the top teams chose it as their core base model. It not only ran blazingly fast, but also outperforms every other single model on this dataset. I think the main reason that MLP is so strong is it can capture complex feature interaction. This is something I should have realized when I saw the strong performance of FM_FTRL, which only captures pairwise interaction.</p>
+
+<h4>2.2.5 LightGBM</h4>
+
+<p>Some <a href="https://www.kaggle.com/anttip/wordbatch-ftrl-fm-lgb-lbl-0-42555">popular pubic kernels</a> used LightGBM on TF-IDF features as the main base model, which I didn&rsquo;t really understand. Despite I have never used LightGBM before at that time, my reasoning was that TF-IDF features are too high-dimensional and sparse for tree-based models, which lead to slows training and weak performance. Looking back at the published solutions, LightGBM is clearly not a mainstream model . I am glad to see a few teams achieved good results with LightGBM and I am more than happy to learn the their secret sauce from the <a href="https://www.kaggle.com/peterhurford/lgb-and-fm-18th-place-0-40604/data">kernels</a>.</p>
+
+<h3>2.3 Ensembling</h3>
+
+<p>I have always heard that Kaggle competitions are essentially ensembling competitions. While that might be true for almost all Kaggle competitions, it&rsquo;s less so for the Mercari Price Suggestion Challenge. The time limit of 60 minutes and the memory limit of 16GB adds constraints to ensembling and competitors need to produce an ensemble that is not only accurate, but also fast and memory efficient. <strong>The limits of kernels add a &ldquo;production&rdquo; flavor and transform the ensembling process from &ldquo;shove as many things in it as we can&rdquo; to &ldquo;choose a small subset of models that blend well while complying with the constraints&rdquo;.</strong> Due to the time constraints, most teams did not do stacking. Some attempts were made by keeping a small validation set and use it to find the optimal blending weights.</p>
+
+<p>Ensembling was definitely the biggest learning of the competition for me. It was my first time to seriously blend models together and I was amazed by the amount of performance gains from even a simple weighted average of diverse models. For this competition, I employed a rarely-used trick of ensembling using different checkpoints of a single RNN over time, inspired my <a href="http://cs231n.github.io/neural-networks-3/#ensemble">lecture notes</a> from CS231 at Stanford. The time cost of this trick is only a few minutes but the performance gain was considerable (from <code>~0.429</code> to <code>~0.423</code>).</p>
+
+<h3>2.4 My final submissions</h3>
+
+<p>My <a href="https://www.kaggle.com/sijunhe9248/rnn-ensemble-fm-ready-multithread?scriptVersionId=2482847">conservative solution</a> consists of a RNN trained for 3 epochs and a FM_FTRL, ran multi-threaded in Keras and scikit-learn. The public score is <code>0.41574</code> and private score is <code>0.41678</code>.</p>
+
+<p>My <a href="https://www.kaggle.com/sijunhe9248/corrected-final-rnn-ridge">aggressive solution</a> was a last minute Hail Mary, consists of the same RNN as the conservative solution and a Ridge Regression from a <a href="https://www.kaggle.com/rumbok/ridge-lb-0-41944">kernel</a> that was made public a day before the deadline. The kernel caused major disruption to the leaderboard as many people were trying to incorporate it last minute. I was among them and a trivial bug in my hasty last-minute effort lead to a no score. Without the bug, the public score is <code>0.41170</code> and private score would be <code>0.41111</code>. <strong>I would have ranked around 35th instead of 65th, though I still wouldn&rsquo;t get a Gold medal.</strong></p>
+
+<h2>3. Reflections</h2>
+
+<h3>3.1 What I did well</h3>
+
+<ul>
+<li>Ensembling using different checkpoints of a single RNN over time</li>
+<li>Focus on learning from and improving upon public kernels</li>
+</ul>
+
+
+<h3>3.2 Areas of Improvements</h3>
+
+<ul>
+<li>I didn&rsquo;t try MLP. I should have gotten the hint from the strong performance of FM that feature interaction is key in this competition.</li>
+<li>The inability to improve my RNN meaningfully over the public kernel</li>
+<li>I need more discipline in hyper-parameter search (i.e. random grid search, <a href="https://github.com/fmfn/BayesianOptimization">Bayesian Optimization</a>) since I don&rsquo;t have enough experience for a good intuition for hhyper-parameter tuning yet</li>
+</ul>
+
+
+<h3>3.3. Learning From Other Solutions</h3>
+
+<h4>3.3.1 1st Place Solution - MLP</h4>
+
+<p>Pawel and Konstantin won this competition by a huge margin. Their <a href="https://www.kaggle.com/lopuhin/mercari-golf-0-3875-cv-in-75-loc-1900-s">solution</a> is as graceful as one can be - a standard MLP neural network of 83 lines of code that ran in 1900 seconds (In comparison, my spaghetti-like Ensemble is more than 500 lines of code, took almost an entire hour and performed much worse ). Some of their key ideas are:</p>
+
+<ul>
+<li><p><strong>MLP</strong>: Their model was a standard MLP ran on sparse feature (TF-IDF). Usually MLP overfits like crazy and I am very surprised it worked so well on this dataset. As Konstantin wrote</p>
+
+<blockquote><p>It has huge variance and each single model is tuned to overfit to a different local minima, but when averaged, they give a really good result. It seems to capture feature interactions which look really important here, and it&rsquo;s fast to train.</p></blockquote></li>
+<li><p><strong>Parallelization</strong>: Their kernel train 4 MLP models in parallel (one model per core) and average them to get the final results. The parallelization squeezed all the juice out of the 4-core Kaggle kernel. I think I need to learn how to wrote multiprocessing code in Python next.</p></li>
+<li><p><strong>Text Concatenation</strong>: The only text preprocessing they did in the kernel was concatenate all text fields (name, item_description, category, brand) together to reduce the dimensionality of the text fields. This didn&rsquo;t make much sense to me theoretically, so I feel this is purely empirical and a testament to the amount of effort they put in this.</p></li>
+<li><p><strong>Doubling the batch size</strong>: Since the training time is a key constraint in this competition, many of the top teams utilized the technique of increasing batch size instead of decaying the learning rate. As described in this <a href="https://arxiv.org/abs/1711.00489">paper</a> by Google, increasing the batch size as opposed to decaying the learning rate gives equivalent test accuracies, but with fewer parameter updates, leading to greater parallelism and shorter training times.</p></li>
+</ul>
+
+
+<h4>3.3.2 4th Place Solution - XNN</h4>
+
+<p><a href="https://www.kaggle.com/chenglongchen">Chenglong Chen</a> not only did extremely well in this competition, but also wrote a detailed <a href="https://github.com/ChenglongChen/tensorflow-XNN">documentation</a> about his models. I admire the his modular design of the code which followed a <a href="https://explosion.ai/blog/deep-learning-formula-nlp">post</a> by Matthew Honnibal to break all models into 4 components: <strong>embed, encode, attend and predict</strong>. Chen methodically experimented a wide range of options for each of the components:</p>
+
+<ul>
+<li><strong>Embed</strong>: FastText, TextCNN, TextRNN, TextBiRNN, TextRCNN</li>
+<li><strong>Attend</strong>: Average Pooling, Max Pooling, Context Attention, Self Attention</li>
+<li><strong>Predict</strong>: NN-based FM, ResNet, MLP</li>
+</ul>
+
+
+<p>Chen also ended up choosing MLP, like all other top teams. Another highlight was that he used a technique called <a href="https://openreview.net/pdf?id=BJYwwY9ll">Snapshot Ensemble</a>, which is similar to my idea of using different checkpoints of the same models but coupled with cyclic learning schedule.</p>
+
+<h2>4. Summary</h2>
+
+<p>I had a great experience in my first Kaggle competition and I am quite happy with the result I had. What mattered much more than the result was the learning - I am amazed by how much I learned during the competition, may it be new models, ensembles or best practices. I am humbled by how smart the Kaggle community is and I think I am addicted! Hopefully I will improve in my next competition.</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="https://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2020
+
+    Sijun He
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'sijunhe';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/';
+        var disqus_url = 'http://sijunhe.github.io/blog/2018/03/02/kaggle-mercari-price-suggestion-challenge/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+</body>
+</html>
