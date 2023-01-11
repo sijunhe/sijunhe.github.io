@@ -1,7 +1,6 @@
 ---
 layout: article
-title: "Classifying Toxic Comment"
-subtitle: "Learning and Reflection from the Jigsaw Toxic Comment Classification Challenge"
+title: "Kaggle: Learning and Reflection from the Jigsaw Toxic Comment Classification Challenge"
 tags: kaggle nlp deep-learning
 ---
 

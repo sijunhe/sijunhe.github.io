@@ -1,7 +1,6 @@
 ---
 layout: article
-title: "Predicting Classified Ads Demand"
-subtitle: "Learning and Reflection from the Avito Demand Prediction Challenge"
+title: "Kaggle: Learning and Reflection from the Avito Demand Prediction Challenge"
 tags: kaggle nlp deep-learning
 ---
 

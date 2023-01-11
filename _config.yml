@@ -84,7 +84,7 @@ toc:
 ## => Markdown Enhancements
 ##############################
 ## Mathjax
-mathjax: # false (default), true
+mathjax: true
 mathjax_autoNumber: # false (default), true
 
 ## Mermaid
@@ -96,7 +96,7 @@ chart: # false (default), true
 
 ## => Paginate
 ##############################
-paginate: 14
+paginate: 20
 paginate_path: /page:num # don't change this unless for special need
 
 

@@ -1,7 +1,6 @@
 ---
 layout: article
-title: "Mercari Price Suggestion"
-subtitle: "Learning and Reflection from the Mercari Price Suggestion Challenge"
+title: "Kaggle: Learning and Reflection from the Mercari Price Suggestion Challenge"
 tags: kaggle nlp deep-learning
 ---
 

@@ -14,35 +14,35 @@ I have been working on some NLP-related Kaggle competitions lately and have came
 
 ## 2. Highway Networks
 - For a layer in a plain feedforward network
-$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}\_{H})$$
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H})$$
 where H is an affine transfor following by a non-linear activation function.
 
-- For a highway network, we define two non-linear transforms $T(\mathbf{x}, \mathbf{W}\_T)$ and $C(\mathbf{x}, \mathbf{W}\_C)$ such that
-$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}\_{H}) \cdot T(\mathbf{x}, \mathbf{W}\_T) + \mathbf{x} \cdot C(\mathbf{x}, \mathbf{W}\_C)$$
+- For a highway network, we define two non-linear transforms $T(\mathbf{x}, \mathbf{W}_T)$ and $C(\mathbf{x}, \mathbf{W}_C)$ such that
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H}) \cdot T(\mathbf{x}, \mathbf{W}_T) + \mathbf{x} \cdot C(\mathbf{x}, \mathbf{W}_C)$$
 
 - $T$ is the transform date and $C$ is the carry gate, each respectively express how much of the output is produced by transforming the input and carrying it.
 
 - For simplicity, we set $C = 1 - T$, giving 
-$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}\_{H}) \cdot T(\mathbf{x}, \mathbf{W}\_T) + \mathbf{x} \cdot (1-T(\mathbf{x}, \mathbf{W}\_C))$$
+$$\mathbf{y} = H(\mathbf{x}, \mathbf{W}_{H}) \cdot T(\mathbf{x}, \mathbf{W}_T) + \mathbf{x} \cdot (1-T(\mathbf{x}, \mathbf{W}_C))$$
 
 - This re-parametrization of the layer transformation is more flexible than the plain feedforward layer. Since
 $$ \mathbf{y} =
 \begin{cases}
-\mathbf{x},  & \text{if} \ \ T(\mathbf{x}, \mathbf{W}\_C) = 0 \\\\
-H(\mathbf{x}, \mathbf{W}\_{H}), & \text{if} \ \ T(\mathbf{x}, \mathbf{W}\_C) = 1
+\mathbf{x},  & \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 0 \\\\
+H(\mathbf{x}, \mathbf{W}_{H}), & \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 1
 \end{cases}$$
 $$ \frac{d\mathbf{y}}{d\mathbf{x}} =
 \begin{cases}
 \mathbf{I} = 0 \\\\
-H'(\mathbf{x}, \mathbf{W}\_{H}), & \text{if} \ \ T(\mathbf{x}, \mathbf{W}\_C) = 1
+H'(\mathbf{x}, \mathbf{W}_{H}), & \text{if} \ \ T(\mathbf{x}, \mathbf{W}_C) = 1
 \end{cases}$$
 
-- Depending on the output of the transform gates $(\mathbf{x}, \mathbf{W}\_C)$, a highway layer can smoothly vary its behavior between a plain layer and a layer that simply passes its inputs through.
+- Depending on the output of the transform gates $(\mathbf{x}, \mathbf{W}_C)$, a highway layer can smoothly vary its behavior between a plain layer and a layer that simply passes its inputs through.
 
 - For highway layers, we user the tranform gate defined as
-$$T(\boldsymbol{x}) = \sigma(\boldsymbol{W}\_T\^T + \boldsymbol{b}\_T)$$
+$$T(\boldsymbol{x}) = \sigma(\boldsymbol{W}_T^T + \boldsymbol{b}_T)$$
 
-- For training very deep networks, $\boldsymbol{b}\_T$ can be initallzed with a negative value such that the network is initially biased towards **carrry** behavior. 
+- For training very deep networks, $\boldsymbol{b}_T$ can be initallzed with a negative value such that the network is initially biased towards **carrry** behavior. 
 
 ## Experiments and Analysis
 - Networks with depths of 10, 20, 50 and 100 plain or highway layers are trained. 

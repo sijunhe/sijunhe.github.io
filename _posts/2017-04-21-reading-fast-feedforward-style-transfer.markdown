@@ -1,7 +1,6 @@
 ---
 layout: article
 title: "Fast (Feedforward) Style Transfer"
-subtitle: "Perceptual Losses for Real-Time Style Transfer and Super-Resolution"
 tags: deep-learning reading-notes computer-vision
 ---
 
@@ -23,16 +22,16 @@ The paper combined the benefits of both approaches and proposed a system that
 ![fast_neural_style_system](https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/fast_neural_style_system.png)
 The system consists of two components: 
 
-- **image transformation network $f\_W$**: a deep residual CNN parameterized by $W$ and transforms input images $x$ into output images $\hat{y} = f\_W(x)$
-- **loss network $\phi$**: used to define several loss functions $l\_1, \cdots, l\_k$. Each loss function computes a scalar loss value $l\_i(\hat{y}, y\_i)$ that measures the difference between the output image $\hat{y}$ and a target image $y_i$. 
+- **image transformation network $f_W$**: a deep residual CNN parameterized by $W$ and transforms input images $x$ into output images $\hat{y} = f_W(x)$
+- **loss network $\phi$**: used to define several loss functions $l_1, \cdots, l_k$. Each loss function computes a scalar loss value $l_i(\hat{y}, y_i)$ that measures the difference between the output image $\hat{y}$ and a target image $y_i$. 
 
 The network is trained using SGD to minimize a loss functions of
-$$W^{\ast}  = \text{argmin}\_W \ \textbf{E}\_{x, \\{y\_i\\} } \left[ \sum\_{i} \lambda\_i l\_i (f\_W(x), y\_i)\right]$$
+$$W^{\ast}  = \text{argmin}_W \ \textbf{E}_{x, \\{y_i\\} } \left[ \sum_{i} \lambda_i l_i (f_W(x), y_i)\right]$$
 
 - Inspired from the optimziation approach from Gatys et al. and others, the author use a pretrained network $\phi$ as a fixed loss network to define the loss functions. 
-- The loss network $\phi$ is used to define a **feature reconstruction loss $l\_{feat}\^{\phi}$** and **style reconstruction loss $l\_{style}\^{\phi}$** that measure differences in **content** and **style** between images.
-- For each input image $x$, there is a **content target $y\_c$** and a **style target $y\_s$**
-- For **style transfer**, the content target $y\_c$ is the input image $x$ and the style target $y\_s$ is the designated style image. One network is trained for each style target. 
+- The loss network $\phi$ is used to define a **feature reconstruction loss $l_{feat}^{\phi}$** and **style reconstruction loss $l_{style}^{\phi}$** that measure differences in **content** and **style** between images.
+- For each input image $x$, there is a **content target $y_c$** and a **style target $y_s$**
+- For **style transfer**, the content target $y_c$ is the input image $x$ and the style target $y_s$ is the designated style image. One network is trained for each style target. 
 
 ### Image Transformation Network
 The image transformation network is a Deep Residual Network. More detail can be found in the [supplementary notes](http://cs.stanford.edu/people/jcjohns/papers/eccv16/JohnsonECCV16Supplementary.pdf) of the paper.
@@ -40,28 +39,28 @@ The image transformation network is a Deep Residual Network. More detail can be 
 ![deep_residual_network_architecture](https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post11/deep_residual_network_architecture.png)
 
 ### Loss Network
-Johnson et al. defined the feature reconstruction loss and the style reconstruction loss in the same way as Gatys et al., though with a different notation. Let $\phi\_{j}(x)$ be the $j$-th layer activations of the loss network for image $x$ with a shape $C\_j \times H\_j \times W\_j$.
+Johnson et al. defined the feature reconstruction loss and the style reconstruction loss in the same way as Gatys et al., though with a different notation. Let $\phi_{j}(x)$ be the $j$-th layer activations of the loss network for image $x$ with a shape $C_j \times H_j \times W_j$.
 
 #### Feature Reconstruction Loss
 - Euclidean distance between feautre representations
-$$l\_{feat}\^{\phi, j}(\hat{y},y) = \frac{1}{C\_j H\_j W\_j} ||\phi\_j(\hat{y}) - \phi\_j(y)||^2\_2$$
-- **Minimizing  $l\_{feat}\^{\phi}$ would reserve the image content and overall spatial structure, but not the color, texture or exacte shape**
+$$l_{feat}^{\phi, j}(\hat{y},y) = \frac{1}{C_j H_j W_j} ||\phi_j(\hat{y}) - \phi_j(y)||^2_2$$
+- **Minimizing  $l_{feat}^{\phi}$ would reserve the image content and overall spatial structure, but not the color, texture or exacte shape**
 
 #### Style Reconstruction Loss
 - Squared Frobenius norm of the distance between the **Gram matrices** between the output and target image
-- Gram matrix $G\_j^\phi(x)$ is a $C\_j \times C\_j$ whose elements are the inner product between the two channels $c$ and $c'$ of activations
-$$G\_j^\phi(x)\_{c,c'} = \frac{1}{C\_j H\_j W\_j} \sum\_{h=1}^{H\_j} \sum\_{w=1}^{W\_j} \phi\_j(x)\_{h,w,c} \phi\_j(x)\_{h,w,c'}$$
-$$l\_{style}\^{\phi, j}(\hat{y},y) = ||G^\phi\_j(\hat{y}) - G^\phi\_j(y)||^2\_F$$
-- **Minimizing  $l\_{style}\^{\phi}$ would reserve the stylistic features, but not its spatial structure**
+- Gram matrix $G_j^\phi(x)$ is a $C_j \times C_j$ whose elements are the inner product between the two channels $c$ and $c'$ of activations
+$$G_j^\phi(x)_{c,c'} = \frac{1}{C_j H_j W_j} \sum_{h=1}^{H_j} \sum_{w=1}^{W_j} \phi_j(x)_{h,w,c} \phi_j(x)_{h,w,c'}$$
+$$l_{style}^{\phi, j}(\hat{y},y) = ||G^\phi_j(\hat{y}) - G^\phi_j(y)||^2_F$$
+- **Minimizing  $l_{style}^{\phi}$ would reserve the stylistic features, but not its spatial structure**
 
 #### Total Variation Regularization
-Other than the $l\_{feat}\^{\phi}$ and $l\_{style}\^{\phi}$, Johnson et al. also defined a loss function $l\_{TV}(\hat{y})$ to encourage spatial smoothness in the output image $\hat{y}$.
+Other than the $l_{feat}^{\phi}$ and $l_{style}^{\phi}$, Johnson et al. also defined a loss function $l_{TV}(\hat{y})$ to encourage spatial smoothness in the output image $\hat{y}$.
 
 
 ### Experiments and Training Details
-- The goal of style transfer is to generate an image $\hat{y}$ that combines the content of the content target $y\_c$ with the style of the style target $y\_s$. 
+- The goal of style transfer is to generate an image $\hat{y}$ that combines the content of the content target $y_c$ with the style of the style target $y_s$. 
 - Gatsy et al. formulate the problem as a optimization problem. An image $\hat{y}$ is generated by solving the problem
-$$\hat{y} = \text{argmin}\_y \ \lambda\_c l\_{feat}\^{\phi, j}(y, y\_c) + \lambda\_s l\_{style}\^{\phi, j}(y, y\_s) + \lambda\_{TV} l\_{TV}(y)$$
+$$\hat{y} = \text{argmin}_y \ \lambda_c l_{feat}^{\phi, j}(y, y_c) + \lambda_s l_{style}^{\phi, j}(y, y_s) + \lambda_{TV} l_{TV}(y)$$
 - However, the method is slow since satifactory results takes about 500 iterations and each iterations requires a forward and a backward pass
 - The result from the style transfer network is **qualitatively similar to Gatsy et al's method**, but can be run in real time during test time
 - Even though the style transfer network is trained on $256 \times 256$ images, they also **perform satisfactorily in higher resolution** of $512 \times 512$ and $1024 \times 1024$, achieving a performance comparable to 50-100 iterations of Gatsy et al's method

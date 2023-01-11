@@ -1,7 +1,6 @@
 ---
 layout: article
 title: "The Effective Engineer"
-subtitle: "How to Leverage Your Efforts In Software Engineering to Make a Disproportionate and Meaningful Impact"
 tags: reading-notes book non-technical
 ---
 I am always skeptical about productivity books since they can easily come off as very theoretical and of little use for my work. After recommendations from several friends, I decided to read [The Effective Engineer](https://www.amazon.com/Effective-Engineer-Engineering-Disproportionate-Meaningful/dp/0996128107) and found it to be a **highly leveraged** use of my time! As a relatively new engineer, I can already resonate deeply with what Lau wrote. I also started to adopt some of the techniques Lau recommended and have seen good results. Here is my reading notes for [The Effective Engineer](https://www.amazon.com/Effective-Engineer-Engineering-Disproportionate-Meaningful/dp/0996128107).

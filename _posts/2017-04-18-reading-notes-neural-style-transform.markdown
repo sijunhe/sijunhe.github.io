@@ -1,7 +1,6 @@
 ---
 layout: article
 title: "Neural Style Transform"
-subtitle: "A Neural Algorithm of Artistic Style"
 tags: deep-learning reading-notes computer-vision
 ---
 
@@ -48,39 +47,39 @@ scale while discarding information of the global arrangement of the scene.
 - The style transfer result were generated on the basis of 19 layer [VGG-Network](https://arxiv.org/abs/1409.1556), a CNN with 16 convolutional and 5 pooling layers. 
 - The fully connected layers are not used.
 - For image synthesis, max-pooling was replaced by average pooling.
-- A layer with $N\_l$ distinct filters has $N\_l$ feature maps each of size $M\_t$, where $M\_t$ is the height times the width of the feature map. The response in a layer $l$ can be stored in a matrix $F\^l \in \mathcal{R}^{N\_t \times M\_t}$
+- A layer with $N_l$ distinct filters has $N_l$ feature maps each of size $M_t$, where $M_t$ is the height times the width of the feature map. The response in a layer $l$ can be stored in a matrix $F^l \in \mathcal{R}^{N_t \times M_t}$
 
 #### Content Reconstruction
-- To visualize the image information encoded at different layers of the hierarchy, gradient descent is performed on a white noise image to find another image $\overset{\rightarrow}{x}$ with feature responses $F\^l$ that matches the feature responses $P\^l$of the original image $\overset{\rightarrow}{p}$. We define the loss as the L-2 loss between the feature representations
-$$\mathcal{L}\_{content}(\overset{\rightarrow}{p}, \overset{\rightarrow}{x}, P\^l, F\^l) = \frac{1}{2} \sum_{i,j} (F\_{ij}\^l - P\_{ij}\^l)\^2$$
+- To visualize the image information encoded at different layers of the hierarchy, gradient descent is performed on a white noise image to find another image $\overset{\rightarrow}{x}$ with feature responses $F^l$ that matches the feature responses $P^l$of the original image $\overset{\rightarrow}{p}$. We define the loss as the L-2 loss between the feature representations
+$$\mathcal{L}_{content}(\overset{\rightarrow}{p}, \overset{\rightarrow}{x}, P^l, F^l) = \frac{1}{2} \sum_{i,j} (F_{ij}^l - P_{ij}^l)^2$$
 
 - The derivative of the loss is
-$$\frac{\partial \mathcal{L}}{\partial F\_{ij}\^l} =
+$$\frac{\partial \mathcal{L}}{\partial F_{ij}^l} =
 \begin{cases}
-(F\_{ij}\^l - P\_{ij}\^l),  & F\_{ij}\^l > 0 \\\\
-0, & F\_{ij}\^l < 0
+(F_{ij}^l - P_{ij}^l),  & F_{ij}^l > 0 \\\\
+0, & F_{ij}^l < 0
 \end{cases}$$
 
 #### Style Reconstruction
-- The style representation is built by computing the correlations between the different filter responses. The feature correlations are given by the Gram matrix $G\^l \in \mathcal{R}^{N\_t \times N\_l}$, where $G\^l\_{ij}$ is the inner product between the feature map $i$ and $j$ in layer $l$
-$$G\^l\_{ij} = \sum\_k F\^l\_{ik}F\^l\_{jk}$$
-- To generate a texture that matches the style of a given image, gradient descent is performed on a white noise image to find another image $\overset{\rightarrow}{x}$ with style representation $G\^l$ that matches the style representation $A\^l$of the original image $\overset{\rightarrow}{a}$. 
+- The style representation is built by computing the correlations between the different filter responses. The feature correlations are given by the Gram matrix $G^l \in \mathcal{R}^{N_t \times N_l}$, where $G^l_{ij}$ is the inner product between the feature map $i$ and $j$ in layer $l$
+$$G^l_{ij} = \sum_k F^l_{ik}F^l_{jk}$$
+- To generate a texture that matches the style of a given image, gradient descent is performed on a white noise image to find another image $\overset{\rightarrow}{x}$ with style representation $G^l$ that matches the style representation $A^l$of the original image $\overset{\rightarrow}{a}$. 
 The contribution of each layer $l$ to the total loss is
-$$E\_l = \frac{1}{4N\_l\^2M\_l\^2} \sum_{i,j} (G\_{ij}\^l - A\_{ij}\^l)\^2$$
+$$E_l = \frac{1}{4N_l^2M_l^2} \sum_{i,j} (G_{ij}^l - A_{ij}^l)^2$$
 And the total loss is the weighted sum of the loss from each layer $l$
-$$\mathcal{L}\_{style} = \sum\_l w\_l E\_l$$
+$$\mathcal{L}_{style} = \sum_l w_l E_l$$
 
-- The derivative of $E\_l$ with trespect to the activations in layer $l$ is
-$$\frac{\partial E\_l}{\partial F\_{ij}\^l} =
+- The derivative of $E_l$ with trespect to the activations in layer $l$ is
+$$\frac{\partial E_l}{\partial F_{ij}^l} =
 \begin{cases}
-\frac{1}{N\_l\^2M\_l\^2}[(F\^l)\^T(F\^l - A\^l)]\_{ji},  & F\_{ij}\^l > 0 \\\\
-0, & F\_{ij}\^l < 0
+\frac{1}{N_l^2M_l^2}[(F^l)^T(F^l - A^l)]_{ji},  & F_{ij}^l > 0 \\\\
+0, & F_{ij}^l < 0
 \end{cases}$$
 
 #### Style Transfer Reconstruction
 - To mix the content of an image with the style of another image, we minimize the distance of a white noise image $\overset{\rightarrow}{x}$ from the **content representation** of the content image $\overset{\rightarrow}{p}$ in **one layer** of the network and the **style representation** of the style image $\overset{\rightarrow}{a}$ in **a number of layers** of the CNN
 
-$$\mathcal{L}\_{total}(\overset{\rightarrow}{p}, \overset{\rightarrow}{a}, \overset{\rightarrow}{x}) = \alpha \mathcal{L}\_{content}(\overset{\rightarrow}{p}, \overset{\rightarrow}{x}) + \beta \mathcal{L}\_{style}(\overset{\rightarrow}{a}, \overset{\rightarrow}{x})$$
+$$\mathcal{L}_{total}(\overset{\rightarrow}{p}, \overset{\rightarrow}{a}, \overset{\rightarrow}{x}) = \alpha \mathcal{L}_{content}(\overset{\rightarrow}{p}, \overset{\rightarrow}{x}) + \beta \mathcal{L}_{style}(\overset{\rightarrow}{a}, \overset{\rightarrow}{x})$$
 
 
 
