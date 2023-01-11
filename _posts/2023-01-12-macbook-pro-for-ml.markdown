@@ -43,26 +43,13 @@ for seq_len in [128, 512]:
         print(f"Batch: {batch_size} Seq: {seq_len} CPU: {cpu_time * 1000:.0f} ms/it MPS: {mps_time * 1000:.0f} ms/it speedup: {speedup:.1%}")
 ```
 
-```
-Batch: 1 Seq: 128 CPU: 59 ms/it MPS: 29 ms/it speedup: 199.6%
-Batch: 4 Seq: 128 CPU: 154 ms/it MPS: 50 ms/it speedup: 310.2%
-Batch: 1 Seq: 512 CPU: 200 ms/it MPS: 56 ms/it speedup: 355.7%
-Batch: 4 Seq: 512 CPU: 752 ms/it MPS: 200 ms/it speedup: 375.9%
-```
+| Batch Size | Sequence Length | Mac CPU  (ms/it) | Mac GPU (ms/it) | Mac GPU Speedup | T4 (ms/it) | P100 (ms/it) |
+|------------|-----------------|------------------|-----------------|-----------------|------------|--------------|
+| 1          | 128             | 59               | 29              | **199.6%**      | 12         | 13           |
+| 4          | 128             | 154              | 50              | **310.2%**      | 26         | 16           |
+| 1          | 512             | 200              | 56              | **355.7%**      | 30         | 18           |
+| 4          | 512             | 752              | 200             | **375.9%**      | 114        | 65           |
 
-```
-# V100
-Batch: 1 Seq: 128 T4 GPU: 12 ms/it
-Batch: 4 Seq: 128 T4 GPU: 26 ms/it
-Batch: 1 Seq: 512 T4 GPU: 30 ms/it
-Batch: 4 Seq: 512 T4 GPU: 114 ms/it    
-
-# P100
-Batch: 1 Seq: 128 P100 GPU: 13 ms/it
-Batch: 4 Seq: 128 P100 GPU: 16 ms/it
-Batch: 1 Seq: 512 P100 GPU: 18 ms/it
-Batch: 4 Seq: 512 P100 GPU: 65 ms/it
-```
 
 # Performance on Stable Diffusion
 
@@ -77,3 +64,7 @@ _ = pipe(prompt, num_inference_steps=1)
 image = pipe(prompt, num_inference_steps=50).images[0]
 100%|██████████| 50/50 [00:58<00:00,  1.18s/it]
 ```
+
+| Mac CPU  (s/it)  | Mac GPU (s/it)  | Mac GPU Speedup | T4 (s/it)  | P100 (s/it) |
+|------------------|-----------------|-----------------|------------|--------------|
+| 59               | 1.18            | **199.6%**      | 12         | 13           |
