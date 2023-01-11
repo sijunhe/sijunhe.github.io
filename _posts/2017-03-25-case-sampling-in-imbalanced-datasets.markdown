@@ -3,6 +3,7 @@ layout: article
 title: "Case-control Sampling In Imbalanced Datasets"
 subtitle: "Subsampling to reduce computational cost for dataset with significant class imbalanace"
 tags: ml-basics
+mathjax: true
 ---
 
 This problem was briefly introduced in [STATS315A Applied Modern Statistics: Learning](http://statweb.stanford.edu/~tibs/stat315a.html) by the renowned Professor [Trevor Hastie](https://web.stanford.edu/~hastie/). Given that the imbalanced dataset problem is ubiquitous in data science, such as modeling click through rate or anomaly detection, I think the case-sampling trick was one of the most practical tricks I have learned in this class. 

@@ -3,6 +3,7 @@ layout: article
 title: "The 1986 Backpropagation Paper"
 subtitle: "Learning Representations by Back-propagating Errors"
 tags: deep-learning reading-notes
+mathjax: true
 ---
 Deep learning is without doubt the hottest topic in both the academia and the industry at the moment, as it enables machines to recognize objects, translate speech or even play chess at human or super-human level. The workhorse behind the training of every neural network is backpropagation, where the weights of connections between neurons get adjusted to minimize the difference between the output of the neural network and the desired target. The idea of backpropagation came around in 1960 - 1970, but it wasn't until 1986 when it was formally introduced as the learning procedure to train neural networks. This is my reading notes of the famous 1986 paper in Nature [Learning Representations by Back-propagating Errors](https://www.iro.umontreal.ca/~vincentp/ift3395/lectures/backprop_old.pdf) by Rumelhart, Hinton and Williams. 
 

@@ -8,7 +8,8 @@ This is a problem from [CS246](http://web.stanford.edu/class/cs246/): Mining Mas
 
 <!--more-->
 
-##Problem Statement
+
+## Problem Statement
 
 The input here can be found [here](https://s3-us-west-1.amazonaws.com/sijunhe-blog/data/soc-LiveJournal1Adj.txt), which is in the form of [User][Tab][Friends]", where [Friends] is a comma-separated list of Users. The output will be in terms of [User][Tab][Recommendations], where [Recommendations] is a comma-separated list of users that are recommended friend.   
 
@@ -25,7 +26,7 @@ Degree 1 friends: the users who A is already friends with
 Degree 2 friends: the users who shares a mutual friend with A.  
 Degree 2 friends could potentially be degree 1 friends as well and we are interested in the users who are degree 2 friends with A, but not degree 1 friends. 
 
-#### Approach
+### Approach
 Since we are using MapReduce, we want the reducer to have the key as A, and the value as an [Iterable](https://docs.oracle.com/javase/7/docs/api/java/lang/Iterable.html) of degree 1 friends and degree 2 friends.  
  
 Example input: A B,C,D  
@@ -42,7 +43,7 @@ Reducer:
 - The reducer then needs to sort the degree two friends of the key by the number of mutual friends
 - The reducer needs to make sure that degree 1 don't get recommended
 
-#### Pseudocode 
+### Pseudocode 
 
 ```
 Map: 
@@ -76,7 +77,7 @@ Reduce:
 
 
 ## Hadoop MapReduce Program  
-```Java
+```java
 package edu.stanford.cs246.friendrecommendation;
 
 import java.io.DataInput;
