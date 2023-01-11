@@ -18,7 +18,7 @@
 ##############################
 text_skin: default # "default" (default), "dark", "forest", "ocean", "chocolate", "orange"
 highlight_theme: tomorrow # "default" (default), "tomorrow", "tomorrow-night", "tomorrow-night-eighties", "tomorrow-night-blue", "tomorrow-night-bright"
-url     : sijunhe.github.io # the base hostname & protocol for your site e.g. https://www.someone.com
+url     : https://sijunhe.github.io # the base hostname & protocol for your site e.g. https://www.someone.com
 baseurl : sijunhe.github.io # does not include hostname
 title   : Sijun He's Unsupervised Learning
 description: > # this means to ignore newlines until "Language & timezone"
