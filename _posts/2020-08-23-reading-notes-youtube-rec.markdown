@@ -1,7 +1,6 @@
 ---
 layout: article
 title: "Deep Neural Networks for YouTube Recommendations"
-subtitle: "Reading Notes on Awesome RecSys Papers II"
 tags: deep-learning rec-sys reading-notes
 ---
 
@@ -21,7 +20,7 @@ tags: deep-learning rec-sys reading-notes
 ### Problem Formulation
 - Post recommendation as a extreme multiclass classification with the goal of accurately classifiying a specific video watch $w_t$ at time $t$ among millions of videos $i$ from a corpus $V$ based on a user $U$ and context $C$, where $u$ represents embedding of user, context pair and $v$ represents represent video embedding of the same dimension. 
 
-$$P(w_t = i | U, C) = \frac{e^{v\_{i}u}}{\sum_{j \in V}e^{v\_{j}u}}$$
+$$P(w_t = i | U, C) = \frac{e^{v_{i}u}}{\sum_{j \in V}e^{v_{j}u}}$$
 
 - To efficiently train the model with millions of classes, negative classes were sampled from background distribution and then corrected via important weighting. 
 - At serving time, approximate nearest neighbor (ANN) in the dot product space were used to retrieve the most likely N classes. This is because the calibrated likelihoods from the softmax output layer is not needed.<span style="color:blue"> [Sijun]: This is a really smart decision  </span>

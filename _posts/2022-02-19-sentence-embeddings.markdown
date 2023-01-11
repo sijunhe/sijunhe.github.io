@@ -21,7 +21,7 @@ Reading a few recent papers on Sentence Embedding and Semantic Sentence Similari
 - When it comes to sentence pair task such as STS or NLI, BERT expects both sentence concaternated by a [SEP] token and uses cross encoding. This scales poorly due to the length of the input and also made it unpractical for retrieval tasks.
 - Both average BERT embeddings and the BERT [CLS] token embeddings underperform average GloVe embeddings
 - SBERT adds a pooling layer over the output of BERT/RoBERTa. Empirically, Mean Pooling outperforms Max Pooling and the [CLS] token embedding
-- At training time, the sentence embeddings $u$, $v$ and theelement-wise difference $|u−v|$ are concaternated and feed into a dense layer to project into $k$ the number of classes
+- At training time, the sentence embeddings $u$, $v$ and theelement-wise difference $ \vert u−v \vert $ are concaternated and feed into a dense layer to project into $k$ the number of classes
 - At inference time, the cosine similarity is computed between he sentence embeddings $u$ and $v$.
 
 
@@ -36,7 +36,7 @@ Reading a few recent papers on Sentence Embedding and Semantic Sentence Similari
 </p>
 
 - The text generation objective follows the seq2seq LM introduced by [UniLM](https://arxiv.org/abs/1905.03197), where tokens in the source sentence can attend to all tokens in the source sentence and the tokens in the target sentence can only attend to the tokens to its left. 
-- The STS objective utilizes in-batch similar sentences (due to the seq2seq task, both a[SEP]b and b[SEP]a are in the same batch) as positives and the rest as negatives. It accomplishes this in an efficient manner by taking the [CLS] embedding of the whole batch $V \in \mathcal{R}\^{bxd}$, normalize it by L2 distance along $d$ axis, takes an outer product $VV\^T$, pass each row through a softmax layer and optimize the cross entropy loss. This can also be seen as contrastive learning, as the in-batch positives are pulled together and the in-batch negatives are pushed apart.
+- The STS objective utilizes in-batch similar sentences (due to the seq2seq task, both a[SEP]b and b[SEP]a are in the same batch) as positives and the rest as negatives. It accomplishes this in an efficient manner by taking the [CLS] embedding of the whole batch $V \in \mathcal{R}^{bxd}$, normalize it by L2 distance along $d$ axis, takes an outer product $VV^T$, pass each row through a softmax layer and optimize the cross entropy loss. This can also be seen as contrastive learning, as the in-batch positives are pulled together and the in-batch negatives are pushed apart.
 
 ### SimCSE
 

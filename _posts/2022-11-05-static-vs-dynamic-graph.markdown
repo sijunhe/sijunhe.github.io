@@ -8,6 +8,7 @@ tags: paddle deep-learning ml-systems
 Some thoughts on Graph Execution (Static Graph), Eager Exeution (Dynamic Graph) and a benchmark between them on [PaddlePaddle](https://github.com/PaddlePaddle/Paddle).
 
 Cover picture generated with [Stable Diffusion](https://huggingface.co/spaces/stabilityai/stable-diffusion) with the prompt "a static robot and a dynamic robot in steampunk environment"
+
 ![robot](https://sijunhe-blog.s3.us-west-1.amazonaws.com/plots/post32/robot.jpg)
 
 <!--more-->

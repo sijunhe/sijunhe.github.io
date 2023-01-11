@@ -1,7 +1,6 @@
 ---
 layout: article
-title: "Macbook Pro for ML?"
-subtitle: "Quick benchmarks on GPU Accelerations on the M1 Macs"
+title: "Does Macbook Pro M1 GPU Matter for ML?"
 tags: deep-learning
 ---
 

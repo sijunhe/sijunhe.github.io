@@ -31,21 +31,21 @@ As it evolves from word2vec to GloVe to sub-word embeddings fasText, word embedd
 
 ELMo address the polysemy limitation by introducing a deep contexualized word representation (ElMo) that improves the state of the art across a range of language understanding problems. ELMo word representations are functions of the entire input sentence, computed on top of two-layer biLMs. 
 
-The state-of-the-art bidirectional neural language models compute a token representation $\textbf{x}\_{k}\^{LM}$ then pass it through $L$ layers of forward LSTMs. At each position $k$, the $j$-th LSTM layer outputs a context-dependent representations $\textbf{h}\_{k,j}\^{LM}$, where each representation is a concatenation of the forward and backward representation$\[ \overrightarrow{\textbf{h}}\_{k,j}\^{LM}, \overleftarrow{\textbf{h}}\_{k,j}\^{LM}\]$.
+The state-of-the-art bidirectional neural language models compute a token representation $\textbf{x}_{k}^{LM}$ then pass it through $L$ layers of forward LSTMs. At each position $k$, the $j$-th LSTM layer outputs a context-dependent representations $\textbf{h}_{k,j}^{LM}$, where each representation is a concatenation of the forward and backward representation$\[ \overrightarrow{\textbf{h}}_{k,j}^{LM}, \overleftarrow{\textbf{h}}_{k,j}^{LM}\]$.
 
-ELMo is a task specific combination of the intermediate layer representations in the biLM. For each token $t\_k$, a $L$-layer biLM computes a set of $2L + 1$, where $\textbf{h}\_{k,0}\^{LM}$ is the token layer representation $x\_k\^{LM}$. For inclusion in a downstream model, ELMo collapses all layers into a single vector with task specific weighting:
+ELMo is a task specific combination of the intermediate layer representations in the biLM. For each token $t_k$, a $L$-layer biLM computes a set of $2L + 1$, where $\textbf{h}_{k,0}^{LM}$ is the token layer representation $x_k^{LM}$. For inclusion in a downstream model, ELMo collapses all layers into a single vector with task specific weighting:
 
-$$\textbf{ELMo}\_k\^{task} = \gamma\^{task} \sum\_{j=0}\^L s\^{task}\_j \textbf{h}\_{k,j}\^{LM}$$
+$$\textbf{ELMo}_k^{task} = \gamma^{task} \sum_{j=0}^L s^{task}_j \textbf{h}_{k,j}^{LM}$$
 
-Most supervised NLP models form a **context-independent** token representations $\textbf{x}\_k$ for each token position using pre-trained word embedding and optionally character-based representations. Then the model forms a context-sensitive representations $\textbf{h}\_{k}$ with RNNs, CNNs or feed forward networks. 
+Most supervised NLP models form a **context-independent** token representations $\textbf{x}_k$ for each token position using pre-trained word embedding and optionally character-based representations. Then the model forms a context-sensitive representations $\textbf{h}_{k}$ with RNNs, CNNs or feed forward networks. 
 
 To add ELMo to the supervised model, the authors
 
 - Freeze the weights of the biLM, run the biLM and record all of the layer presentations for each word
-- Replace $\textbf{x}\_k$ with $\left[\textbf{x}\_k; \textbf{ELMo}\_k\^{task}\right]$ and pass them into the task RNN
+- Replace $\textbf{x}_k$ with $\left[\textbf{x}_k; \textbf{ELMo}_k^{task}\right]$ and pass them into the task RNN
 - Let the end task model learn a linear combination of these representations
 
-For some tasks, the authors observe further improvement by introducing another set of output specific linear weights and replacing $\textbf{h}\_k$ with $\left[\textbf{h}\_k; \textbf{ELMo}\_k\^{task}\right]$. The authors also found it beneficial to add a moderate amount of dropout to ELMo and in some cases to regularize the ELMo weights by adding L2 loss, which forces the ELMo weights to stay close to an average of all biLM layers.
+For some tasks, the authors observe further improvement by introducing another set of output specific linear weights and replacing $\textbf{h}_k$ with $\left[\textbf{h}_k; \textbf{ELMo}_k^{task}\right]$. The authors also found it beneficial to add a moderate amount of dropout to ELMo and in some cases to regularize the ELMo weights by adding L2 loss, which forces the ELMo weights to stay close to an average of all biLM layers.
 
 # Fine-tuning Approaches
 
@@ -73,17 +73,17 @@ The paper also introduced quite a few fine-tuning tricks that the authors empiri
 
 Five months after ULMFiT, OpenAI provided an incremental improvement on the fine-tuning concept by upgrading the previous state-of-the-art AWD-LSTM Language model to a Transformer-based LM. The LM is a multi-layer [Transformer](https://sijunhe.github.io/blog/2018/12/05/transformer/) decoder, which applies a multi-headed self-attention operation over the input context tokens followed by position-wise feedforward layers to produce an output.
 
-$$h\_0 = UW\_e + W\_p$$
-$$h\_l = \text{transformer_block}(h\_{l-1}) \forall i \in [1, n]$$
-$$P(u) = \text{softmax}(h\_{n}W\_e\^T)$$
+$$h_0 = UW_e + W_p$$
+$$h_l = \text{transformer_block}(h_{l-1}) \forall i \in [1, n]$$
+$$P(u) = \text{softmax}(h_{n}W_e^T)$$
 
-where $U = \(u\_{-k}, \cdots, u\_{-1}\)$ is the context vector of tokens, $W\_e$ is the token embedding matrix and $W\_p$ is the position embedding matrix. 
+where $U = \(u_{-k}, \cdots, u_{-1}\)$ is the context vector of tokens, $W_e$ is the token embedding matrix and $W_p$ is the position embedding matrix. 
 
-To fine-tune the LM for a supervised task, an linear block is added to the above LM. The final transformer block's activation $h\_l\^m$ is connected into an added linear output layer with parameters $W\_y$ to predict $y$.
+To fine-tune the LM for a supervised task, an linear block is added to the above LM. The final transformer block's activation $h_l^m$ is connected into an added linear output layer with parameters $W_y$ to predict $y$.
 
-$$P(y|X) = \text{softmax}(h\_{l}\^mW\_y)$$
+$$P(y|X) = \text{softmax}(h_{l}^mW_y)$$
 
-The authors also found that including language modeling as an auxiliary object to the fine-tuning helped learning by improving generalization of the supervised model and accelerating convergence. The overall objective is $L\_{total} = L\_{supervised} + \lambda \cdot L\_{LM}$
+The authors also found that including language modeling as an auxiliary object to the fine-tuning helped learning by improving generalization of the supervised model and accelerating convergence. The overall objective is $L_{total} = L_{supervised} + \lambda \cdot L_{LM}$
 
 #### Fine-Tuning
 
@@ -107,7 +107,7 @@ In order to train a model that understands sentence relationships, the authors a
 
 ![finetuning_bert](https://s3-us-west-1.amazonaws.com/sijunhe-blog/plots/post22/bert_finetuning.png)
 
-Same with the OpenAI GPT, BERT requires converting each task to be represented by a Transformer encoder architecture. A *[CLS]* token is added to the start of all input sentence. For sentence-level classification task, the final hidden state for the *[CLS]* token is connected into a linear layer and a softmax layer. For token-level task like NER, the final hidden state for each token $T\_i$ is passed through a linear layer and a softmax layer for class probabilities. 
+Same with the OpenAI GPT, BERT requires converting each task to be represented by a Transformer encoder architecture. A *[CLS]* token is added to the start of all input sentence. For sentence-level classification task, the final hidden state for the *[CLS]* token is connected into a linear layer and a softmax layer. For token-level task like NER, the final hidden state for each token $T_i$ is passed through a linear layer and a softmax layer for class probabilities. 
 
 #### Feature-based Approach
 

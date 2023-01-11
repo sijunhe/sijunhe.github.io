@@ -1,7 +1,6 @@
 ---
 layout: article
-title: "How to Train Transformers"
-subtitle: "Reading Notes on 【100亿模型计划】"
+title: "How to Train Transformers - Reading Notes on 【100亿模型计划】"
 tags: reading-notes deep-learning nlp
 ---
 
@@ -13,28 +12,28 @@ tags: reading-notes deep-learning nlp
 
 ## Complexity of Matrix Multiplication
 - dot product between 2 vectors of length *n* has a complexity of $2n$ : *n* multiplications and *n-1* additions in theory, but this is usually implemented as a single [Multiply–accumulate operation](https://en.wikipedia.org/wiki/Multiply%E2%80%93accumulate_operation)
-- Matrix multiplication between two *n x n* matrix has a complexity of $2n\^3$ because consists of $n\^2$ pairs of dot products
+- Matrix multiplication between two *n x n* matrix has a complexity of $2n^3$ because consists of $n^2$ pairs of dot products
 - Benchmarking TFLOPS of GPU with matrix multiplication is lower than the theoretical TFLOPS of the GPU spec because of memory bandwidth. As an example, benchmarking with simple elementwise operation usually hit the memory bandwidth ceiling with very small TFLOPS
 
 ## Complexity of Feed-Forward Network
 
 - Input to the encoder is of shape $[B, S, H]$, where each timestep slice is of shape $[B, H]$
-- For each timestep, the input gets projected into a size of $[B, 4H]$ and then back into $[B, H]$. Each projection has a complexity of $8BH\^2$, which sums up to $16BH\^2$
-- We need to do the same projections for each timestep, making the total complexity $16BH\^2S$, or $O(BH\^2S)$
+- For each timestep, the input gets projected into a size of $[B, 4H]$ and then back into $[B, H]$. Each projection has a complexity of $8BH^2$, which sums up to $16BH^2$
+- We need to do the same projections for each timestep, making the total complexity $16BH^2S$, or $O(BH^2S)$
 
 ## Complexity of Multi-head Self-Attention
 
 - Input to the encoder is of shape $[B, S, H]$, where each data row is of shape $[H, S]$. The layer has $a$ attention heads
-- Each attention head projects the input into query, key and value space with size of $H/a$ with a total complexity of $6H\^2 S/a$
-- Query, key and value matrice are of size $[S, H/a]$. Each timestep in the query matrix attends to each timestep in the key matrix through a dot product, which $S\^2$ pairs of dot product between vectors of size $H/a$. Similar matrix multiplication also happens between the normalized attention scores and the value matrix. This sums up to a complexity of $4S\^2H/a$
-- Since we need to do this for each attention heads, the above two operations sum up to $6H\^2 S + 4S\^2H$. Afterwards we concatenate the outputs of all heads into a matrix of size $[S, H]$ and projects into a new matrix of size $[S, H]$, which is another $2H\^2S$ and makes the total $8H\^2 S + 4S\^2H$
-- Since the above computation is for each data row in the batch, the total computation is $8BH\^2S + 4BS\^2H$, or $O(BH\^2S + BS\^2H)$
+- Each attention head projects the input into query, key and value space with size of $H/a$ with a total complexity of $6H^2 S/a$
+- Query, key and value matrice are of size $[S, H/a]$. Each timestep in the query matrix attends to each timestep in the key matrix through a dot product, which $S^2$ pairs of dot product between vectors of size $H/a$. Similar matrix multiplication also happens between the normalized attention scores and the value matrix. This sums up to a complexity of $4S^2H/a$
+- Since we need to do this for each attention heads, the above two operations sum up to $6H^2 S + 4S^2H$. Afterwards we concatenate the outputs of all heads into a matrix of size $[S, H]$ and projects into a new matrix of size $[S, H]$, which is another $2H^2S$ and makes the total $8H^2 S + 4S^2H$
+- Since the above computation is for each data row in the batch, the total computation is $8BH^2S + 4BS^2H$, or $O(BH^2S + BS^2H)$
 
 ## Complexity of Transformer Encoder/Decoder Layer
 
-- The complexity of the encoder layer is *FFN* + *SelfAttention*, the complexity of the decoder layer in encoder-decoder models is approximately *FFN* + *2 * SelfAttention* to account for the Encoder-Decoder cross attention. Overall, both the encoder and the decoder has a complexity of $O(BH\^{2}S + BS\^{2}H)$
+- The complexity of the encoder layer is *FFN* + *SelfAttention*, the complexity of the decoder layer in encoder-decoder models is approximately *FFN* + *2 * SelfAttention* to account for the Encoder-Decoder cross attention. Overall, both the encoder and the decoder has a complexity of $O(BH^{2}S + BS^{2}H)$
 - In practice, Decoder-only models (e.g. GPT2) requires more computation than Encoder-only models (e.g. BERT) of the same size. This could be attributed to additional element-wise operation such as causal masking. Decoders in Encoder-Decoder (e.g. T5) is even slower due to the required cross attention
-- Technically, transformers do scale *quadratically* with input sequence length. However, it also scales quadratically with the hidden space size, which usually dominates with $H=768,1024$. The $BS\^{2}H$ term starts to matter when the sequence lengths get close to the maximum input sequence length such as 512
+- Technically, transformers do scale *quadratically* with input sequence length. However, it also scales quadratically with the hidden space size, which usually dominates with $H=768,1024$. The $BS^{2}H$ term starts to matter when the sequence lengths get close to the maximum input sequence length such as 512
 - All of the above calculations are theoretically and only takes matrix multiplication into account. In practice, computation-efficient operations such as GeLU activation and LayerNorm takes a significant amount of time outside of matrix multiplication due to the above-mentioned memory bandwidth ceiling
 
 

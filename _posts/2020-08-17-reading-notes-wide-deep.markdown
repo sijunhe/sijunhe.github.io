@@ -1,7 +1,6 @@
 ---
 layout: article
 title: "Wide & Deep Learning for Recommendation Systems"
-subtitle: "Reading Notes on Classic RecSys Papers I"
 tags: deep-learning rec-sys reading-notes
 ---
 
@@ -25,7 +24,7 @@ Recently I started working on the applications of text representations in Recomm
 
 ![wide_and_deep_model](https://sijunhe-blog.s3-us-west-1.amazonaws.com/plots/post25/wide_deep_model.png)
 
-- Wide component is a GLM $y=\textbf{w}^{T}\textbf{x}+b$. One of the most important features is the cross-product transformation, defined as $\theta\_{k}(\textbf{x}) = \prod\_{i=1}^{d} x\_{i}^{c\_{ki}} \ \ \ c\_{ki} \in \{0, 1\}$
+- Wide component is a GLM $y=\textbf{w}^{T}\textbf{x}+b$. One of the most important features is the cross-product transformation, defined as $\theta_{k}(\textbf{x}) = \prod_{i=1}^{d} x_{i}^{c_{ki}} \ \ \ c_{ki} \in \{0, 1\}$
 - Deep component is a feed-forward NN where sparse, high-dimensional categorical features are first converted into a embedding. The embedding are initialized randomly and trainable
 - The wide and deep compoent are combined at the output layer, which is then fed to a logistici loss function for joint training
 - The wide component is optimized by FTRL with L1 regularization while the deep part is optimized by AdaGrad. <span style="color:blue"> [Sijun]: The FTRL algorithm was originally designed to train Google-scale GLMs. It induces sparsity, which is needed in the wide part of the model, as most of the cross-product features are not meaningful. The deep part of the model is trained with AdaGrad, which is an regular adapative optimizer for NNs </span>

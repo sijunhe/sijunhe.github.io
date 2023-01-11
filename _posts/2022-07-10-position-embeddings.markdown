@@ -1,7 +1,6 @@
 ---
 layout: article
-title: "Encoding Positional Information"
-subtitle: "A short Survey on Position Embeddings in Transformer models"
+title: "A short Survey on Position Embeddings in Transformer models"
 tags: reading-notes deep-learning nlp
 ---
 
@@ -38,8 +37,8 @@ Another approach is the **functional** approach, where a certain function is pic
 
 [Attention is All You Need](https://arxiv.org/abs/1706.03762) by Vasawni et al. is easily one of the most influential ML/NLP papers in the last decade, as it proposed a novel attention-only mechanism for contextual modeling. Since attention is location-independent and has no way of tracking positions explicitly or implictly, the authors proposed using sinusoidal waves to inject position of the tokens in the sequence. 
 
-$$PE\_(pos, 2i) = sin(\frac{pos}{10000\^{2i/d\_{model}}})$$
-$$PE\_(pos, 2i+1) = cos(\frac{pos}{10000\^{2i/d\_{model}}})$$
+$$PE_(pos, 2i) = sin(\frac{pos}{10000^{2i/d_{model}}})$$
+$$PE_(pos, 2i+1) = cos(\frac{pos}{10000^{2i/d_{model}}})$$
 
 ![pe](https://sijunhe-blog.s3.us-west-1.amazonaws.com/plots/post30/pe.png)
 
@@ -54,14 +53,14 @@ The authors also mentioned that they experimented with using learned positional 
 
 Instead of encoding token positions as a function of their absolute positions, Shaw et al. proposed an **relative parametric** approach of encoding positions as a function of the distance between tokens in a subsequent paper [[2018 Shaw et al.]](https://arxiv.org/abs/1803.02155). Since relative attention requires the positions of two tokens *i* and *j*, Shaw et al. modifies the self attention module slightly by adding in two sets of relative position embeddings (colored in blue):
 
-$$ z\_{i} = \sum_{j=1}^{n} \alpha\_{ij} (x\_{i} W\^{V} + \color{blue}{a\_{ij}\^{V}}) $$
-$$ e\_{ij} = \frac{x\_{i} W\^{Q} (x\_{j} W\^{K} + \color{blue}{a\_{ij}\^{K}})}{\sqrt{d\_z}} $$
+$$ z_{i} = \sum_{j=1}^{n} \alpha_{ij} (x_{i} W^{V} + \color{blue}{a_{ij}^{V}}) $$
+$$ e_{ij} = \frac{x_{i} W^{Q} (x_{j} W^{K} + \color{blue}{a_{ij}^{K}})}{\sqrt{d_z}} $$
 
-where $a\_{ij}^{K}$ and $ a\_{ij}^{V}$ are trainable embeddings that encodes the relative position between $i$ and $j$ when computing the softmax scores and the final output value respectively. However, buffering embeddings for all potential pairs of token positions would require $L\^2 * d\_{model}$ parameters ($L=512$ and $d\_{model}=768$ for BERT base), which is wasteful and relative position information beyond a certain distance is not useful anyway. Hence we can truncate the pairwise relative position embeddings as $a\_{ij}^{K} = W\_{max(j-i, k)}$ which limits each relative position embeddings matrix to $(2k+1) * d\_{model}$ (ablation study shows $k=64$ is a good number for en-de translation).
+where $a_{ij}^{K}$ and $ a_{ij}^{V}$ are trainable embeddings that encodes the relative position between $i$ and $j$ when computing the softmax scores and the final output value respectively. However, buffering embeddings for all potential pairs of token positions would require $L^2 * d_{model}$ parameters ($L=512$ and $d_{model}=768$ for BERT base), which is wasteful and relative position information beyond a certain distance is not useful anyway. Hence we can truncate the pairwise relative position embeddings as $a_{ij}^{K} = W_{max(j-i, k)}$ which limits each relative position embeddings matrix to $(2k+1) * d_{model}$ (ablation study shows $k=64$ is a good number for en-de translation).
 
 [[Huang et al. 2018]](https://arxiv.org/abs/2009.13658) continued this line of work by examining 4 different ways of incorporating relative position embeddings into self attention modules. As an example, one of the methods proposed calls for modeling the dot product of all possible pairs of query, key, and relative position embeddings:
 
-$$ e\_{ij} = \frac{(x\_{i} W\^{Q}) (x\_{j} W\^{K}) + (x\_{i} W\^{Q}) * a\_{ij} + (x\_{j} W\^{K}) *a\_{ij} }{\sqrt{d\_z}} $$
+$$ e_{ij} = \frac{(x_{i} W^{Q}) (x_{j} W^{K}) + (x_{i} W^{Q}) * a_{ij} + (x_{j} W^{K}) *a_{ij} }{\sqrt{d_z}} $$
 
 This is a natural (albeit not very innovative) follow-up to Shaw et al.'s work but I think it unintentionally sparked the disentangled attention workstream such as DeBERTa [[2020 He et al.]](https://arxiv.org/abs/2006.03654).
 
@@ -79,8 +78,8 @@ Since it's publication, BERT [[2019, Devlin et al.]](https://arxiv.org/abs/1810.
 
 A logical extension to all the previous work is to try the **relative functional** approach. And Wei et al. just did that in [NEZHA](https://arxiv.org/abs/1909.00204). As you can see from below, Nezha simply combines the sinusoidal functions used in the original Transformer paper and the relative attention idea introduced by Shaw et al.
 
-$$a\_{ij}(2k) = sin(\frac{j - i}{10000\^{2k/d\_{z}}})$$
-$$a\_{ij}(2k+1) = cos(\frac{j - i}{10000\^{2k/d\_{z}}})$$
+$$a_{ij}(2k) = sin(\frac{j - i}{10000^{2k/d_{z}}})$$
+$$a_{ij}(2k+1) = cos(\frac{j - i}{10000^{2k/d_{z}}})$$
 
 Other than the results shown in the paper, I personally have had great experience pretrained Nezha models in Chinese span extraction tasks.
 

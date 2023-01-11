@@ -1,7 +1,6 @@
 ---
 layout: article
-title: "Flagging Insincere Questions on Quora"
-subtitle: "Yet another text classification competition"
+title: "Kaggle: Flagging Insincere Questions on Quora"
 tags: kaggle nlp deep-learning
 ---
 

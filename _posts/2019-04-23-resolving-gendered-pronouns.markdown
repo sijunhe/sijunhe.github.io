@@ -1,7 +1,6 @@
 ---
 layout: article
-title: "Resolving Gendered Pronouns"
-subtitle: "Learning from the Gendered Pronoun Resolution Challenge"
+title: "Kaggle: Learning from the Gendered Pronoun Resolution Challenge"
 tags: kaggle nlp deep-learning
 ---
 

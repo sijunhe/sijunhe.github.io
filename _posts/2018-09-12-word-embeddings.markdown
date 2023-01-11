@@ -92,9 +92,11 @@ We can restrict $F$ in the following way
 - $F$ should be only dependent on the difference of the two target words $w_i - w_j$
 - By requiring the role of target words and context words can be exchanged, we have $F\left( (w_i - w_j)^T \tilde{w}_k \right) = F(w_i^T \tilde{w}_k) / F(w_j^T \tilde{w}_k)$
 
-This gives us the solution of $F = \text{exp}$ and $ w_i^T \tilde{w}_k = \text{log} (P_{ik}) $. To restore the symmetry between target word and context words, we can set $b_i=\text{log} (X_{i})$ and add an bias term $\tilde{b}_k$, 
+This gives us the solution of $F = \text{exp}$ and
 
-This gives us the solution of $F = \text{exp}$ and $w_i^T \tilde{w}_k = \text{log} (P_{ik}) = \text{log} (X_{ik}) - \text{log} (X_{i})$. To restore the symmetry between target word and context words, we can set $b_i=\text{log} (X_{i})$ and add an bias term $\tilde{b}_k$, 
+$$w_i^T \tilde{w}_k = \text{log} (P_{ik})- \text{log} (X_{i})$$
+
+To restore the symmetry between target word and context words, we can set $b_i=\text{log} (X_{i})$ and add an bias term $\tilde{b}_k$, 
 
 $$w_{i}^T\tilde{w}_{k} + b_i + \tilde{b}_k = \text{log} (X_{ik})\tag{6}$$
 
@@ -139,8 +141,8 @@ There is a limitation in skip-gram and GloVe that word representations ignore th
 
 Each word is represented as a bag of character *n*-grams. A special boundary symbols *<>* are added at the start and end of a word. The word *w*itself is also in the set of its *n*-grams to learn a representation for each word. For example, for the word *where* and $n=3$, we have the character *n*-grams *<wh, whe, her, ere, re>, where*. In practice, all *n*-grams for $3 \leq n \leq 6$ are used. 
 
-Given a word *w* and a set of *n*-grams $\mathcal{G}_w$ of size $G$, a vector representation $z_g$ is assigned to each *n*-grams $g$. In skip-gram, the scoring function between a context word and a center word is defined as $s(w, c) = u_g^Tv_c$. Since a word is reprenseted as the sum of the vector representations of its *n*-grams,  we have $s(w, c) = \sum_{g \in \mathcal{G}_w} z_g^Tv_c$. With this change, Eq. 2 becomes
+Given a word *w* and a set of *n*-grams $\mathcal{G}\_w$ of size $G$, a vector representation $z_g$ is assigned to each *n*-grams $g$. In skip-gram, the scoring function between a context word and a center word is defined as $s(w, c) = u_g^Tv_c$. Since a word is reprenseted as the sum of the vector representations of its *n*-grams,  we have $s(w, c) = \sum_{g \in \mathcal{G}\_w} z_g^T v_c$. With this change, Eq. 2 becomes
 
-$$p(w_{O} \vert w_{I}) = \frac{\text{exp} \( \sum_{g \in \mathcal{G}_{w_{O}}} z_g^Tv_{w_{I}} \)}{\sum_{w=1}^W \text{exp} \( \sum_{g \in \mathcal{G}_w} z_g^T v_{w_{I}}\)}\tag{8}$$
+$$p(w_{O} \vert w_{I}) = \frac{\text{exp} \left( \sum_{g \in \mathcal{G}_{w_{O}}} z_g^Tv_{w_{I}} \right)}{\sum_{w=1}^W \text{exp} \left( \sum_{g \in \mathcal{G}_w} z_g^T v_{w_{I}}\right)}\tag{8}$$
 
 This simple model allows sharing the representations across words, thus allowing to learn reliable representation for rare words. Also, the model can infer word vectors for words that do not appear in the training set (Out-of-Vocabulary) simply by averaging the vector representation of its n-grams. In fact, Bojanowski et al found that imputing vectors for unseen words is always at least as good as not doing so, and in some cases give a large performance boost. 
