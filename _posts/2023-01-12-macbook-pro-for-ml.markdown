@@ -62,9 +62,8 @@ pipe = StableDiffusionPipeline.from_pretrained("runwayml/stable-diffusion-v1-5")
 # First-time "warmup" pass (see explanation  above)
 _ = pipe(prompt, num_inference_steps=1)
 image = pipe(prompt, num_inference_steps=50).images[0]
-100%|██████████| 50/50 [00:58<00:00,  1.18s/it]
 ```
 
 | Mac CPU  (s/it)  | Mac GPU (s/it)  | Mac GPU Speedup | T4 (s/it)  | P100 (s/it) |
 |------------------|-----------------|-----------------|------------|--------------|
-| 59               | 1.18            | **199.6%**      | 12         | 13           |
+| 3.88             | 1.18            | **199.6%**      | 0.50       | 0.29         |
