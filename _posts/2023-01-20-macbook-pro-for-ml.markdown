@@ -2,7 +2,6 @@
 layout: article
 title: "Macbook Pro GPU for ML?"
 tags: deep-learning ml-systems
-publish: false
 ---
 
 Before I left the Bay Area at the end of 2021, I splurged on a Macbook Pro with the new M1 Pro chip (8-Core CPU, 14-Core GPU). I had no idea that Apple was working on [MPS](https://developer.apple.com/metal/pytorch/) but I had a hunch that those GPU cores might be usable for ML at some point. PyTorch and Apple released [Accelerated PyTorch Training on Mac](https://pytorch.org/blog/introducing-accelerated-pytorch-training-on-mac/) around June 2022 and things quickly fall in line. As of the time of writing of this blogpost, MPS acceleration is available out-of-the-box in PyTorch on MacOS 12.3+. In this short post, I benchmarked two most common models (BERT for transformers, Stable Diffusion for Diffusion Models) on MPS and see how much speedup it can achieve out-of-the-box.
