@@ -1,6 +1,6 @@
 ---
 layout: article
-title: "Instruction Finetuning"
+title: "Instruction Finetuning and FLAN"
 tags: deep-learning nlp reading-notes
 ---
 
