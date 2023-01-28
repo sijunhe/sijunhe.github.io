@@ -26,14 +26,20 @@ tags: deep-learning nlp reading-notes
 ![flan-t5](/assets/images/posts/instruction-tuning/flan_t5.png)
 
 - Google reseachers Chung et al. published [Scaling Instruction-Finetuned Language Models](https://arxiv.org/abs/2210.11416) in late 2022, which showed that instruction finetuning can improve performance across a range of model architectures, model sizes, prompting setups, and evaluation tasks
-- Key contributions on top of FLAN:
-    - Scaled number of tasks from 62 to 1836
-    - Added T5, PaLM and U-PaLM architecture (FLAN was on GPT architecture)
-    - Introduced chain-of-thought data, which improves multi-step reasoning ability
 
+![scale-flan-models](/assets/images/posts/instruction-tuning/scale_flan_models.png)
 
+- Key contribution 1: scaled model sizes 137B -> 540B and number of tasks 62 -> 1836
+    - Across all three model sizes (8B, 62B, 540B) of PaLM, instruction finetuning improves performance by a large margin
+    - Increasing the number of finetuning tasks improves performance but the gain diminishes after 282 tasks
 
+![t5-performances](/assets/images/posts/instruction-tuning/t5_performance.png)
 
+- Key contribution 2: Added encoder-decoder architecture (T5) and open-sourced Flan-T5 checkpoints, which achieve strong few-shot performance even compared with much larger models
+    - Flan-T5-Small with 80M params has similar zero-shot performance as T5-XXL 11B
+    - Flan-T5-Base with 250M params has similar zero-shot performance as PaLM 8B
+
+- Key contribution 3: introduced [chain-of-thought](https://arxiv.org/abs/2201.11903) data, which improves multi-step reasoning ability
 
 ## Fine-Tuning Language Models from Human Preferences
 
