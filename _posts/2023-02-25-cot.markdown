@@ -30,7 +30,9 @@ intuition that complex reasoning tasks typically admit multiple reasoning paths 
 
 ![self-consistency](/assets/images/posts/chain-of-thought/self-consistency.png)
 
-
+- Self-Consistency method generates a diverse of candidate outputs by sampling the language model’s decoder (e.g. with top k or top p sampling), and then aggregate the answers by marginalizing out the sampled reasoning paths and choosing the answer that is the most consistent among the generated answers.
+- How do we marginalize the reasoning path? Each generated text is parsed (with a task-specific parser) into the reasoning path (i.e. *She has 16 - 3 - 4 = 9 eggs left. So she makes $2 * 9 =$18 per day*) and the answer (i.e. *The answeris $18*). For each answer, we sum the probability for all observed reasoning path.
+- Results: self-consistency boosts the performance of chain-of-thought prompting on a range of popular arithmetic and commonsense reasoning benchmarks, including GSM8K (+17.9%), SVAMP (+11.0%), AQuA (+12.2%), StrategyQA (+6.4%) and ARC-challenge (+3.9%). These gains are achieved by sampling and aggregating 40 outputs with Self-Consistency instead a greedy decode of 1.
 
 ## Let's think step by step
 
