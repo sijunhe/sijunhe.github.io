@@ -27,7 +27,7 @@ to maximize the sum of the predicted rewards $r_t = \hat{r}(o_{t}, a_{t})$.
 - Challenges: The algorithm’s performance is only as good as the human evaluator’s intuition about what behaviors look correct, so if the human doesn’t have a good grasp of the task they may not offer as much helpful feedback.
 
 
-## Apply the above RL technique on Language Models?
+## Apply the above RL technique to Language Models?
 
 - [Fine-Tuning Language Models from Human Preferences](https://arxiv.org/abs/1909.08593) by OpenAI researchers Ziegler et al., published in 2019
 - Rather than vanilla supervised learning, the authors finetuned pretrained LM with RL using a reward
@@ -59,6 +59,13 @@ $$R(x,y) = r(x, y) - \beta log \ \frac{pi(y|x)}{\rho(y|x)}$$
     - Since both the reward model and the policy model are initialized with $\rou$, it's appealing to train jointly to improve learning and efficiency. The authors were not able to make the idea work due to the overfitting caused by imbalanced data (much more RL episodes than reward model data).
     - Human preferences and ambiguities can have unintended consequences, for example, since copying is usually correct and easy to check for, the labelers subcontiously preferred copying, which caused the RL finetuned model to be mostly extractive
 
-- https://arxiv.org/abs/2009.01325
+
+## Doubling down on Summarization + Human Feedback
+
+- [Learning to summarize from human feedback](https://arxiv.org/abs/2009.01325) by OpenAI Researchers Stiennon et al., published in 2020
+- OpenAI Researchers refined their methods from 2019 and focuses solely on summarization this time. The initution is that summarization is a field in NLP where training and evaluation are bottlenecked by the data and the metrics (ROUGE) doesn't align 100% with human judgement of quality. By applying a RLHF method similar to the one introduced previously, the authors found that they can produce models which significantly outperform both human reference summaries! The models also showed great domain transfer ability and can do summarization to the standards of human reference without any in-domain finetuning
+
+![summarize_from_human_feedback](/assets/images/posts/rlhf/summarize_from_human_feedback.png)
+
 - https://arxiv.org/abs/2109.10862
 - https://openai.com/blog/instruction-following/
