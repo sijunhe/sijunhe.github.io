@@ -26,14 +26,38 @@ to maximize the sum of the predicted rewards $r_t = \hat{r}(o_{t}, a_{t})$.
 - Results: without the assess the true reward (i.e. the score), the agent can learn from human feedback to achieve strong and somtimes superhuman performance in many of the environments.
 - Challenges: The algorithm’s performance is only as good as the human evaluator’s intuition about what behaviors look correct, so if the human doesn’t have a good grasp of the task they may not offer as much helpful feedback.
 
-​## Apply the above RL technique on Language Models?
+
+## Apply the above RL technique on Language Models?
 
 - [Fine-Tuning Language Models from Human Preferences](https://arxiv.org/abs/1909.08593) by OpenAI researchers Ziegler et al., published in 2019
-- The authors finetuned pretrained LM with RL using a reward
-model trained from human preferences on text continuations. *The work is mostly in the domain of RL with NLP being a medium to make RL practical and safe for real-world tasks.*
+- Rather than vanilla supervised learning, the authors finetuned pretrained LM with RL using a reward
+model trained from human preferences on text continuations. <span style="color:blue"> The work is mostly in the domain of RL with NLP being a medium to make RL practical and safe for real-world tasks. </span>
+- The motivation is NLP tasks where supervised data sets are unavailable or insufficient, and where programmatic reward functions are poor proxies for our true goals
+- Two types of tasks
+    - continuing text in a way that matches a target style, either positive sentiment or vividly descriptive. 
+    - summarizing text from the CNN/Daily Mail or TL;DR datasets. 
+- With the input $x$ (e.g. article to be summarized) and output $y$, we want to finetune the policy $\pi$ (initialized with the pretrained LM, also called the zero-shot policy $\rho$) to optimize the expected reward $E[ r(x, y)]$. However, the reward function $r$ is not provided by the environment like traditional RL and we can only learn about the reward by asking humans. To do this, we use human labels to train a reward model. Following the previous work, we ask human labelers to pick best response $y_b$ to a given input $x$ among four options $\(y_0, y_1, y_2, y_3\)$. The loss function for the reward model is the classic cross entropy loss after applying softmax over the options.
+- The reward model is the language model $\rho$ with a randomly-initalized linear projection on top. To keep $\pi$ from moving too far from $p$, there is a KL penalty, which makes the reward model
 
+$$R(x,y) = r(x, y) - \beta log \ \frac{pi(y|x)}{\rho(y|x)}$$
+
+- Training process:
+    1. Gather samples $(x, y_0, y_1, y_2, y_3, y_b)$ with y coming from $\rho$ and asking human to pick $y_b$ from the options
+    2. Initialize $r$ to $\rho$ with a randomly-initialized final linear year on top. Train $r$ on the samples from step 1
+    3. Train $\pi$ via PPO, with reward function from step 2
+    4. In the case of online data collection, periodically gather more samples with $\pi$ instead of $\rho$ and retrain the reward model $r$. This is because if the trained policy $\pi$ is very different from the zero-shot policy $\rho$, the reward model will suffer a large distributional shift from training on samples from $\rho$ to evaluation on samples from $\pi$
 
 ![finetuning_lm_human_preference](/assets/images/posts/rlhf/finetuning_lm_human_preference.png)
+
+- Experiments and Results:
+    - The approach is first tested by using a trained sentiment classification model as a stand-in for human labels. The results showed that RL finetuning is effective at optimizing for the mock sentiment reward
+    - For stylistic continuation, as little as 5,000 human comparisons is required to result in the RL finetuned model being preferred by humans 86% of the time vs. zeroshot and 77% vs. fine-tuning to the mock sentiment model
+    - For summaization, the authors found that the while the RL finetuned model underperforms supervised baselines when it comes to ROUGE, they are usually preferred by human labelers. Surprisingly, the RL finetuned models produce summaries that are preferrred over the ground truth! The authors found that the RL finetuned models are essentially extractive "copiers" because copying is easy to check for human labelers.
+
+- Learnings and Challenges:
+    - Online data collection is hard due to software and ML complexities. 
+    - Since both the reward model and the policy model are initialized with $\rou$, it's appealing to train jointly to improve learning and efficiency. The authors were not able to make the idea work due to the overfitting caused by imbalanced data (much more RL episodes than reward model data).
+    - Human preferences and ambiguities can have unintended consequences, for example, since copying is usually correct and easy to check for, the labelers subcontiously preferred copying, which caused the RL finetuned model to be mostly extractive
 
 - https://arxiv.org/abs/2009.01325
 - https://arxiv.org/abs/2109.10862
