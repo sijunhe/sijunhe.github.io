@@ -78,12 +78,26 @@ $$R(x,y) = r(x, y) - \beta log \ \frac{pi(y|x)}{\rho(y|x)}$$
 
 ## Putting it together: InstructGPT
 
--[Training language models to follow instructions with human feedback](https://arxiv.org/abs/2203.02155) by OpenAI researchers Ouyang et al., published in 2022
+- [Training language models to follow instructions with human feedback](https://arxiv.org/abs/2203.02155) by OpenAI researchers Ouyang et al., published in 2022
+
+#### Methodology
 
 ![rlhf_instructgpt](/assets/images/posts/rlhf/rlhf_instructgpt.png)
 
 - Similar RLHF techniques as previously introduced, with some modifications for the unique goal of this model
     1. **Collect demonstration data, and train a supervised policy**: collect human-written demostrations on a wide variety of tasks, which is then used to finetune the model with supervised learning <span style="color:blue"> previously the supervised learning is done on existing dataset (text continuations, summarizations) which doesn't require labeling new data. The authors wants to train on text prompts submitted to the OpenAI API and also hand-written by the labelers themselves, which clearly has no labeled data, hence the labeling effort.</span>
-    2. **Collect comparison data, and train a reward model**: collect a dataset of comparisons between model outputs, where labelers rank output from most-preferred to least-preferred for a given input. The comparison dataset is then used to train a reward model to predict the human-preferred output.  <span style="color:blue"> this is different from previous RLHF setup where labelers labeled pairs for the reward model with binary cross-entropy loss. The labelers here ranks the outputs for *efficiency* purposes, as one ranking data point can turn into $\{ K \choose 2\} $ pairs. The reward model still uses binary cross entropy loss. The authors put all $\{ K \choose 2\} $ pairs into the same batch to improve efficiency and prevent overfitting</span>
+    2. **Collect comparison data, and train a reward model**: collect a dataset of comparisons between model outputs, where labelers rank output from most-preferred to least-preferred for a given input. The comparison dataset is then used to train a reward model to predict the human-preferred output. The authors only used a 6B reward model to save compute. <span style="color:blue"> this is different from previous RLHF setup where labelers labeled pairs for the reward model with binary cross-entropy loss. The labelers here ranks the outputs for *efficiency* purposes, as one ranking data point can turn into $\{ K \choose 2\} $ pairs. The reward model still uses binary cross entropy loss. The authors put all $\{ K \choose 2\} $ pairs into the same batch to improve efficiency and prevent overfitting</span>
     3. **Optimize a policy against the reward model using PPO**: Use the output of the RM as a scalar reward to finetune the supervised policy to optimize this reward using the PPO algorithm. <span style="color:blue"> identical to previous setup </span>
+
+#### Results
+
+![rlhf_result](/assets/images/posts/rlhf/rlhf_results.png)
+
+- Using the same labeler preference metric as Stiennon et al., we can see that **labelers significantly prefer InstructGPT outputs over outputs from GPT-3**.  175B InstructGPT outputs are preferred to GPT-3 outputs 85 ± 3% of the time, and preferred 71 ± 4% of the time to few-shot GPT-3. <span style="color:blue"> Other than an expected gain with model scale and PPO models outperforming GPT and fewshot GPT, we can see that even 1.3B PPO model can outperform the vanilla 175B GPT!</span>
+- The authors also observe the same improvement on the held-out labelers (<span style="color:blue"> since labelers provided the demonstration data that trains the SFT model and the ranking data that trains the reward model, we need to rule out that PPO model simply captured the personal preference of the labelers.</span>).
+- **Demonstration data is more refelctive of real world LLM usage than instruction tuning dataset converted from classic NLP datasets**: if we try to finetune 175B GPT-3 not on the SFT data, but on the instruction tuning datasets FLAN and T0,  we find that these models perform better than GPT-3, on par with GPT-3 with a well-chosen prompt, and worse than our SFT baseline. This is because the classical supervised NLP datasets that FLAN and T0 are based off are a small percentage of the API distribution and the input distribution lacks diversity.
+- InstructGPT models show **improvements in truthfulness and informativeness** over GPT-3, without being specifically instructed to tell the truth. <span style="color:blue"> Not really surprised here. Even without specifically instructed to tell the truth, the labelers would downrank the uninformative and untruthful generation outputs, which is then learned by the reward model and eventually the PPO model</span>
+- when instructed to produce a safe and respectful output ("respectful prompt"), InstructGPT models generate less toxic outputs than those from GPT-3
+- When training the PPO model on the API distribution, the performance on public NLP datasets decreases because of "alignment tax". This can be minimized by adding a pretraining updates to our PPO fine-tuning. Adding the pretraining updates performs better than the simpler solution of increasing the KL coefficient
+
 
