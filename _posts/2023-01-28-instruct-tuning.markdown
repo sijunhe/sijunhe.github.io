@@ -1,7 +1,7 @@
 ---
 layout: article
 title: "ChatGPT Series: Instruction Finetuning and FLAN"
-tags: deep-learning nlp reading-notes chatgpt
+tags: deep-learning nlp reading-notes llm
 ---
 
 Reading Notes on Instruction Finetuning

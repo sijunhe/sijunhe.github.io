@@ -1,7 +1,7 @@
 ---
 layout: article
 title: "ChatGPT Series: Chain-of-Thought Prompting"
-tags: deep-learning nlp reading-notes chatgpt
+tags: deep-learning nlp reading-notes llm
 ---
 
 ## Chain-of-Thought Prompting
